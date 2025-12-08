@@ -1,0 +1,95 @@
+{% extends 'starter-page.html' %}
+{% load static %}
+
+{% block title %}Become a Mentor{% endblock %}
+
+{% block content %}
+
+<section class="mentor section light-background">
+  <div class="container" data-aos="fade-up">
+    <div class="section-title">
+      <span class="subtitle">Mentor</span>
+      <h2>Apply to Be a Mentor</h2>
+      <p>Share your experience and guide learners through mentorship sessions in leadership, digital literacy, and personal development.</p>
+    </div>
+
+    {% if messages %}
+      <div class="mb-4">
+        {% for message in messages %}
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="card p-4">
+          <!-- Mentor registration form posts to /mentor/ -->
+          <form id="mentorForm" method="post" action="/mentor/">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Full name</label>
+                <input type="text" name="name" id="name" class="form-control" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Email address</label>
+                <input type="email" name="email" id="email" class="form-control" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Phone</label>
+                <input type="text" name="phone" id="phone" class="form-control">
+              </div>
+
+              
+              <div class="col-md-6">
+                <label class="form-label">Organization (optional)</label>
+                <input type="text" name="organization" id="organization" class="form-control">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Years of experience (optional)</label>
+                <input type="number" name="years" id="years" class="form-control" min="0">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Short bio / mentoring approach</label>
+                <!-- Post this field directly as `message` so backend receives mentor details without JS -->
+                <textarea name="message" id="bio" class="form-control" rows="4" placeholder="Tell us about your mentoring experience and availability"></textarea>
+              </div>
+
+              <!-- Hidden subject used by server to mark mentor registrations -->
+              <input type="hidden" name="subject" id="subject" value="Mentor Registration">
+
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary">Submit Application</button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Removed client-side script per request; bio posts directly as `message`. -->
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card p-4">
+          <h5>Why Mentor with EduHope?</h5>
+          <p>Mentors provide guidance, share skills, and help learners build confidence. Your time and knowledge create lasting impact.</p>
+          <ul>
+            <li>Flexible mentorship sessions</li>
+            <li>Focused on leadership and digital skills</li>
+            <li>Support from EduHope team</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

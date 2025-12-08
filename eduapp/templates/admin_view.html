@@ -1,0 +1,397 @@
+{% extends 'starter-page.html'%}
+
+{% load static %}
+
+{% block title %} Admin Dashboard {% endblock %}
+
+{% block content %}
+
+<!-- Admin Dashboard Section -->
+<section class="admin-dashboard section">
+  <div class="container">
+    
+    <!-- Dashboard Header -->
+    <div class="dashboard-header mb-5">
+      <h1>EduHope Admin Dashboard</h1>
+      <p>Manage learners, mentors, partners, and messages</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-5">
+      <div class="col-md-6 col-lg-3 mb-4">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="bi bi-people-fill"></i>
+          </div>
+          <div class="stat-content">
+            <h5>Total Learners</h5>
+            <p class="stat-number">{{ total_learners }}</p>
+            <small class="text-success">{{ verified_learners }} Verified</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-4">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="bi bi-person-badge"></i>
+          </div>
+          <div class="stat-content">
+            <h5>Total Mentors</h5>
+            <p class="stat-number">{{ total_mentors }}</p>
+            <small class="text-success">{{ verified_mentors }} Verified</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-4">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="bi bi-building"></i>
+          </div>
+          <div class="stat-content">
+            <h5>Total Partners</h5>
+            <p class="stat-number">{{ total_partners }}</p>
+            <small class="text-success">{{ verified_partners }} Verified</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-4">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="bi bi-envelope-open"></i>
+          </div>
+          <div class="stat-content">
+            <h5>Total Messages</h5>
+            <p class="stat-number">{{ total_messages }}</p>
+            <small class="text-muted">Latest inquiries</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs for Different Sections -->
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab">Messages</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="learners-tab" data-bs-toggle="tab" data-bs-target="#learners" type="button" role="tab">Learners</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="mentors-tab" data-bs-toggle="tab" data-bs-target="#mentors" type="button" role="tab">Mentors</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="partners-tab" data-bs-toggle="tab" data-bs-target="#partners" type="button" role="tab">Partners</button>
+      </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="adminTabContent">
+      
+      <!-- Messages Tab -->
+      <div class="tab-pane fade show active" id="messages" role="tabpanel">
+        <div class="data-section">
+          <h3>Latest Messages</h3>
+          {% if all %}
+            <div class="table-responsive">
+              <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Subject</th>
+                    <th>Message</th>
+                    
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for msg in all %}
+                  <tr>
+                    <td><strong>{{ msg.name }}</strong></td>
+                    <td><a href="mailto:{{ msg.email }}">{{ msg.email }}</a></td>
+                    <td>{{ msg.subject }}</td>
+                    <td>
+                      <small>{{ msg.message|truncatewords:10 }}</small>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="alert alert-info">No messages yet.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Learners Tab -->
+      <div class="tab-pane fade" id="learners" role="tabpanel">
+        <div class="data-section">
+          <h3>Registered Learners</h3>
+          {% if all_learners %}
+            <div class="table-responsive">
+              <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>School</th>
+                    <th>Grade</th>
+                    <th>Gender</th>
+                    <th>Status</th>
+                    <th>Date Joined</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for learner in all_learners %}
+                  <tr>
+                    <td><strong>{{ learner.name }}</strong></td>
+                    <td><a href="mailto:{{ learner.email }}">{{ learner.email }}</a></td>
+                    <td>{{ learner.school }}</td>
+                    <td>{{ learner.grade }}</td>
+                    <td>{{ learner.get_gender_display }}</td>
+                    <td>
+                      {% if learner.is_verified %}
+                        <span class="badge bg-success">Verified</span>
+                      {% else %}
+                        <span class="badge bg-warning">Pending</span>
+                      {% endif %}
+                    </td>
+                    <td><small>{{ learner.created_at|date:"M d, Y" }}</small></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="alert alert-info">No learners registered yet.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Mentors Tab -->
+      <div class="tab-pane fade" id="mentors" role="tabpanel">
+        <div class="data-section">
+          <h3>Registered Mentors</h3>
+          {% if all_mentors %}
+            <div class="table-responsive">
+              <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Expertise</th>
+                    <th>Organization</th>
+                    <th>Experience</th>
+                    <th>Status</th>
+                    <th>Date Joined</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for mentor in all_mentors %}
+                  <tr>
+                    <td><strong>{{ mentor.name }}</strong></td>
+                    <td><a href="mailto:{{ mentor.email }}">{{ mentor.email }}</a></td>
+                    <td>{{ mentor.get_expertise_display }}</td>
+                    <td>{{ mentor.organization|default:"N/A" }}</td>
+                    <td>{{ mentor.years_of_experience }} years</td>
+                    <td>
+                      {% if mentor.is_verified %}
+                        <span class="badge bg-success">Verified</span>
+                      {% else %}
+                        <span class="badge bg-warning">Pending</span>
+                      {% endif %}
+                    </td>
+                    <td><small>{{ mentor.created_at|date:"M d, Y" }}</small></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="alert alert-info">No mentors registered yet.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Partners Tab -->
+      <div class="tab-pane fade" id="partners" role="tabpanel">
+        <div class="data-section">
+          <h3>Registered Partners</h3>
+          {% if all_partners %}
+            <div class="table-responsive">
+              <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Date Joined</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for partner in all_partners %}
+                  <tr>
+                    <td><strong>{{ partner.name }}</strong></td>
+                    <td><a href="mailto:{{ partner.email }}">{{ partner.email }}</a></td>
+                    <td>{{ partner.get_partner_type_display }}</td>
+                    <td>{{ partner.location }}</td>
+                    <td>{{ partner.phone }}</td>
+                    <td>
+                      {% if partner.is_verified %}
+                        <span class="badge bg-success">Verified</span>
+                      {% else %}
+                        <span class="badge bg-warning">Pending</span>
+                      {% endif %}
+                    </td>
+                    <td><small>{{ partner.created_at|date:"M d, Y" }}</small></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="alert alert-info">No partners registered yet.</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section><!-- /Admin Dashboard Section -->
+
+<style>
+  .admin-dashboard {
+    padding: 40px 0;
+    background-color: #f8f9fa;
+  }
+
+  .dashboard-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .dashboard-header h1 {
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .stat-icon {
+    font-size: 32px;
+    color: #0d6efd;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e7f1ff;
+    border-radius: 8px;
+  }
+
+  .stat-content h5 {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .stat-number {
+    margin: 5px 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+  }
+
+  .nav-tabs {
+    border-bottom: 2px solid #dee2e6;
+  }
+
+  .nav-tabs .nav-link {
+    color: #666;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 12px 20px;
+    margin-bottom: -2px;
+    transition: all 0.3s;
+  }
+
+  .nav-tabs .nav-link:hover {
+    color: #0d6efd;
+    border-bottom-color: #0d6efd;
+  }
+
+  .nav-tabs .nav-link.active {
+    color: #0d6efd;
+    background-color: transparent;
+    border-bottom-color: #0d6efd;
+  }
+
+  .data-section {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .data-section h3 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .table {
+    margin-bottom: 0;
+  }
+
+  .table thead th {
+    font-weight: 600;
+    border: none;
+    padding: 15px;
+  }
+
+  .table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+
+  .badge {
+    padding: 6px 12px;
+    font-weight: 500;
+  }
+
+  .alert {
+    padding: 20px;
+    border-radius: 8px;
+    border: none;
+  }
+</style>
+
+{% endblock %}

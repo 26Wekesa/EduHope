@@ -1,0 +1,253 @@
+{% extends 'starter-page.html' %}
+{% load static %}
+
+{% block title %} Events {% endblock %}
+
+{% block content %}
+ <!-- Page Title -->
+<div class="page-title">
+  <div class="breadcrumbs">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#"><i class="bi bi-house"></i> Home</a></li>
+        <li class="breadcrumb-item"><a href="#">Events</a></li>
+        <li class="breadcrumb-item active current">Event Details</li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="title-wrapper">
+    <h1>Event Details</h1>
+    <p>Get insights into our community events aimed at empowering children and supporting the B.OLD Foundation mission.</p>
+  </div>
+</div>
+<!-- End Page Title -->
+
+<!-- Events Details Section -->
+<section id="event-details" class="event-details section">
+
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+    <div class="project-intro">
+      <div class="intro-content" data-aos="fade-up">
+        <div class="project-meta">
+          <span class="project-type">Community Event</span>
+          <span class="project-year">2024</span>
+        </div>
+        <h1 class="project-title">Chapati Festival Fundraiser</h1>
+        <p class="project-description">
+          A community-driven event dedicated to feeding, empowering, and supporting children through charity, mentorship, and engagement.
+        </p>
+      </div>
+    </div>
+
+    <div class="project-showcase" data-aos="fade-up" data-aos-delay="200">
+      <div class="showcase-slider swiper init-swiper">
+        <script type="application/json" class="swiper-config">
+          {
+            "loop": true,
+            "speed": 800,
+            "autoplay": { "delay": 5000 },
+            "effect": "fade",
+            "fadeEffect": { "crossFade": true },
+            "slidesPerView": 1,
+            "pagination": { "el": ".swiper-pagination", "type": "bullets", "clickable": true }
+          }
+        </script>
+
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <img src="{% static 'assets/img/events/event-1.webp' %}" alt="Event showcase" class="img-fluid" loading="lazy">
+          </div>
+          <div class="swiper-slide">
+            <img src="{% static 'assets/img/events/event-2.webp' %}" alt="Event showcase" class="img-fluid" loading="lazy">
+          </div>
+          <div class="swiper-slide">
+            <img src="{% static 'assets/img/events/event-3.webp' %}" alt="Event showcase" class="img-fluid" loading="lazy">
+          </div>
+        </div>
+
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+
+    <div class="project-details-grid">
+      <div class="row">
+
+        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+          <div class="project-narrative">
+            <h2>Event Narrative</h2>
+            <p>
+              The Chapati Festival is an annual charity event organized by B.OLD Foundation to support underserved communities. 
+              The event brings together volunteers, parents, youth, and well-wishers to make chapati, distribute food, donate clothes, and mentor children.
+            </p>
+            <p>
+              This event is a pillar of our mission to empower the boy child by addressing emotional, social, and physical needs through direct community involvement.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="project-info">
+            <div class="info-block">
+              <div class="info-label">Organizer</div>
+              <div class="info-value">B.OLD Foundation</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Duration</div>
+              <div class="info-value">One Day</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Location</div>
+              <div class="info-value">Local Community Grounds</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Participants</div>
+              <div class="info-value">500+ Attendees</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Purpose</div>
+              <div class="info-value">Feeding, Empowerment & Charity</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="solution-approach" data-aos="fade-up" data-aos-delay="100">
+      <div class="approach-header">
+        <h2>Event Activities</h2>
+        <p>Highlights of what happens during the Chapati Festival.</p>
+      </div>
+
+      <div class="approach-steps">
+        <div class="step-item" data-aos="fade-up" data-aos-delay="150">
+          <div class="step-number">01</div>
+          <h3>Food Preparation & Feeding</h3>
+          <p>Volunteers prepare chapati and meals which are distributed to children and families in need.</p>
+        </div>
+
+        <div class="step-item" data-aos="fade-up" data-aos-delay="200">
+          <div class="step-number">02</div>
+          <h3>Clothing Donations</h3>
+          <p>New and gently used clothes are sorted and distributed to less-privileged children.</p>
+        </div>
+
+        <div class="step-item" data-aos="fade-up" data-aos-delay="250">
+          <div class="step-number">03</div>
+          <h3>Mentorship & Engagement</h3>
+          <p>Children are taught leadership, dignity, confidence, and social responsibility.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-gallery" data-aos="fade-up" data-aos-delay="100">
+      <h2>Event Gallery</h2>
+      <div class="gallery-grid">
+        <div class="gallery-item" data-aos="fade-up" data-aos-delay="150">
+          <img src="{% static 'assets/img/events/event-4.webp' %}" alt="Chapati making" class="img-fluid glightbox" loading="lazy">
+        </div>
+        <div class="gallery-item featured" data-aos="fade-up" data-aos-delay="200">
+          <img src="{% static 'assets/img/events/event-5.webp' %}" alt="Children enjoying" class="img-fluid glightbox" loading="lazy">
+        </div>
+        <div class="gallery-item" data-aos="fade-up" data-aos-delay="250">
+          <img src="{% static 'assets/img/events/event-6.webp' %}" alt="Volunteers" class="img-fluid glightbox" loading="lazy">
+        </div>
+        <div class="gallery-item" data-aos="fade-up" data-aos-delay="300">
+          <img src="{% static 'assets/img/events/event-7.webp' %}" alt="Donations" class="img-fluid glightbox" loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <div class="technologies-used" data-aos="fade-up" data-aos-delay="100">
+      <div class="row">
+        <div class="col-lg-6">
+          <h2>Partnerships</h2>
+          <p>This event is made possible through collaboration with sponsors, volunteers, and youth organizations dedicated to community empowerment.</p>
+        </div>
+        <div class="col-lg-6">
+          <div class="tech-stack">
+            <div class="tech-group" data-aos="fade-up" data-aos-delay="150">
+              <h4>Key Partners</h4>
+              <div class="tech-tags">
+                <span class="tech-tag">Local NGOs</span>
+                <span class="tech-tag">Community Leaders</span>
+                <span class="tech-tag">Youth Groups</span>
+              </div>
+            </div>
+
+            <div class="tech-group" data-aos="fade-up" data-aos-delay="200">
+              <h4>Sponsors</h4>
+              <div class="tech-tags">
+                <span class="tech-tag">Food Suppliers</span>
+                <span class="tech-tag">Clothing Donors</span>
+                <span class="tech-tag">Corporate Sponsors</span>
+              </div>
+            </div>
+
+            <div class="tech-group" data-aos="fade-up" data-aos-delay="250">
+              <h4>Support Teams</h4>
+              <div class="tech-tags">
+                <span class="tech-tag">Volunteers</span>
+                <span class="tech-tag">Mentors</span>
+                <span class="tech-tag">Community Workers</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-outcomes" data-aos="fade-up" data-aos-delay="100">
+      <div class="outcomes-header">
+        <h2>Key Impact</h2>
+      </div>
+
+      <div class="outcomes-grid">
+        <div class="outcome-card" data-aos="fade-up" data-aos-delay="150">
+          <div class="outcome-stat">1500+</div>
+          <div class="outcome-label">Children Fed</div>
+        </div>
+        <div class="outcome-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="outcome-stat">700+</div>
+          <div class="outcome-label">Clothes Donated</div>
+        </div>
+        <div class="outcome-card" data-aos="fade-up" data-aos-delay="250">
+          <div class="outcome-stat">300+</div>
+          <div class="outcome-label">Volunteers Engaged</div>
+        </div>
+        <div class="outcome-card" data-aos="fade-up" data-aos-delay="300">
+          <div class="outcome-stat">10+</div>
+          <div class="outcome-label">Partner Organizations</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-navigation" data-aos="fade-up" data-aos-delay="200">
+      <div class="nav-container">
+        <a href="#" class="nav-item prev">
+          <span class="nav-label">Previous Event</span>
+          <span class="nav-title">Boy Child Mentorship Drive</span>
+        </a>
+
+        <a href="#" class="nav-item center">
+          <i class="bi bi-grid"></i>
+          <span>View All Events</span>
+        </a>
+
+        <a href="#" class="nav-item next">
+          <span class="nav-label">Next Event</span>
+          <span class="nav-title">One Boy One Tree Initiative</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+<!-- /Events Details Section -->
+
+
+
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends 'starter-page.html'%}
+{% load static %}
+
+{% block title %} Send Us a message {% endblock %}
+
+{% block content %}
+<section id="partnership" class="contact section light-background">
+  <div class="container section-title" data-aos="fade-up">
+    <span class="subtitle">Partnership Request</span>
+    <h2>Become Our Partner</h2>
+    <p>
+      We welcome collaborations with organizations, institutions, and individuals who share our vision. 
+      Kindly fill out this form, and our partnership review team will get back to you.
+    </p>
+  </div>
+
+  <div class="container">
+    <div class="row gy-4">
+
+      <!-- Partnership Info Text -->
+      <div class="col-lg-5">
+        <div class="info-item">
+          <div class="info-icon">
+            <i class="bi bi-people"></i>
+          </div>
+          <div class="info-content">
+            <h4>Partner With Us</h4>
+            <p>Create meaningful impact by joining hands with our mission. Let’s work together to bring lasting change.</p>
+          </div>
+        </div>
+
+        <div class="contact-details">
+
+          <div class="detail-item">
+            <div class="detail-icon">
+              <i class="bi bi-envelope-open"></i>
+            </div>
+            <div class="detail-content">
+              <span class="detail-label">Email</span>
+              <span class="detail-value">partnership@yourorganization.com</span>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-icon">
+              <i class="bi bi-telephone-outbound"></i>
+            </div>
+            <div class="detail-content">
+              <span class="detail-label">Phone</span>
+              <span class="detail-value">+254 712 345 678</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="col-lg-7">
+        <div class="form-wrapper">
+
+          <div class="form-header">
+            <h3>Submit Partnership Request</h3>
+          </div>
+
+          <form action="#" method="POST" class="php-email-form">
+
+            <!-- Organization Details -->
+            <h4>Organization / Individual Details</h4>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label>Organization / Full Name</label>
+                <input type="text" name="org_name" required>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label>Type of Partner</label>
+                <select name="partner_type" required>
+                  <option value="">-- Select --</option>
+                  <option value="ngo">NGO / Non-profit</option>
+                  <option value="government">Government Institution</option>
+                  <option value="company">Company / Corporate</option>
+                  <option value="school">School / Training Centre</option>
+                  <option value="individual">Individual</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Official Email</label>
+              <input type="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="text" name="phone" required>
+            </div>
+
+            <div class="form-group">
+              <label>Website (Optional)</label>
+              <input type="text" name="website" placeholder="https://">
+            </div>
+
+            <!-- Partnership Info -->
+            <h4>Partnership Details</h4>
+
+            <div class="form-group">
+              <label>Area of Partnership</label>
+              <select name="partnership_area" required>
+                <option value="">-- Select Area of Interest --</option>
+                <option value="sponsorship">Student Sponsorship</option>
+                <option value="donations">Donations (Clothes, Food, Materials)</option>
+                <option value="projects">Joint Projects / Programs</option>
+                <option value="training">Training & Capacity Building</option>
+                <option value="volunteer">Volunteer Support</option>
+                <option value="infrastructure">Infrastructure & Facilities Support</option>
+                <option value="other">Other (Explain Below)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Describe Your Proposal</label>
+              <textarea name="proposal_description" rows="5" required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Reason for Partnership</label>
+              <textarea name="reason" rows="4" placeholder="Why do you want to partner with us?" required></textarea>
+            </div>
+
+            <!-- Submission -->
+            <button type="submit" class="submit-btn">
+              <span>Submit Request</span>
+              <i class="bi bi-arrow-right"></i>
+            </button>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+{% endblock %}

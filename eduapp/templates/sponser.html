@@ -1,0 +1,167 @@
+{% extends 'starter-page.html' %}
+
+
+{% load static %}
+
+{% block title %} Sponsor Dashboard {% endblock %}
+
+{% block content %}
+
+<section class="section light-background">
+  <div class="container py-5">
+
+    <!-- PAGE TITLE -->
+    <div class="section-title" data-aos="fade-up">
+      <h2>Sponsor Dashboard</h2>
+      <p>Manage your sponsorship, send donations, and register as a continuous supporter — all in one place.</p>
+    </div>
+
+    <!-- DASHBOARD ACTIONS -->
+    <div class="row gy-4">
+
+      <div class="col-lg-6">
+        <div class="card p-4 shadow-sm">
+          <h4>One-Time Donation</h4>
+          <p>Support a learner or project with a one-time contribution.</p>
+          <a href="#one-time-section" class="btn btn-primary">Donate Now</a>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card p-4 shadow-sm">
+          <h4>Continuous Donation</h4>
+          <p>Register to support learners on a monthly, termly or annual basis.</p>
+          <a href="#continuous-section" class="btn btn-success">Register</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DONATION HISTORY PREVIEW -->
+    <div class="mt-5">
+      <h3>Donation History</h3>
+      <p class="text-muted">Your donation records will appear here once the backend is connected.</p>
+
+      <table class="table table-bordered mt-3">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Donation Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+            <td>No records yet</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="my-5">
+
+    <!-- ================= ONE-TIME DONATION FORM ================= -->
+    <section id="one-time-section">
+      <div class="section-title">
+        <h2>One-Time Donation</h2>
+        <p>Choose your amount and support a learner today.</p>
+      </div>
+
+      <div class="card p-4 shadow-sm">
+
+        <form>
+
+          <div class="form-group mb-3">
+            <label>Select Amount</label>
+            <select class="form-control" name="amount">
+              <option value="">Choose amount</option>
+              <option value="500">KES 500</option>
+              <option value="1000">KES 1,000</option>
+              <option value="5000">KES 5,000</option>
+              <option value="10000">KES 10,000</option>
+              <option value="custom">Custom Amount</option>
+            </select>
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Custom Amount (Optional)</label>
+            <input type="number" class="form-control" placeholder="Enter custom amount">
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Message (Optional)</label>
+            <textarea class="form-control" rows="4" placeholder="Your message..."></textarea>
+          </div>
+
+          <button class="btn btn-primary w-100">Submit One-Time Donation</button>
+
+        </form>
+
+      </div>
+    </section>
+
+    <hr class="my-5">
+
+    <!-- ================= CONTINUOUS DONATION FORM ================= -->
+    <section id="continuous-section">
+      <div class="section-title">
+        <h2>Continuous Donation Registration</h2>
+        <p>Support a learner every month, term or annually.</p>
+      </div>
+
+      <div class="card p-4 shadow-sm">
+
+        <form>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Full Name</label>
+              <input type="text" class="form-control" placeholder="Enter your full name">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label>Email Address</label>
+              <input type="email" class="form-control" placeholder="you@example.com">
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Phone Number</label>
+            <input type="text" class="form-control" placeholder="+254 7XX XXX XXX">
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Monthly/Termly Contribution Amount</label>
+            <input type="number" class="form-control" placeholder="e.g. 2000 per month">
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Contribution Frequency</label>
+            <select class="form-control">
+              <option value="">Choose frequency</option>
+              <option value="monthly">Monthly</option>
+              <option value="termly">Termly</option>
+              <option value="annually">Annually</option>
+            </select>
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Reason for Sponsoring</label>
+            <textarea class="form-control" rows="4" placeholder="Describe your motivation..."></textarea>
+          </div>
+
+          <button class="btn btn-success w-100">Register As Continuous Donor</button>
+
+        </form>
+
+      </div>
+    </section>
+
+  </div>
+</section>
+
+{% endblock %}

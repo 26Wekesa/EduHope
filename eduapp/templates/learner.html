@@ -1,0 +1,118 @@
+{% extends 'starter-page.html'%}
+
+{% load static %}
+
+{% block title %} register learners {% endblock %}
+
+{% block content %}
+<div class="form-header">
+  <h3>Register a Learner in Need</h3>
+  <p>Please fill out this form to help us assess and support a learner who is facing financial difficulties or unable to meet basic needs.</p>
+</div>
+
+<form method="post" class="m-5">
+
+  <!-- Learner Details -->
+  <div class="section-subtitle"><h4>Learner Information</h4></div>
+
+  <div class="row">
+    <div class="col-md-6 form-group">
+      <label>Learner's Full Name</label>
+      <input type="text" name="learner_name" class="form-control" required>
+    </div>
+    <div class="col-md-6 form-group">
+      <label>Age / Date of Birth</label>
+      <input type="text" name="dob" required class="form-control">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 form-group">
+      <label>Class / Grade</label>
+      <input type="text" name="grade" required class="form-control">
+    </div>
+    <div class="col-md-6 form-group">
+      <label>School Name</label>
+      <input type="text" name="school" required class="form-control mb-1">
+    </div>
+  </div>
+
+  <!-- Needs Details -->
+  <div class="section-subtitle mb-1"><h4>Financial & Basic Needs Status</h4></div>
+
+  <div class="form-group form-control mb-1">
+    <label>Type of support needed</label>
+    <select name="support_type" required>
+      <option value="">-- Select --</option>
+      <option value="school_fees">School Fees</option>
+      <option value="uniform_clothing">Uniform / Clothing</option>
+      <option value="learning_materials">Learning Materials</option>
+      <option value="food_assistance">Food Assistance</option>
+      <option value="shelter">Shelter Support</option>
+      <option value="other">Other (Explain Below)</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Briefly describe the learner’s situation</label>
+    <textarea name="situation_description" rows="4" placeholder="Explain why the learner needs support..." required class="form-control"></textarea>
+  </div>
+
+  <!-- Parent/Guardian Details -->
+  <div class="section-subtitle"><h4>Parent / Guardian Information</h4></div>
+
+  <div class="row">
+    <div class="col-md-6 form-group">
+      <label>Parent/Guardian Name</label>
+      <input type="text" name="guardian_name" required class="form-control">
+    </div>
+    <div class="col-md-6 form-group">
+      <label>Relationship to Learner</label>
+      <input type="text" name="relationship" required class="form-control">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 form-group">
+      <label>Contact Number</label>
+      <input type="text" name="guardian_contact" class="form-control" required>
+    </div>
+    <div class="col-md-6 form-group">
+      <label>Home Location / Address</label>
+      <input type="text" name="address" class="form-control" required>
+    </div>
+  </div>
+
+  <!-- Informant Details -->
+  <div class="section-subtitle"><h4>Informant Details (Your Information)</h4></div>
+  <p class="small">These details help us verify the case. They will be kept confidential.</p>
+
+  <div class="row">
+    <div class="col-md-6 form-group">
+      <label>Your Full Name</label>
+      <input type="text" name="informant_name" required class="form-control">
+    </div>
+    <div class="col-md-6 form-group">
+      <label>Your Phone Number</label>
+      <input type="text" name="informant_phone" required class="form-control">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Your Relationship to the Learner</label>
+    <input type="text" name="informant_relationship" required class="form-control" placeholder="e.g., Teacher, Neighbor, Social Worker">
+  </div>
+
+  <div class="form-group">
+    <label>Any additional remarks</label>
+    <textarea name="informant_remarks" rows="4" placeholder="Optional"  class="form-control"></textarea>
+  </div>
+
+  <button type="submit" class="submit-btn btn-outline-success">
+    <span>Submit Application</span>
+    <i class="bi bi-arrow-right"></i>
+  </button>
+</form>
+
+
+{% endblock %}
