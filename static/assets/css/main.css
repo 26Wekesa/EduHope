@@ -22,11 +22,11 @@
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root { 
   --background-color: #ffffff; /* Background color for the entire website, including individual sections */
-  --default-color: #666666; /* Default color used for the majority of the text content across the entire website */
+  --default-color: #779f12ff; /* Default color used for the majority of the text content across the entire website */
   --heading-color: #000000; /* Color for headings, subheadings and title throughout the website */
   --accent-color: #313131; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
-  --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
-  --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+  --surface-color: #64a456ff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
+  --contrast-color: #77a733ff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
 }
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
@@ -47,7 +47,7 @@
 }
 
 .dark-background {
-  --background-color: #060606;
+  --background-color: #4e8535ff;
   --default-color: #e3e3e3;
   --heading-color: #ffffff;
   --accent-color: #bdb5b5;
@@ -4176,4 +4176,77 @@ section,
 --------------------------------------------------------------*/
 .starter-section {
   /* Add your styles here */
+}
+
+/*--------------------------------------------------------------
+# Admin Dashboard
+--------------------------------------------------------------*/
+.admin-dashboard .stat-card {
+  background: var(--surface-color);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.admin-dashboard .stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.admin-dashboard .stat-icon {
+  font-size: 2rem;
+  color: var(--accent-color);
+  margin-bottom: 10px;
+}
+
+.admin-dashboard .stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--heading-color);
+}
+
+.admin-dashboard .nav-tabs {
+  border-bottom: none;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-dashboard .nav-tabs .nav-link {
+  white-space: nowrap;
+  border: none;
+  border-radius: 0;
+  color: var(--default-color);
+}
+
+.admin-dashboard .nav-tabs .nav-link.active {
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+}
+
+.admin-dashboard .table-responsive {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.admin-dashboard .data-section h3 {
+  color: var(--heading-color);
+  margin-bottom: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .admin-dashboard .stat-card {
+    margin-bottom: 15px;
+  }
+  
+  .admin-dashboard .nav-tabs {
+    justify-content: flex-start;
+  }
+  
+  .admin-dashboard .nav-tabs .nav-item {
+    flex: 0 0 auto;
+  }
 }

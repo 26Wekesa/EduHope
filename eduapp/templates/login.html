@@ -1,0 +1,62 @@
+{% extends 'starter-page.html' %}
+
+{% load static %}
+
+{% block title %} Login Page {% endblock %}
+    
+{% block content %}
+
+<div style="background: #e9f2ff; font-family: Arial, sans-serif;">
+
+<div class="container" 
+     style="width: 100%; height: 100vh; display: flex; justify-content: center; 
+            align-items: center;">
+
+    <div class="card" 
+         style="width: 380px; background: white; padding: 30px; border-radius: 10px; 
+                box-shadow: 0 0 15px rgba(0,0,0,0.2);">
+
+        <h3 style="text-align: center; color: #1e7221; font-weight: bold; margin-bottom: 20px;">
+            Login
+        </h3>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Username -->
+            <label style="font-weight: bold; color: #1e7221;">Username</label>
+            <input type="text" name="username" placeholder="Enter username"
+                style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
+                       border-radius: 5px; margin-bottom: 15px;">
+
+            <!-- Password -->
+            <label style="font-weight: bold; color: #1e7221;">Password</label>
+            <input type="password" name="password" placeholder="Enter password"
+                style="width: 100%; padding: 10px; border: 1px solid #8d8d58;
+                       border-radius: 5px; margin-bottom: 15px;">
+
+           
+
+            <!-- Login Button -->
+            <button class="btn btn-success" type="submit" 
+                style="width: 100%; color: white; 
+                       padding: 12px; border: none; border-radius: 5px; 
+                       font-size: 16px; font-weight: bold; cursor: pointer;">
+                Login
+            </button>
+
+        </form>
+
+        <div style="text-align:center; margin-top: 15px;">
+            <p style="color: #06550e;">Don't have an account?
+                <a href="{% url 'register' %}" style="color: #00ff66; font-weight: bold;">Sign Up</a>
+            </p>
+            <a href="#" style="color: #85830c;">Forgot your password?</a>
+        </div>
+
+    </div>
+</div>
+
+</div>
+{% endblock %}
+

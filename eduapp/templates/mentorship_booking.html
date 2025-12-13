@@ -1,0 +1,138 @@
+{% extends 'starter-page.html'%}
+
+{% load static %}
+
+{% block title %} Book Mentorship Session {% endblock %}
+
+{% block content %}
+
+<div style="background: #e9f2ff; font-family: Arial, sans-serif;">
+
+<div class="container" 
+     style="width: 100%; height: 100vh; display: flex; justify-content: center; 
+            align-items: center;">
+
+    <div class="card" 
+         style="width: 600px; max-height: 80vh; overflow-y: auto; background: white; padding: 30px; border-radius: 10px; 
+                box-shadow: 0 0 15px rgba(0,0,0,0.2);">
+
+        <h3 style="text-align: center; color: #1e7221; font-weight: bold; margin-bottom: 20px;">
+            Book a Mentorship Session
+        </h3>
+
+        <p style="text-align: center; color: #666; margin-bottom: 20px;">
+            Schedule a mentorship session for your learners. Our experienced mentors will provide guidance and support.
+        </p>
+
+        {% if messages %}
+        <div style="margin-bottom: 20px;">
+            {% for message in messages %}
+            <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <!-- School Details -->
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: #1e7221; font-weight: bold;">School Information</h4>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold; color: #1e7221;">School Name</label>
+                <input type="text" name="school_name" required
+                    style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
+                           border-radius: 5px;">
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; color: #1e7221;">Contact Person</label>
+                    <input type="text" name="contact_person" required
+                        style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
+                               border-radius: 5px;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; color: #1e7221;">Phone Number</label>
+                    <input type="text" name="phone" required
+                        style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
+                               border-radius: 5px;">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold; color: #1e7221;">Email Address</label>
+                <input type="email" name="email" required
+                    style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
+                           border-radius: 5px;">
+            </div>
+
+            <!-- Session Details -->
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: #1e7221; font-weight: bold;">Session Details</h4>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; color: #1e7221;">Number of Learners</label>
+                    <input type="number" name="number_of_learners" min="1" required
+                        style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
+                               border-radius: 5px;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; color: #1e7221;">Duration (Hours)</label>
+                    <input type="number" name="duration_hours" min="1" max="8" required
+                        style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
+                               border-radius: 5px;">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; color: #1e7221;">Preferred Date</label>
+                    <input type="date" name="preferred_date" required
+                        style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
+                               border-radius: 5px;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; color: #1e7221;">Preferred Time</label>
+                    <input type="time" name="preferred_time" required
+                        style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
+                               border-radius: 5px;">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold; color: #1e7221;">Topics to Cover</label>
+                <textarea name="topics" rows="3" placeholder="e.g., Career guidance, Study skills, Personal development" required
+                    style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
+                           border-radius: 5px;"></textarea>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold; color: #1e7221;">Additional Notes (Optional)</label>
+                <textarea name="additional_notes" rows="3" placeholder="Any special requirements or additional information"
+                    style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
+                           border-radius: 5px;"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" 
+                style="width: 100%; background: #28a745; color: white; 
+                       padding: 12px; border: none; border-radius: 5px; 
+                       font-size: 16px; font-weight: bold; cursor: pointer;">
+                Book Session
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+</div>
+{% endblock %}

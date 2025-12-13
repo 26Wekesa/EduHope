@@ -4,14 +4,14 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - Axis Bootstrap Template</title>
+  <title>Index - EduHope </title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
   {% load static %}
 
   <!-- Favicons -->
-  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+  <link href="" rel="icon">
   <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
 
   <!-- Fonts -->
@@ -38,28 +38,29 @@
   ======================================================== -->
 </head>
 
-<body class="index-page">
+<body class="index-page bg-success">
 
-  <header id="header" class="header d-flex align-items-center fixed-top">
+  <header id="header" class="header d-flex align-items-center fixed-top bg-warning">
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
       <a href="index.html" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="assets/img/logo.webp" alt=""> -->
-        <h1 class="sitename">EduHope Portal</h1>
+        <h1 class="sitename text-bg-success rounded-2 px-4 py-2 mx-2">EduHope</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="#hero" class="active">Home</a></li>
-          <li><a href="{% url 'mentor'%}">Become a mentor</a></li>
-          <li><a href="{% url 'patner'%}">Be part of us</a></li>
-          <li><a href="{% url 'message'%}">Send us a message</a></li>
-          <li><a href="#team">Team</a></li>
+          
+          <li><a href="{% url 'mentor'%}" class="btn btn-outline-success text-dark ms-1 me-2 px-4 py-2 mx-2 text-dark">Become a mentor</a></li>
+          <li><a href="{% url 'patner'%}" class="btn btn-outline-success text-dark me-2 px-4 py-2 mx-2 text-dark">Be part of us</a></li>
+          <li><a href="{% url 'message'%}" class="btn btn-outline-success text-dark me-2 px-4 py-2 mx-2 text-dark">Send us a message</a></li>
+          <li><a href="{% url 'learner'%}" class="btn btn-outline-success text-dark me-2 px-4 py-2 mx-2 text-dark">Register a learner</a></li>
+          <li><a href="{% url 'mentorship_booking'%}" class="btn btn-outline-success text-dark me-2 px-4 py-2 mx-2 text-dark">Book Mentorship</a></li>
           
            
-        
-          <li><a href="#contact">Contact</a></li>
+      
+          <li><a href="{% url 'login' %}" class="btn btn-outline-success me-2 px-4 py-2 mx-2 text-dark">Admin login</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -77,10 +78,10 @@
         <div class="row align-items-center">
           <div class="text-center text-lg-start col-lg-12">
             <div class="hero-content">
-              <h1 data-aos="fade-up" data-aos-delay="200">Connecting Learners, Sponsors, Mentors, and Schools</h1>
+              <h1 data-aos="fade-up" data-aos-delay="200" class="text-center">Connecting Learners, Sponsors, Mentors, and Schools</h1>
               <p data-aos="fade-up" data-aos-delay="300">EduHope Portal is a digital platform designed to connect learners in need with sponsors, mentors, and schools in an efficient, transparent, and secure way. We support children—especially boys and vulnerable learners—who face financial, social, or educational barriers by giving them a space where their stories, talents, and academic profiles can be shared with well-wishers ready to help.</p>
               <div class="hero-cta" data-aos="fade-up" data-aos-delay="400">
-                <a href="#about" class="btn-primary">Learn More</a>
+                <a href="#about" class="btn btn-success">Learn More</a>
                 <a href="#services" class="btn-secondary">
                   <i class="bi bi-hand-thumbs-up"></i>
                   Become a Sponsor
@@ -144,21 +145,7 @@
                   <div class="stat-label">Partner Schools</div>
                 </div>
               </div>
-
-              <div class="cta-section">
-                <a href="#" team="" class="btn-outline">Meet Our Team</a>
-              </div>
             </div>
-          </div>
-
-          <div class="floating-card" data-aos="zoom-in" data-aos-delay="500">
-                <div class="card-content">
-                  <div class="icon">
-                    <i class="bi bi-award"></i>
-                  </div>
-                  <div class="text">
-                    <h4>Award Winning</h4>
-                    <p>Empowering youth and recognized for impact in education and mentorship.</p>
           </div>
         </div>
 
@@ -214,7 +201,7 @@
               <h3>Mentorship Booking</h3>
               <p>Structured mentorship sessions in leadership, mental health, digital literacy, and talent development.</p>
               <a href="#" class="service-link">
-                Apply as Mentor <i class="bi bi-arrow-right"></i>
+                Apply as Mentor <i class="bi bi-arrow-right text-bg-success"></i>
               </a>
             </div>
           </div><!-- End Service Item -->
@@ -345,280 +332,9 @@
     </section><!-- /Why Us Section -->
 
     
-    <!-- Team Section -->
-    <section id="team" class="team section">
 
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <span class="subtitle">Team</span>
-        <h2>Meet Our Team</h2>
-        <p>Meet the passionate EduHope team dedicated to empowering learners, supporting sponsors, and building a brighter future through education and mentorship.</p>
-      </div><!-- End Section Title -->
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="row gy-5">
-
-          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="team-member">
-              <div class="member-img">
-                <img src="{% static 'assets/img/person/person-f-8.webp' %}" class="img-fluid" alt="Sarah Johnson" loading="lazy">
-              </div>
-              <div class="member-info">
-                <h4>Sarah Johnson</h4>
-                <span>Chief Executive Officer</span>
-                <p>Sarah leads our mission to connect learners and sponsors, ensuring every child has access to opportunity.</p>
-                <div class="social">
-                  <a href="#"><i class="bi bi-twitter-x"></i></a>
-                  <a href="#"><i class="bi bi-linkedin"></i></a>
-                  <a href="#"><i class="bi bi-instagram"></i></a>
-                </div>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="250">
-            <div class="team-member">
-              <div class="member-img">
-                <img src="{% static 'assets/img/person/person-m-12.webp' %}" class="img-fluid" alt="Michael Chen" loading="lazy">
-              </div>
-              <div class="member-info">
-                <h4>Michael Chen</h4>
-                <span>Chief Technology Officer</span>
-                <p>Michael drives our technology, building secure and efficient systems for the EduHope Portal.</p>
-                <div class="social">
-                  <a href="#"><i class="bi bi-twitter-x"></i></a>
-                  <a href="#"><i class="bi bi-linkedin"></i></a>
-                  <a href="#"><i class="bi bi-github"></i></a>
-                </div>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-            <div class="team-member">
-              <div class="member-img">
-                <img src="{% static 'assets/img/person/person-f-3.webp' %}" class="img-fluid" alt="Emily Rodriguez" loading="lazy">
-              </div>
-              <div class="member-info">
-                <h4>Emily Rodriguez</h4>
-                <span>Creative Director</span>
-                <p>Emily creates engaging content and outreach to inspire mentors and partners to join our cause.</p>
-                <div class="social">
-                  <a href="#"><i class="bi bi-twitter-x"></i></a>
-                  <a href="#"><i class="bi bi-linkedin"></i></a>
-                  <a href="#"><i class="bi bi-dribbble"></i></a>
-                </div>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="350">
-            <div class="team-member">
-              <div class="member-img">
-                <img src="{% static 'assets/img/person/person-m-7.webp' %}" class="img-fluid" alt="David Thompson" loading="lazy">
-              </div>
-              <div class="member-info">
-                <h4>David Thompson</h4>
-                <span>Head of Operations</span>
-                <p>David manages operations, ensuring smooth collaboration between schools, sponsors, and mentors.</p>
-                <div class="social">
-                  <a href="#"><i class="bi bi-twitter-x"></i></a>
-                  <a href="#"><i class="bi bi-linkedin"></i></a>
-                  <a href="#"><i class="bi bi-facebook"></i></a>
-                </div>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Team Section -->
-
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="testimonials section">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <span class="subtitle">Testimonials</span>
-        <h2>What They Say</h2>
-        <p>Join EduHope Portal and help us build a future where every learner has guidance, support, and hope.</p>
-      </div><!-- End Section Title -->
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="testimonial-slider swiper init-swiper">
-          <script type="application/json" class="swiper-config">
-            {
-              "loop": true,
-              "speed": 600,
-              "autoplay": {
-                "delay": 4000
-              },
-              "slidesPerView": 1,
-              "spaceBetween": 30,
-              "navigation": {
-                "nextEl": ".swiper-button-next",
-                "prevEl": ".swiper-button-prev"
-              },
-              "breakpoints": {
-                "768": {
-                  "slidesPerView": 2
-                },
-                "1200": {
-                  "slidesPerView": 3
-                }
-              }
-            }
-          </script>
-
-          <div class="swiper-wrapper">
-
-            <!-- Testimonial Slide 1 -->
-            <div class="swiper-slide">
-              <div class="testimonial-item" data-aos="zoom-in" data-aos-delay="200">
-                <div class="testimonial-header">
-                  <img src="{% static 'assets/img/person/person-f-12.webp' %}" alt="Client" class="img-fluid" loading="lazy">
-                  <div class="rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                  </div>
-                </div>
-                <div class="testimonial-body">
-                  <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit sed eiusmod tempor.</p>
-                </div>
-                <div class="testimonial-footer">
-                  <h5>Jessica Martinez</h5>
-                  <span>UX Designer</span>
-                  <div class="quote-icon">
-                    <i class="bi bi-chat-quote-fill"></i>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Testimonial Slide -->
-
-            <!-- Testimonial Slide 2 -->
-            <div class="swiper-slide">
-              <div class="testimonial-item" data-aos="zoom-in" data-aos-delay="300">
-                <div class="testimonial-header">
-                  <img src="{% static 'assets/img/person/person-m-8.webp' %}" alt="Client" class="img-fluid" loading="lazy">
-                  <div class="rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                  </div>
-                </div>
-                <div class="testimonial-body">
-                  <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa.</p>
-                </div>
-                <div class="testimonial-footer">
-                  <h5>David Rodriguez</h5>
-                  <span>Software Engineer</span>
-                  <div class="quote-icon">
-                    <i class="bi bi-chat-quote-fill"></i>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Testimonial Slide -->
-
-            <!-- Testimonial Slide 3 -->
-            <div class="swiper-slide">
-              <div class="testimonial-item" data-aos="zoom-in" data-aos-delay="400">
-                <div class="testimonial-header">
-                  <img src="{% static 'assets/img/person/person-f-6.webp' %}" alt="Client" class="img-fluid" loading="lazy">
-                  <div class="rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                  </div>
-                </div>
-                <div class="testimonial-body">
-                  <p>EduHope helped me achieve my dream of attending school. The support and mentorship changed my life for the better.</p>
-                </div>
-                <div class="testimonial-footer">
-                  <h5>Amanda Wilson</h5>
-                  <span>Creative Director</span>
-                  <div class="quote-icon">
-                    <i class="bi bi-chat-quote-fill"></i>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Testimonial Slide -->
-
-            <!-- Testimonial Slide 4 -->
-            <div class="swiper-slide">
-              <div class="testimonial-item" data-aos="zoom-in" data-aos-delay="500">
-                <div class="testimonial-header">
-                  <img src="{% static 'assets/img/person/person-m-12.webp' %}" alt="Client" class="img-fluid" loading="lazy">
-                  <div class="rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                  </div>
-                </div>
-                <div class="testimonial-body">
-                  <p>Thanks to EduHope, I found a sponsor who believed in me and a mentor who guided me through challenges. I am now thriving academically.</p>
-                </div>
-                <div class="testimonial-footer">
-                  <h5>Ryan Thompson</h5>
-                  <span>Business Analyst</span>
-                  <div class="quote-icon">
-                    <i class="bi bi-chat-quote-fill"></i>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Testimonial Slide -->
-
-            <!-- Testimonial Slide 5 -->
-            <div class="swiper-slide">
-              <div class="testimonial-item" data-aos="zoom-in" data-aos-delay="600">
-                <div class="testimonial-header">
-                  <img src="assets/img/person/person-f-10.webp" alt="Client" class="img-fluid" loading="lazy">
-                  <div class="rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                  </div>
-                </div>
-                <div class="testimonial-body">
-                  <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi.</p>
-                </div>
-                <div class="testimonial-footer">
-                  <h5>Rachel Chen</h5>
-                  <span>Project Manager</span>
-                  <div class="quote-icon">
-                    <i class="bi bi-chat-quote-fill"></i>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Testimonial Slide -->
-
-          </div>
-
-          <div class="swiper-navigation">
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-button-next"></div>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section><!-- /Testimonials Section -->
-
+    
     <!-- Contact Section -->
     <section id="contact" class="contact section light-background">
       <!-- Section Title -->
@@ -717,7 +433,7 @@
                   <div class="sent-message">Your message has been sent. Thank you!</div>
                 </div>
 
-                <button type="submit" class="submit-btn">
+                <button type="submit" class="btn btn-success">
                   <span>Send Message</span>
                   <i class="bi bi-arrow-right"></i>
                 </button>
@@ -735,7 +451,7 @@
 
   </main>
 
-  <footer id="footer" class="footer dark-background">
+  <footer id="footer" class="footer dark-success">
 
     <div class="container footer-top">
       <div class="row gy-4">
@@ -779,7 +495,7 @@
           <p>EduHope Foundation</p>
           <p>Building Future Leaders</p>
           <p>Nairobi, Kenya</p>
-          <p class="mt-4"><strong>Phone:</strong> <span>+254 7XX XXX XXX</span></p>
+          <p class="mt-4"><strong>Phone:</strong> <span>+254 725371365</span></p>
           <p><strong>Email:</strong> <span>hello@eduhope.org</span></p>
         </div>
 
@@ -793,7 +509,7 @@
         <!-- You can delete the links only if you've purchased the pro version. -->
         <!-- Licensing information: https://bootstrapmade.com/license/ -->
         <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        Designed by <a href="https://bootstrapmade.com/">Christopher Wekesa</a>
       </div>
     </div>
 
