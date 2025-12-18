@@ -5,88 +5,77 @@
 
 {% block content %}
 
-<section class="mentor section light-background">
-  <div class="container" data-aos="fade-up">
-    <div class="section-title">
-      <span class="subtitle">Mentor</span>
-      <h2>Apply to Be a Mentor</h2>
-      <p>Share your experience and guide learners through mentorship sessions in leadership, digital literacy, and personal development.</p>
-    </div>
+<section class="mentor section">
+  <div style="background: #e9f2ff; font-family: Arial, sans-serif;">
 
-    {% if messages %}
-      <div class="mb-4">
-        {% for message in messages %}
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
+    <div class="container" style="width:100%; min-height:70vh; display:flex; justify-content:center; align-items:center; padding:40px 0;">
 
-    <div class="row">
-      <div class="col-lg-8">
-        <div class="card p-4">
-          <!-- Mentor registration form posts to /mentor/ -->
-          <form id="mentorForm" method="post" action="/mentor/">
-            {% csrf_token %}
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Full name</label>
-                <input type="text" name="name" id="name" class="form-control" required>
-              </div>
+      <div class="card" style="width:650px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.12);">
 
-              <div class="col-md-6">
-                <label class="form-label">Email address</label>
-                <input type="email" name="email" id="email" class="form-control" required>
-              </div>
+        <h3 style="text-align:center; color:#1e7221; font-weight:bold; margin-bottom:10px;">Apply to Be a Mentor</h3>
+        <p style="text-align:center; color:#666; margin-bottom:20px;">Share your experience and guide learners through mentorship sessions in leadership, digital literacy, and personal development.</p>
 
-              <div class="col-md-6">
-                <label class="form-label">Phone</label>
-                <input type="text" name="phone" id="phone" class="form-control">
-              </div>
-
-              
-              <div class="col-md-6">
-                <label class="form-label">Organization (optional)</label>
-                <input type="text" name="organization" id="organization" class="form-control">
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label">Years of experience (optional)</label>
-                <input type="number" name="years" id="years" class="form-control" min="0">
-              </div>
-
-              <div class="col-12">
-                <label class="form-label">Short bio / mentoring approach</label>
-                <!-- Post this field directly as `message` so backend receives mentor details without JS -->
-                <textarea name="message" id="bio" class="form-control" rows="4" placeholder="Tell us about your mentoring experience and availability"></textarea>
-              </div>
-
-              <!-- Hidden subject used by server to mark mentor registrations -->
-              <input type="hidden" name="subject" id="subject" value="Mentor Registration">
-
-              <div class="col-12">
-                <button type="submit" class="btn btn-success">Submit Application</button>
-              </div>
-            </div>
-          </form>
-
-          <!-- Removed client-side script per request; bio posts directly as `message`. -->
+        {% if messages %}
+        <div style="margin-bottom: 20px;">
+          {% for message in messages %}
+          <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px;">{{ message }}</div>
+          {% endfor %}
         </div>
-      </div>
+        {% endif %}
 
-      <div class="col-lg-4">
-        <div class="card p-4">
-          <h5>Why Mentor with EduHope?</h5>
+        <form id="mentorForm" method="post" action="/mentor/">
+          {% csrf_token %}
+
+          <div style="display:flex; gap:15px; margin-bottom:15px;">
+            <div style="flex:1;">
+              <label style="font-weight:bold; color:#1e7221;">Full name</label>
+              <input type="text" name="name" id="name" required style="width:100%; padding:10px; border:1px solid #7e7e4b; border-radius:5px;">
+            </div>
+            <div style="flex:1;">
+              <label style="font-weight:bold; color:#1e7221;">Email address</label>
+              <input type="email" name="email" id="email" required style="width:100%; padding:10px; border:1px solid #7e7e4b; border-radius:5px;">
+            </div>
+          </div>
+
+          <div style="display:flex; gap:15px; margin-bottom:15px;">
+            <div style="flex:1;">
+              <label style="font-weight:bold; color:#1e7221;">Phone</label>
+              <input type="text" name="phone" id="phone" style="width:100%; padding:10px; border:1px solid #7e7e4b; border-radius:5px;">
+            </div>
+            <div style="flex:1;">
+              <label style="font-weight:bold; color:#1e7221;">Organization (optional)</label>
+              <input type="text" name="organization" id="organization" style="width:100%; padding:10px; border:1px solid #7e7e4b; border-radius:5px;">
+            </div>
+          </div>
+
+          <div style="margin-bottom:15px;">
+            <label style="font-weight:bold; color:#1e7221;">Years of experience (optional)</label>
+            <input type="number" name="years" id="years" min="0" style="width:100%; padding:10px; border:1px solid #7e7e4b; border-radius:5px;">
+          </div>
+
+          <div style="margin-bottom:15px;">
+            <label style="font-weight:bold; color:#1e7221;">Short bio / mentoring approach</label>
+            <textarea name="message" id="bio" rows="5" placeholder="Tell us about your mentoring experience and availability" style="width:100%; padding:10px; border:1px solid #7e7e4b; border-radius:5px;"></textarea>
+          </div>
+
+          <input type="hidden" name="subject" id="subject" value="Mentor Registration">
+
+          <button type="submit" style="width:100%; background:#28a745; color:white; padding:12px; border:none; border-radius:5px; font-size:16px; font-weight:bold; cursor:pointer;">Submit Application</button>
+
+        </form>
+
+        <div style="margin-top:18px; color:#666; font-size:14px;">
+          <h5 style="color:#1e7221; margin-bottom:8px;">Why Mentor with EduHope?</h5>
           <p>Mentors provide guidance, share skills, and help learners build confidence. Your time and knowledge create lasting impact.</p>
-          <ul>
+          <ul style="margin-left:18px;">
             <li>Flexible mentorship sessions</li>
             <li>Focused on leadership and digital skills</li>
-            <li>Support from EduHope team</li>
+            <li>Support from the EduHope team</li>
           </ul>
         </div>
+
       </div>
+
     </div>
 
   </div>
