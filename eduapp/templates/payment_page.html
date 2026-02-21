@@ -1,0 +1,19 @@
+{% extends 'starter-page.html' %}
+{% load static %}
+
+{% block tittle %} Payment method {% endblock %}
+{% block content %}
+
+<form action="{% url 'mpesa_pay' %}" method="post">
+    {% csrf_token %}
+
+    <input type="number" name="amount" placeholder="Amount (Ksh)" required>
+    <select name="Donation_type"required>
+        <option value="onetime_donation">One-Time</option>
+        <option value="monthly">Monthly</option>
+        <option value="annual">Annual</option>
+    </select>
+    <input type="tel" name="phone_number" placeholder="Phone Number (2547XXXXXXXX)" required>
+    <button type="submit" class="btn btn-outline-success"> Pay with Mpesa</button>
+</form>
+{% endblock %}

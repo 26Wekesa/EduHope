@@ -4,6 +4,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from .mpesa import mpesa_stk_push 
 
 # Create your views here.
 
@@ -154,22 +155,8 @@ def patner(request):
                 messages.success(request, "Thank you for your partnership request. We will review it and get back to you.")
             except:
                 messages.error(request, "Error saving partnership request.")
-            return redirect('/patner')
-        elif 'donation' in request.POST:
-            try:
-                mydonation = Donation(
-                    donor_name=request.POST['donor_name'],
-                    email=request.POST['email'],
-                    phone=request.POST.get('phone', ''),
-                    amount=request.POST['amount'],
-                    donation_type=request.POST['donation_type'],
-                    message=request.POST.get('message', ''),
-                )
-                mydonation.save()
-                messages.success(request, "Thank you for your donation!")
-            except:
-                messages.error(request, "Error processing donation.")
-            return redirect('/patner')
+        return redirect('/patner')
+        
     return render(request, 'patner.html')
 
 
@@ -378,6 +365,24 @@ def count(request):
          "total_mentors": total_mentors,
          "total_applications": total_applications
      })
+
+def payment_page(request):
+    if request.method == "POST":
+        amount = request.POST['amount']
+        phone = request.POST['phone']
+        donation_type = request.POST['donation_type']
+        if phone.startswith('0'):
+            phone = '254' + phone[1:]
+        request.session["donation_data"] = {
+            "amount": amount,
+            "phone": phone,
+            "donation_type":donation_type,
+        }
+        response = mpesa_stk_push(phone, amount, donation_type)
+        request.session["checkout_response_id"] = response.get("CheckoutRequestID")
+
+        return render(request, 'waiting.html')
+    return render(request, 'payment_page.html')
    
 
 
@@ -385,3 +390,44 @@ def count(request):
 #     """Simple confirmation page shown after a message is saved."""
 #     return render(request, 'appointment.html')
 
+
+# # Adding Mpesa Integration Snippet
+# def token(request):
+#     """ Generates the ID of the transaction """
+#     consumer_key = 'qvQFfRUmIIMKcLutXyGEdAbkKtYN7RzIjVKiMz8Ma94qQt4q'
+#     consumer_secret = 'HRSVAAGk1AEG4ZATjzWmqYSTpGluFG6Erf8gRab85NEepozIGSmTPmR6k2Cu9Ivr'
+#     api_URL = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+
+#     r = requests.get(api_URL, auth=HTTPBasicAuth(
+#         consumer_key, consumer_secret))
+#     mpesa_access_token = json.loads(r.text)
+#     validated_mpesa_access_token = mpesa_access_token["access_token"]
+
+#     return render(request, 'token.html', {"token":validated_mpesa_access_token})
+
+
+# # Send the stk push
+# def stk(request):
+#     """ Sends the stk push prompt """
+#     if request.method =="POST":
+#         phone = request.POST['phone']
+#         amount = request.POST['amount']
+#         access_token = MpesaAccessToken.validated_mpesa_access_token
+#         api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+#         headers = {"Authorization": "Bearer %s" % access_token}
+#         request = {
+#             "BusinessShortCode": LipanaMpesaPpassword.Business_short_code,
+#             "Password": LipanaMpesaPpassword.decode_password,
+#             "Timestamp": LipanaMpesaPpassword.lipa_time,
+#             "TransactionType": "CustomerPayBillOnline",
+#             "Amount": amount,
+#             "PartyA": phone,
+#             "PartyB": LipanaMpesaPpassword.Business_short_code,
+#             "PhoneNumber": phone,
+#             "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
+#             "AccountReference": "eMobilis",
+#             "TransactionDesc": "Web Development Charges"
+#         }
+#         response = requests.post(api_url, json=request, headers=headers)
+#         return HttpResponse("Success")
+ 

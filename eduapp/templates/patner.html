@@ -119,74 +119,10 @@
             </button>
 
         </form>
+        <a href="{% url 'payment_page' %}" class="btn btn-outline-success"></a>
 
-        <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
-
-        <h3 style="text-align: center; color: #1e7221; font-weight: bold; margin-bottom: 20px;">
-            Make a One-Time Donation
-        </h3>
-
-        <form method="post">
-
-            {% csrf_token %}
-
-            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-                <div style="flex: 1;">
-                    <label style="font-weight: bold; color: #1e7221;">Your Name</label>
-                    <input type="text" name="donor_name" required
-                        style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
-                               border-radius: 5px;">
-                </div>
-                <div style="flex: 1;">
-                    <label style="font-weight: bold; color: #1e7221;">Email Address</label>
-                    <input type="email" name="email" required
-                        style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
-                               border-radius: 5px;">
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-                <div style="flex: 1;">
-                    <label style="font-weight: bold; color: #1e7221;">Phone Number (Optional)</label>
-                    <input type="text" name="phone"
-                        style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
-                               border-radius: 5px;">
-                </div>
-                <div style="flex: 1;">
-                    <label style="font-weight: bold; color: #1e7221;">Donation Amount ($)</label>
-                    <input type="number" name="amount" step="0.01" required
-                        style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
-                               border-radius: 5px;">
-                </div>
-            </div>
-
-            <div style="margin-bottom: 15px;">
-                <label style="font-weight: bold; color: #1e7221;">Donation Type</label>
-                <select name="donation_type" required
-                    style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
-                           border-radius: 5px;">
-                    <option value="one_time">One-Time Donation</option>
-                    <option value="monthly">Monthly Donation</option>
-                    <option value="annual">Annual Donation</option>
-                </select>
-            </div>
-
-            <div style="margin-bottom: 15px;">
-                <label style="font-weight: bold; color: #1e7221;">Message (Optional)</label>
-                <textarea name="message" rows="3"
-                    style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
-                           border-radius: 5px;"></textarea>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" name="donation"
-                style="width: 100%; background: #28a745; color: white; 
-                       padding: 12px; border: none; border-radius: 5px; 
-                       font-size: 16px; font-weight: bold; cursor: pointer;">
-                Send Donation
-            </button>
-
-        </form>
+        
+        
 
     </div>
 </div>

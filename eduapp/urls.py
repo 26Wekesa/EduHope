@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from eduapp import views
+from eduapp import views 
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -39,5 +39,7 @@ urlpatterns = [
     path('delete_learner/<int:id>/', views.delete_learner, name='delete_learner'),
     path('approve_partner/<int:id>/', views.approve_partner, name='approve_partner'),
     path('delete_partner/<int:id>/', views.delete_partner, name='delete_partner'),
+
+    path('patner/', views.payment_page, name='payment_page'),
     
 ]
