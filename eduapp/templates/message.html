@@ -4,82 +4,56 @@
 {% block title %} Send Us a message {% endblock %}
 
 {% block content %}
-<div style="background: #e9f2ff; font-family: Arial, sans-serif;">
+<div class="page-shell">
 
-<div class="container" 
-     style="width: 100%; height: 100vh; display: flex; justify-content: center; 
-            align-items: center;">
+<div class="container" style="max-width:700px;">
 
-    <div class="card" 
-         style="width: 600px; max-height: 80vh; overflow-y: auto; background: white; padding: 30px; border-radius: 10px; 
-                box-shadow: 0 0 15px rgba(0,0,0,0.2);">
+    <div class="page-card p-4 p-md-5">
 
-        <h3 style="text-align: center; color: #1e7221; font-weight: bold; margin-bottom: 20px;">
-            Send us a message
-        </h3>
-
-        <p style="text-align: center; color: #666; margin-bottom: 20px;">
-            Contact EduHope to learn how you can support learners, become a mentor, or partner with us to make a lasting impact in education.
-        </p>
+        <div style="text-align:center; margin-bottom:18px;">
+            <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">Contact Us</span>
+            <h3 style="color:#0d1b4b; font-weight:700; font-size:24px; margin-bottom:6px;">Contact Bold Foundation</h3>
+            <p style="color:#556; margin:0;">Reach out to learn how to support learners, become a mentor, or partner with us.</p>
+        </div>
 
         {% if messages %}
-        <div style="margin-bottom: 20px;">
+        <div style="margin-bottom:16px;">
             {% for message in messages %}
-            <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
-                {{ message }}
-            </div>
+            <div style="background:#e6f1ff; color:#0a2b66; padding:12px; border-radius:8px; margin-bottom:10px; border-left:4px solid #0a1f44;">{{ message }}</div>
             {% endfor %}
         </div>
         {% endif %}
 
         <form method="post">
-
             {% csrf_token %}
 
-            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-                <div style="flex: 1;">
-                    <label style="font-weight: bold; color: #1e7221;">Full Name</label>
-                    <input type="text" name="name" required
-                        style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
-                               border-radius: 5px;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+                <div>
+                    <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Full Name</label>
+                    <input type="text" name="name" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                 </div>
-                <div style="flex: 1;">
-                    <label style="font-weight: bold; color: #1e7221;">Email Address</label>
-                    <input type="email" name="email" required
-                        style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
-                               border-radius: 5px;">
+                <div>
+                    <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Email Address</label>
+                    <input type="email" name="email" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                 </div>
             </div>
 
-            <div style="margin-bottom: 15px;">
-                <label style="font-weight: bold; color: #1e7221;">Subject</label>
-                <input type="text" name="subject" required
-                    style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
-                           border-radius: 5px;">
+            <div style="margin-bottom:12px;">
+                <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Subject</label>
+                <input type="text" name="subject" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
             </div>
 
-            <div style="margin-bottom: 15px;">
-                <label style="font-weight: bold; color: #1e7221;">Message</label>
-                <textarea name="message" rows="5" required
-                    style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
-                           border-radius: 5px;"></textarea>
+            <div style="margin-bottom:14px;">
+                <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Message</label>
+                <textarea name="message" rows="6" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px; resize:vertical;"></textarea>
             </div>
 
-            <!-- Submit Button -->
-            <button type="submit" 
-                style="width: 100%; background: #28a745; color: white; 
-                       padding: 12px; border: none; border-radius: 5px; 
-                       font-size: 16px; font-weight: bold; cursor: pointer;">
-                Send Message
-            </button>
+            <button type="submit" class="page-btn-primary">Send Message</button>
 
         </form>
 
     </div>
-</div>
 
 </div>
-
-
 
 {% endblock %}

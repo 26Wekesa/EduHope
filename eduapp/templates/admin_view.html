@@ -1,555 +1,556 @@
-{% extends 'starter-page.html'%}
-
+{% extends 'base.html' %}
 {% load static %}
 
-{% block title %} Admin Dashboard {% endblock %}
+{% block title %}Admin Dashboard | B.O.L.D. Foundation{% endblock %}
 
 {% block content %}
-
-<!-- Admin Dashboard Section -->
-<section class="admin-dashboard section">
+<section style="padding-top: 120px; padding-bottom: 80px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: #fff;">
   <div class="container">
-    
-    <!-- Dashboard Header -->
-    <div class="dashboard-header mb-5">
-      <h1>EduHope Admin Dashboard</h1>
-      <p>Manage learners, mentors, partners, and messages</p>
-    </div>
-
-    <!-- Statistics Cards -->
-    <div class="row mb-5 justify-content-center">
-      <div class="col-6 col-md-4 col-lg-2 mb-4">
-        <div class="stat-card">
-          <div class="stat-icon">
-            <i class="bi bi-people-fill"></i>
-          </div>
-          <div class="stat-content">
-            <h5>Approved Learners</h5>
-            <p class="stat-number">{{ approved_learners }}</p>
-            
-          </div>
-        </div>
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8" data-aos="fade-right">
+        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">
+          Admin Dashboard
+        </span>
+        <h1 class="display-6 fw-bold mb-3">Manage members, applications, partnerships, and payments</h1>
+        <p class="mb-0 fs-5" style="line-height: 1.8; color: rgba(255,255,255,0.9);">
+          Monitor mentor applications, review payment records, approve requests, and keep the B.O.L.D. Foundation operations organized.
+        </p>
       </div>
-
-      <div class="col-6 col-md-4 col-lg-2 mb-4">
-        <div class="stat-card">
-          <div class="stat-icon">
-            <i class="bi bi-person-badge"></i>
-          </div>
-          <div class="stat-content">
-            <h5>Approved Mentors</h5>
-            <p class="stat-number">{{ approved_mentors }}</p>
-            
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-4 col-lg-2 mb-4">
-        <div class="stat-card">
-          <div class="stat-icon">
-            <i class="bi bi-building"></i>
-          </div>
-          <div class="stat-content">
-            <h5>Approved Partners</h5>
-            <p class="stat-number">{{ approved_partners }}</p>
-            
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-4 col-lg-2 mb-4">
-        <div class="stat-card">
-          <div class="stat-icon">
-            <i class="bi bi-envelope-open"></i>
-          </div>
-          <div class="stat-content">
-            <h5>Total Messages</h5>
-            <p class="stat-number">{{ total_messages }}</p>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-4 col-lg-2 mb-4">
-        <div class="stat-card">
-          <div class="stat-icon">
-            <i class="bi bi-calendar-check"></i>
-          </div>
-          <div class="stat-content">
-            <h5>Bookings</h5>
-            <p class="stat-number">{{ total_bookings }}</p>
-            
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-4 col-lg-2 mb-4">
-        <div class="stat-card">
-          <div class="stat-icon">
-            <i class="bi bi-cash"></i>
-          </div>
-          <div class="stat-content">
-            <h5>Total Donations</h5>
-            <p class="stat-number">{{ total_donations }}</p>
-            
-          </div>
+      <div class="col-lg-4 text-center" data-aos="fade-left">
+        <div class="p-4 rounded-4 shadow-lg" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);">
+          <i class="bi bi-speedometer2" style="font-size: 4rem; color: #00c2e0;"></i>
         </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- Tabs for Different Sections -->
-    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+<section class="py-5 bg-white">
+  <div class="container">
+    <div class="row g-4 mb-5">
+      <div class="col-md-4 col-lg-2" data-aos="fade-up">
+        <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: #f4f9ff;">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <span class="badge rounded-pill" style="background: #dff7ff; color: #0d1b4b;">Learners</span>
+            <i class="bi bi-people-fill text-primary fs-4"></i>
+          </div>
+          <h3 class="fw-bold mb-0" style="color: #0d1b4b;">{{ approved_learners }}</h3>
+          <small class="text-secondary">Approved</small>
+        </div>
+      </div>
+
+      <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="50">
+        <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: #f8f9fb;">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <span class="badge rounded-pill" style="background: #eaf8ff; color: #0d1b4b;">Mentors</span>
+            <i class="bi bi-person-badge text-success fs-4"></i>
+          </div>
+          <h3 class="fw-bold mb-0" style="color: #0d1b4b;">{{ approved_mentors }}</h3>
+          <small class="text-secondary">Approved</small>
+        </div>
+      </div>
+
+      <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="100">
+        <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: #f4f9ff;">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <span class="badge rounded-pill" style="background: #dff7ff; color: #0d1b4b;">Partners</span>
+            <i class="bi bi-building text-info fs-4"></i>
+          </div>
+          <h3 class="fw-bold mb-0" style="color: #0d1b4b;">{{ approved_partners }}</h3>
+          <small class="text-secondary">Approved</small>
+        </div>
+      </div>
+
+      <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="150">
+        <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: #f8f9fb;">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <span class="badge rounded-pill" style="background: #eaf8ff; color: #0d1b4b;">Messages</span>
+            <i class="bi bi-envelope-open text-warning fs-4"></i>
+          </div>
+          <h3 class="fw-bold mb-0" style="color: #0d1b4b;">{{ total_messages }}</h3>
+          <small class="text-secondary">Inbox</small>
+        </div>
+      </div>
+
+      <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="200">
+        <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: #f4f9ff;">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <span class="badge rounded-pill" style="background: #dff7ff; color: #0d1b4b;">Bookings</span>
+            <i class="bi bi-calendar-check text-primary fs-4"></i>
+          </div>
+          <h3 class="fw-bold mb-0" style="color: #0d1b4b;">{{ total_bookings }}</h3>
+          <small class="text-secondary">Total</small>
+        </div>
+      </div>
+
+      <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="250">
+        <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: #f8f9fb;">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <span class="badge rounded-pill" style="background: #eaf8ff; color: #0d1b4b;">Payments</span>
+            <i class="bi bi-cash-stack text-success fs-4"></i>
+          </div>
+          <h3 class="fw-bold mb-0" style="color: #0d1b4b;">{{ stats.successful_payments }}</h3>
+          <small class="text-secondary">Successful</small>
+        </div>
+      </div>
+    </div>
+
+    <ul class="nav nav-tabs mb-4 border-0" id="adminTabs" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab">Messages</button>
+        <button class="nav-link active rounded-top" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab">Messages</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="learners-tab" data-bs-toggle="tab" data-bs-target="#learners" type="button" role="tab">Learners</button>
+        <button class="nav-link rounded-top" id="learners-tab" data-bs-toggle="tab" data-bs-target="#learners" type="button" role="tab">Learners</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="mentors-tab" data-bs-toggle="tab" data-bs-target="#mentors" type="button" role="tab">Mentors</button>
+        <button class="nav-link rounded-top" id="mentors-tab" data-bs-toggle="tab" data-bs-target="#mentors" type="button" role="tab">Mentors</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="partners-tab" data-bs-toggle="tab" data-bs-target="#partners" type="button" role="tab">Partners</button>
+        <button class="nav-link rounded-top" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab">Payments</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab">Bookings</button>
+        <button class="nav-link rounded-top" id="partners-tab" data-bs-toggle="tab" data-bs-target="#partners" type="button" role="tab">Partners</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="donations-tab" data-bs-toggle="tab" data-bs-target="#donations" type="button" role="tab">Donations</button>
+        <button class="nav-link rounded-top" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab">Bookings</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-top" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab">Events</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-top" id="donations-tab" data-bs-toggle="tab" data-bs-target="#donations" type="button" role="tab">Donations</button>
       </li>
     </ul>
 
-    <!-- Tab Content -->
     <div class="tab-content" id="adminTabContent">
-      
-      <!-- Messages Tab -->
       <div class="tab-pane fade show active" id="messages" role="tabpanel">
-        <div class="data-section">
-          <h3>Latest Messages</h3>
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Latest Messages</h3>
           {% if all_messages %}
-            <div class="table-responsive">
-              <table class="table table-hover table-striped">
-                <thead class="table-dark">
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Subject</th>
-                    <th>Message</th>
-                    <th>Action</th>
-                    
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for msg in all_messages %}
-                  <tr>
-                    <td><strong>{{ msg.name }}</strong></td>
-                    <td><a href="mailto:{{ msg.email }}">{{ msg.email }}</a></td>
-                    <td>{{ msg.subject }}</td>
-                    <td>
-                      <small>{{ msg.message|truncatewords:10 }}</small>
-                    </td>
-                    <td>
-                      <a href="/delete/{{msg.id}}" class="btn btn-danger">Delete</a>
-           
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Subject</th>
+                  <th>Message</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for msg in all_messages %}
+                <tr>
+                  <td><strong>{{ msg.name }}</strong></td>
+                  <td><a href="mailto:{{ msg.email }}">{{ msg.email }}</a></td>
+                  <td>{{ msg.subject }}</td>
+                  <td>{{ msg.message|truncatewords:12 }}</td>
+                  <td><a href="/delete/{{ msg.id }}" class="btn btn-sm btn-danger rounded-pill">Delete</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
           {% else %}
-            <div class="alert alert-info">No messages yet.</div>
+          <div class="alert alert-info rounded-4 border-0">No messages yet.</div>
           {% endif %}
         </div>
       </div>
 
-      <!-- Learners Tab -->
       <div class="tab-pane fade" id="learners" role="tabpanel">
-  <div class="data-section">
-    <h3>Support Applications</h3>
-
-    {% if applications %}
-      <div class="table-responsive">
-        <table class="table table-hover table-striped">
-          <thead class="table-dark">
-            <tr>
-              <th>Learner</th>
-              <th>DOB</th>
-              <th>Grade</th>
-              <th>School</th>
-              <th>Support Type</th>
-              <th>Situation</th>
-              <th>Guardian</th>
-              <th>Contact</th>
-              <th>Informant</th>
-              <th>Status</th>
-              <th>Actions</th>
-            
-            </tr>
-          </thead>
-          <tbody>
-            {% for app in applications %}
-            <tr>
-              <td><strong>{{ app.learner_name }}</strong></td>
-              <td>{{ app.dob }}</td>
-              <td>{{ app.grade }}</td>
-              <td>{{ app.school }}</td>
-
-              <td>{{ app.support_type }}</td>
-
-              <td>
-                <small>{{ app.situation_description|truncatewords:15 }}</small>
-              </td>
-
-              <td>{{ app.guardian_name }} ({{ app.relationship }})</td>
-              <td>{{ app.guardian_contact }}</td>
-
-              <td>
-                {{ app.informant_name }}  
-                <br>
-                <small>{{ app.informant_phone }}</small>
-              </td>
-              <td>
-                {% if app.approved %}
-                  <span class="badge bg-success">Approved</span>
-                {% else %}
-                  <span class="badge bg-warning">Pending</span>
-                {% endif %}
-              </td>
-              <td>
-                {% if not app.approved %}
-                  <a href="{% url 'approve_learner' app.id %}" class="btn btn-success btn-sm">Approve</a>
-                {% endif %}
-                <a href="{% url 'delete_learner' app.id %}" class="btn btn-danger btn-sm">Delete</a>
-              </td>
-              
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Support Applications</h3>
+          {% if applications %}
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Learner</th>
+                  <th>School</th>
+                  <th>Grade</th>
+                  <th>Guardian</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for app in applications %}
+                <tr>
+                  <td><strong>{{ app.learner_name }}</strong></td>
+                  <td>{{ app.school }}</td>
+                  <td>{{ app.grade }}</td>
+                  <td>{{ app.guardian_name }}</td>
+                  <td>
+                    {% if app.approved %}
+                      <span class="badge bg-success rounded-pill">Approved</span>
+                    {% else %}
+                      <span class="badge bg-warning text-dark rounded-pill">Pending</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if not app.approved %}
+                      <a href="{% url 'approve_learner' app.id %}" class="btn btn-sm btn-success rounded-pill">Approve</a>
+                    {% endif %}
+                    <a href="{% url 'delete_learner' app.id %}" class="btn btn-sm btn-danger rounded-pill">Delete</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="alert alert-info rounded-4 border-0">No support applications submitted yet.</div>
+          {% endif %}
+        </div>
       </div>
 
-    {% else %}
-      <div class="alert alert-info">No support applications submitted yet.</div>
-    {% endif %}
-  </div>
-</div>
-
-      <!-- Mentors Tab -->
       <div class="tab-pane fade" id="mentors" role="tabpanel">
-        <div class="data-section">
-          <h3>Registered Mentors</h3>
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Registered Mentors</h3>
           {% if mentors %}
-            <div class="table-responsive">
-              <table class="table table-hover table-striped">
-                <thead class="table-dark">
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>phone</th>
-                    <th>Organization</th>
-                    <th>years</th>
-                    <th>bio</th>
-                    <th>subject</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for mentor in mentors %}
-                  <tr>
-                    <td><strong>{{ mentor.name }}</strong></td>
-                    <td><a href="mailto:{{ mentor.email }}">{{ mentor.email }}</a></td>
-                    <td>{{ mentor.phone }}</td>
-                    <td>{{ mentor.organization }}</td>
-                    <td>{{ mentor.years }} years</td>
-                    <td>{{ mentor.bio }}</td>
-                    <td>{{ mentor.subject }}</td>
-                    <td>
-                      {% if mentor.approved %}
-                        <span class="badge bg-success">Approved</span>
-                      {% else %}
-                        <span class="badge bg-warning">Pending</span>
-                      {% endif %}
-                    </td>
-                    <td>
-                      {% if not mentor.approved %}
-                        <a href="{% url 'approve_mentor' mentor.id %}" class="btn btn-success btn-sm">Approve</a>
-                      {% endif %}
-                      <a href="{% url 'delete_mentor' mentor.id %}" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Organization</th>
+                  <th>Subject</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for mentor in mentors %}
+                <tr>
+                  <td><strong>{{ mentor.name }}</strong></td>
+                  <td>{{ mentor.email }}</td>
+                  <td>{{ mentor.phone }}</td>
+                  <td>{{ mentor.organization }}</td>
+                  <td>{{ mentor.subject }}</td>
+                  <td>
+                    {% if mentor.status == 'approved' %}
+                      <span class="badge bg-success rounded-pill">Approved</span>
+                    {% elif mentor.status == 'rejected' %}
+                      <span class="badge bg-danger rounded-pill">Rejected</span>
+                    {% elif mentor.status == 'payment_pending' %}
+                      <span class="badge bg-warning text-dark rounded-pill">Payment Pending</span>
+                    {% else %}
+                      <span class="badge bg-info text-dark rounded-pill">{{ mentor.get_status_display }}</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if mentor.status != 'approved' %}
+                      <a href="{% url 'approve_mentor' mentor.id %}" class="btn btn-sm btn-success rounded-pill">Approve</a>
+                    {% endif %}
+                    <a href="{% url 'delete_mentor' mentor.id %}" class="btn btn-sm btn-danger rounded-pill">Delete</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
           {% else %}
-            <div class="alert alert-info">No mentors registered yet.</div>
+          <div class="alert alert-info rounded-4 border-0">No mentors registered yet.</div>
           {% endif %}
         </div>
       </div>
 
-      <!-- Partners Tab -->
+      <div class="tab-pane fade" id="payments" role="tabpanel">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Mentor M-Pesa Payment Records</h3>
+          {% if transactions %}
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Mentor</th>
+                  <th>Phone</th>
+                  <th>Amount</th>
+                  <th>Receipt</th>
+                  <th>Status</th>
+                  <th>Result</th>
+                  <th>Initiated</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for txn in transactions %}
+                <tr>
+                  <td><strong>{{ txn.mentor.name }}</strong></td>
+                  <td>{{ txn.phone_number }}</td>
+                  <td>KES {{ txn.amount }}</td>
+                  <td>{{ txn.mpesa_receipt_number|default:'—' }}</td>
+                  <td>
+                    {% if txn.status == 'success' %}
+                      <span class="badge bg-success rounded-pill">Success</span>
+                    {% elif txn.status == 'failed' %}
+                      <span class="badge bg-danger rounded-pill">Failed</span>
+                    {% elif txn.status == 'pending' %}
+                      <span class="badge bg-warning text-dark rounded-pill">Pending</span>
+                    {% else %}
+                      <span class="badge bg-secondary rounded-pill">{{ txn.status }}</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ txn.result_description|default:'Not yet available' }}</td>
+                  <td>{{ txn.initiated_at|date:"d M Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="alert alert-info rounded-4 border-0">No M-Pesa payment records yet.</div>
+          {% endif %}
+        </div>
+      </div>
+
       <div class="tab-pane fade" id="partners" role="tabpanel">
-        <div class="data-section">
-          <h3>Partnership Requests</h3>
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Partnership Requests</h3>
           {% if all_partners %}
-            <div class="table-responsive">
-              <table class="table table-hover table-striped">
-                <thead class="table-dark">
-                  <tr>
-                    <th>Organization</th>
-                    <th>Type</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Area</th>
-                    <th>Status</th>
-                    <th>Submitted</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for partner in all_partners %}
-                  <tr>
-                    <td><strong>{{ partner.org_name }}</strong></td>
-                    <td>{{ partner.partner_type }}</td>
-                    <td><a href="mailto:{{ partner.email }}">{{ partner.email }}</a></td>
-                    <td>{{ partner.phone }}</td>
-                    <td>{{ partner.partnership_area }}</td>
-                    <td>
-                      {% if partner.approved %}
-                        <span class="badge bg-success">Approved</span>
-                      {% else %}
-                        <span class="badge bg-warning">Pending</span>
-                      {% endif %}
-                    </td>
-                    <td><small>{{ partner.submitted_at|date:"M d, Y" }}</small></td>
-                    <td>
-                      {% if not partner.approved %}
-                        <a href="{% url 'approve_partner' partner.id %}" class="btn btn-success btn-sm">Approve</a>
-                      {% endif %}
-                      <a href="{% url 'delete_partner' partner.id %}" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Organization</th>
+                  <th>Type</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for partner in all_partners %}
+                <tr>
+                  <td><strong>{{ partner.org_name }}</strong></td>
+                  <td>{{ partner.partner_type }}</td>
+                  <td>{{ partner.email }}</td>
+                  <td>{{ partner.phone }}</td>
+                  <td>
+                    {% if partner.approved %}
+                      <span class="badge bg-success rounded-pill">Approved</span>
+                    {% else %}
+                      <span class="badge bg-warning text-dark rounded-pill">Pending</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if not partner.approved %}
+                      <a href="{% url 'approve_partner' partner.id %}" class="btn btn-sm btn-success rounded-pill">Approve</a>
+                    {% endif %}
+                    <a href="{% url 'delete_partner' partner.id %}" class="btn btn-sm btn-danger rounded-pill">Delete</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
           {% else %}
-            <div class="alert alert-info">No partnership requests yet.</div>
+          <div class="alert alert-info rounded-4 border-0">No partnership requests yet.</div>
           {% endif %}
         </div>
       </div>
 
-      <!-- Mentorship Bookings Tab -->
       <div class="tab-pane fade" id="bookings" role="tabpanel">
-        <div class="data-section">
-          <h3>Bookings</h3>
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Bookings</h3>
           {% if bookings %}
-            <div class="table-responsive">
-              <table class="table table-hover table-striped">
-                <thead class="table-dark">
-                  <tr>
-                    <th>School</th>
-                    <th>Contact Person</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Learners</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Duration</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for booking in bookings %}
-                  <tr>
-                    <td><strong>{{ booking.school_name }}</strong></td>
-                    <td>{{ booking.contact_person }}</td>
-                    <td><a href="mailto:{{ booking.email }}">{{ booking.email }}</a></td>
-                    <td>{{ booking.phone }}</td>
-                    <td>{{ booking.number_of_learners }}</td>
-                    <td>{{ booking.preferred_date }}</td>
-                    <td>{{ booking.preferred_time }}</td>
-                    <td>{{ booking.duration_hours }} hours</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>School</th>
+                  <th>Contact</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for booking in bookings %}
+                <tr>
+                  <td><strong>{{ booking.school_name }}</strong></td>
+                  <td>{{ booking.contact_person }}</td>
+                  <td>{{ booking.email }}</td>
+                  <td>{{ booking.phone }}</td>
+                  <td>{{ booking.preferred_date }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
           {% else %}
-            <div class="alert alert-info">No bookings yet.</div>
+          <div class="alert alert-info rounded-4 border-0">No bookings yet.</div>
           {% endif %}
         </div>
       </div>
 
-      <!-- Donations Tab -->
+      <div class="tab-pane fade" id="events" role="tabpanel">
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Create Event</h3>
+          <form method="post" action="{% url 'event_create' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Title</label>
+                <input type="text" name="title" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Slug</label>
+                <input type="text" name="slug" class="form-control" placeholder="optional custom url">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Date</label>
+                <input type="datetime-local" name="date" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Location</label>
+                <input type="text" name="location" class="form-control" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="4" required></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Image</label>
+                <input type="file" name="image" class="form-control" accept="image/*">
+              </div>
+              <div class="col-md-3 d-flex align-items-end">
+                <div class="form-check mt-4">
+                  <input class="form-check-input" type="checkbox" name="is_featured" id="is_featured">
+                  <label class="form-check-label" for="is_featured">Featured</label>
+                </div>
+              </div>
+              <div class="col-md-3 d-flex align-items-end">
+                <div class="form-check mt-4">
+                  <input class="form-check-input" type="checkbox" name="is_published" id="is_published" checked>
+                  <label class="form-check-label" for="is_published">Published</label>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary rounded-pill mt-4">Save Event</button>
+          </form>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Upcoming Event List</h3>
+          {% if events %}
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Title</th>
+                  <th>Date</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for event in events %}
+                <tr>
+                  <td><strong>{{ event.title }}</strong></td>
+                  <td>{{ event.date|date:"d M Y H:i" }}</td>
+                  <td>{{ event.location }}</td>
+                  <td>
+                    {% if event.is_published %}
+                      <span class="badge bg-success rounded-pill">Published</span>
+                    {% else %}
+                      <span class="badge bg-secondary rounded-pill">Draft</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="{% url 'event_edit' event.id %}" class="btn btn-sm btn-primary rounded-pill">Edit</a>
+                    <a href="{% url 'event_delete' event.id %}" class="btn btn-sm btn-danger rounded-pill">Delete</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="alert alert-info rounded-4 border-0">No events have been created yet.</div>
+          {% endif %}
+        </div>
+      </div>
+
       <div class="tab-pane fade" id="donations" role="tabpanel">
-        <div class="data-section">
-          <h3>Donations</h3>
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Donations</h3>
           {% if donations %}
-            <div class="table-responsive">
-              <table class="table table-hover table-striped">
-                <thead class="table-dark">
-                  <tr>
-                    <th>Donor</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Amount</th>
-                    <th>Type</th>
-                    <th>Submitted</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for donation in donations %}
-                  <tr>
-                    <td><strong>{{ donation.donor_name }}</strong></td>
-                    <td><a href="mailto:{{ donation.email }}">{{ donation.email }}</a></td>
-                    <td>{{ donation.phone }}</td>
-                    <td>${{ donation.amount }}</td>
-                    <td>{{ donation.get_donation_type_display }}</td>
-                    <td><small>{{ donation.submitted_at|date:"M d, Y" }}</small></td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Donor</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Event</th>
+                  <th>Amount</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for donation in donations %}
+                <tr>
+                  <td><strong>{{ donation.donor_name }}</strong></td>
+                  <td>{{ donation.email }}</td>
+                  <td>{{ donation.phone }}</td>
+                  <td>{{ donation.event.title|default:'General' }}</td>
+                  <td>KES {{ donation.amount }}</td>
+                  <td>{{ donation.get_donation_type_display }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
           {% else %}
-            <div class="alert alert-info">No donations yet.</div>
+          <div class="alert alert-info rounded-4 border-0">No donations yet.</div>
           {% endif %}
         </div>
       </div>
-
     </div>
-
   </div>
-</section><!-- /Admin Dashboard Section -->
+</section>
 
 <style>
-  .admin-dashboard {
-    padding: 40px 0;
-    background-color: #f8f9fa;
-  }
-
-  .dashboard-header {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-
-  .dashboard-header h1 {
-    color: #333;
-    font-weight: 700;
-    margin-bottom: 10px;
-  }
-
-  .stat-card {
-    background: white;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-
-  .stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-
-  .stat-icon {
-    font-size: 32px;
-    color: #0d6efd;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #e7f1ff;
-    border-radius: 8px;
-  }
-
-  .stat-content h5 {
-    margin: 0;
-    font-size: 14px;
-    color: #666;
-    font-weight: 500;
-  }
-
-  .stat-number {
-    margin: 5px 0;
-    font-size: 28px;
-    font-weight: 700;
-    color: #333;
-  }
-
-  .nav-tabs {
-    border-bottom: 2px solid #dee2e6;
-  }
-
   .nav-tabs .nav-link {
-    color: #666;
-    border: none;
-    border-bottom: 3px solid transparent;
-    padding: 12px 20px;
-    margin-bottom: -2px;
-    transition: all 0.3s;
-  }
-
-  .nav-tabs .nav-link:hover {
-    color: #0d6efd;
-    border-bottom-color: #0d6efd;
+    color: #0d1b4b;
+    font-weight: 600;
+    border: 1px solid #e9edf5;
+    border-bottom: none;
+    background: #f7f9fc;
+    margin-right: 10px;
+    border-radius: 12px 12px 0 0;
   }
 
   .nav-tabs .nav-link.active {
-    color: #0d6efd;
-    background-color: transparent;
-    border-bottom-color: #0d6efd;
+    background: #0d1b4b;
+    color: #fff;
+    border-color: #0d1b4b;
   }
 
-  .data-section {
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  .table th {
+    font-weight: 700;
+    color: #0d1b4b;
   }
 
-  .data-section h3 {
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-
-  .table {
-    margin-bottom: 0;
-  }
-
-  .table thead th {
-    font-weight: 600;
-    border: none;
-    padding: 15px;
-  }
-
-  .table tbody td {
-    padding: 15px;
-    vertical-align: middle;
-    border-bottom: 1px solid #dee2e6;
-  }
-
-  .table tbody tr:hover {
-    background-color: #f8f9fa;
+  .table td {
+    color: #495057;
   }
 
   .badge {
-    padding: 6px 12px;
-    font-weight: 500;
+    font-weight: 600;
+    padding: 7px 12px;
   }
 
-  .alert {
-    padding: 20px;
-    border-radius: 8px;
-    border: none;
+  .btn {
+    transition: 0.2s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
   }
 </style>
-
 {% endblock %}

@@ -6,56 +6,40 @@
     
 {% block content %}
 
-<div style="background: #e9f2ff; font-family: Arial, sans-serif;">
+<div class="page-shell">
 
-<div class="container" 
-     style="width: 100%; height: 100vh; display: flex; justify-content: center; 
-            align-items: center;">
+<div class="container" style="max-width:420px; margin:0 auto;">
 
-    <div class="card" 
-         style="width: 380px; background: white; padding: 30px; border-radius: 10px; 
-                box-shadow: 0 0 15px rgba(0,0,0,0.2);">
+    <div class="page-card p-4 p-md-5">
 
-        <h3 style="text-align: center; color: #1e7221; font-weight: bold; margin-bottom: 20px;">
-            Login
-        </h3>
+        <div style="text-align:center; margin-bottom:18px;">
+            <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">Admin Login</span>
+            <h3 style="color:#0d1b4b; font-weight:700; font-size:22px; margin-bottom:6px;">Sign in to manage Bold Foundation data</h3>
+        </div>
 
         <form method="post">
             {% csrf_token %}
 
-            <!-- Username -->
-            <label style="font-weight: bold; color: #1e7221;">Username</label>
-            <input type="text" name="username" placeholder="Enter username"
-                style="width: 100%; padding: 10px; border: 1px solid #7e7e4b; 
-                       border-radius: 5px; margin-bottom: 15px;">
+            <div style="margin-bottom:12px;">
+                <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Username</label>
+                <input type="text" name="username" placeholder="Enter username" style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+            </div>
 
-            <!-- Password -->
-            <label style="font-weight: bold; color: #1e7221;">Password</label>
-            <input type="password" name="password" placeholder="Enter password"
-                style="width: 100%; padding: 10px; border: 1px solid #8d8d58;
-                       border-radius: 5px; margin-bottom: 15px;">
+            <div style="margin-bottom:16px;">
+                <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Password</label>
+                <input type="password" name="password" placeholder="Enter password" style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+            </div>
 
-           
-
-            <!-- Login Button -->
-            <button class="btn btn-success" type="submit" 
-                style="width: 100%; color: white; 
-                       padding: 12px; border: none; border-radius: 5px; 
-                       font-size: 16px; font-weight: bold; cursor: pointer;">
-                Login
-            </button>
+            <button class="page-btn-primary" type="submit">Login</button>
 
         </form>
 
-        <div style="text-align:center; margin-top: 15px;">
-            <p style="color: #06550e;">Don't have an account?
-                <a href="{% url 'register' %}" style="color: #00ff66; font-weight: bold;">Sign Up</a>
-            </p>
-            <a href="#" style="color: #85830c;">Forgot your password?</a>
+        <div style="text-align:center; margin-top:14px; font-size:14px; color:#556;">
+            <p style="margin:0;">Don't have an account? <a href="{% url 'register' %}" style="color:#0a1f44; font-weight:600;">Sign Up</a></p>
+            <a href="#" style="color:#0a1f44; display:inline-block; margin-top:6px;">Forgot your password?</a>
         </div>
 
     </div>
-</div>
 
 </div>
 {% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Payment Status{% endblock %}
+
+{% block content %}
+<div style="padding-top: 100px; min-height: 80vh; background: var(--gray-bg);">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6 text-center">
+        <div class="card border-0 shadow-lg rounded-4 p-5" id="statusCard">
+          <!-- Pending state -->
+          <div id="pendingState">
+            <div class="spinner-border text-primary mb-3" style="width:3rem;height:3rem;"></div>
+            <h4 class="fw-bold">Waiting for Payment...</h4>
+            <p class="text-muted">Check your phone for the M-Pesa prompt and enter your PIN.</p>
+            <small class="text-muted">This page updates automatically every 5 seconds.</small>
+          </div>
+          <!-- Success state (hidden initially) -->
+          <div id="successState" style="display:none;">
+            <div style="width:80px;height:80px;background:#d1fae5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:auto;">
+              <i class="bi bi-check-circle-fill text-success" style="font-size:2.5rem;"></i>
+            </div>
+            <h4 class="fw-bold mt-3 text-success">Payment Successful!</h4>
+            <p class="text-muted">Your mentor application has been submitted for review.</p>
+            <p id="receiptDisplay" class="badge bg-success fs-6 py-2 px-4"></p>
+            <a href="/dashboard/" class="btn btn-lg mt-3 fw-bold text-white"
+               style="background:var(--navy);border-radius:50px;">
+              Go to My Dashboard
+            </a>
+          </div>
+          <!-- Failed state (hidden initially) -->
+          <div id="failedState" style="display:none;">
+            <div style="width:80px;height:80px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:auto;">
+              <i class="bi bi-x-circle-fill text-danger" style="font-size:2.5rem;"></i>
+            </div>
+            <h4 class="fw-bold mt-3 text-danger">Payment Failed</h4>
+            <p id="failedDesc" class="text-muted"></p>
+            <a href="/mentor/" class="btn btn-outline-danger mt-3 rounded-pill">Try Again</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const pollInterval = setInterval(checkStatus, 5000);
+
+  async function checkStatus() {
+    try {
+      const res = await fetch('/payment/check/');
+      const data = await res.json();
+
+      if (data.status === 'success') {
+        clearInterval(pollInterval);
+        document.getElementById('pendingState').style.display = 'none';
+        document.getElementById('successState').style.display = 'block';
+        if (data.receipt) {
+          document.getElementById('receiptDisplay').textContent = 'Receipt: ' + data.receipt;
+        }
+      } else if (data.status === 'failed' || data.status === 'cancelled') {
+        clearInterval(pollInterval);
+        document.getElementById('pendingState').style.display = 'none';
+        document.getElementById('failedState').style.display = 'block';
+        document.getElementById('failedDesc').textContent = data.description || 'Payment was not completed.';
+      }
+    } catch (e) {
+      console.log('Poll error:', e);
+    }
+  }
+</script>
+{% endblock %}

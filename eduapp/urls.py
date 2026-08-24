@@ -1,45 +1,51 @@
-from django.contrib import admin
 from django.urls import path
-from eduapp import views 
+from eduapp import views
 
 urlpatterns = [
+    # Public
     path('', views.index, name='index'),
-
-    path('login/', views.login_user, name='login'),
-    
-    path('events/', views.events, name='events'),
-
+    path('events/', views.events_list, name='events'),
+    path('events/<slug:slug>/', views.event_detail, name='event_detail'),
+    path('events/<slug:slug>/support/', views.event_support, name='event_support'),
     path('services/', views.services, name='services'),
-
     path('terms/', views.terms, name='terms'),
-
     path('privacy/', views.privacy, name='privacy'),
-
     path('sponser/', views.sponser, name='sponser'),
-
-    path('mentor/', views.mentor, name='mentor'),
-
-    path('admin_view/', views.admin, name='admin_view'),
-
-    path('patner/', views.patner, name='patner'),
-
-    path('mentorship_booking/', views.mentorship_booking, name='mentorship_booking'),
-    
-    path('learner/', views.support_application, name='learner'),
-
     path('message/', views.message, name='message'),
 
-    path('register/', views.register, name='register'),
-    
-    path('delete/<int:id>/', views.delete, name='delete'),
-    
+    # Mentor application flow
+    path('mentor/', views.mentor, name='mentor'),
+    path('mentor/<int:mentor_id>/pay/', views.payment_initiate, name='payment_initiate'),
+    path('payment/status/', views.payment_status, name='payment_status'),
+    path('payment/check/', views.check_payment_status, name='check_payment_status'),
+    path('mpesa/callback/', views.mpesa_callback, name='mpesa_callback'),
+
+    # Mentor dashboard
+    path('dashboard/', views.mentor_dashboard, name='mentor_dashboard'),
+
+    # Forms
+    path('learner/', views.support_application, name='learner'),
+    path('patner/', views.patner, name='patner'),
+    path('mentorship_booking/', views.mentorship_booking, name='mentorship_booking'),
+
+    # Admin dashboard
+    path('admin_view/', views.admin_view, name='admin_view'),
     path('approve_mentor/<int:id>/', views.approve_mentor, name='approve_mentor'),
+    path('reject_mentor/<int:id>/', views.reject_mentor, name='reject_mentor'),
     path('delete_mentor/<int:id>/', views.delete_mentor, name='delete_mentor'),
     path('approve_learner/<int:id>/', views.approve_learner, name='approve_learner'),
     path('delete_learner/<int:id>/', views.delete_learner, name='delete_learner'),
     path('approve_partner/<int:id>/', views.approve_partner, name='approve_partner'),
     path('delete_partner/<int:id>/', views.delete_partner, name='delete_partner'),
+    path('delete_message/<int:id>/', views.delete_message, name='delete_message'),
 
-    path('patner/', views.payment_page, name='payment_page'),
-    
+    # Events admin
+    path('events/create/', views.event_create, name='event_create'),
+    path('events/<int:id>/edit/', views.event_edit, name='event_edit'),
+    path('events/<int:id>/delete/', views.event_delete, name='event_delete'),
+
+    # Auth
+    path('login/', views.login_user, name='login'),
+    path('logout/', views.logout_user, name='logout'),
+    path('register/', views.register, name='register'),
 ]

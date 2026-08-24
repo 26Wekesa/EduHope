@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ event.title }} | B.O.L.D. Foundation{% endblock %}
+
+{% block content %}
+<section style="padding-top: 120px; padding-bottom: 60px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: #fff;">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8" data-aos="fade-right">
+        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">
+          Event Details
+        </span>
+        <h1 class="display-5 fw-bold mb-3">{{ event.title }}</h1>
+        <div class="d-flex flex-wrap gap-3 text-white-50 mb-0">
+          <span><i class="bi bi-calendar3 me-2"></i>{{ event.date|date:"d M Y H:i" }}</span>
+          <span><i class="bi bi-geo-alt me-2"></i>{{ event.location }}</span>
+        </div>
+      </div>
+      <div class="col-lg-4 text-center" data-aos="fade-left">
+        <div class="rounded-4 p-4 shadow-lg" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);">
+          <i class="bi bi-calendar-check text-info" style="font-size: 4rem;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5 bg-white">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-8" data-aos="fade-up">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          {% if event.image %}
+            <img src="{{ event.image.url }}" class="img-fluid w-100" alt="{{ event.title }}" style="height: 420px; object-fit: cover;">
+          {% else %}
+            <div style="height: 420px; background: linear-gradient(135deg, #0d1b4b 0%, #00c2e0 100%); display: flex; align-items: center; justify-content: center;">
+              <i class="bi bi-calendar-event text-white" style="font-size: 5rem;"></i>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+          <h4 class="fw-bold mb-3" style="color: #0d1b4b;">Support this event</h4>
+          <p class="text-secondary">Help us make this initiative a success by contributing through the same M-Pesa till used for mentor registration.</p>
+          <div class="alert alert-light border rounded-4 mb-3">
+            <strong>Till Number:</strong> {{ settings.MPESA_SHORTCODE|default:'174379' }}
+          </div>
+          <form method="post" action="{% url 'event_support' event.slug %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">Full name</label>
+              <input type="text" name="donor_name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone</label>
+              <input type="tel" name="phone" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Amount (KES)</label>
+              <input type="number" min="1" name="amount" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Donation type</label>
+              <select class="form-select" name="donation_type">
+                <option value="one_time">One-time</option>
+                <option value="monthly">Monthly</option>
+                <option value="annual">Annual</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Message</label>
+              <textarea class="form-control" name="message" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn w-100 rounded-pill fw-bold text-white" style="background: #0d1b4b;">Support Event</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-5" data-aos="fade-up">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h3 class="fw-bold mb-3" style="color: #0d1b4b;">About the event</h3>
+          <p class="text-secondary mb-0" style="line-height: 1.9;">{{ event.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'eduapp'
+    'eduapp',
+    'payment'
 ]
 
 MIDDLEWARE = [
@@ -119,3 +120,13 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+# App-specific defaults
+MENTOR_APPLICATION_FEE = 100
+MPESA_SHORTCODE = '174379'
+MPESA_PASSKEY = ''
+MPESA_ACCESS_TOKEN = ''
+MPESA_CALLBACK_URL = 'https://example.com/mpesa/callback/'
+
+# Authentication
+LOGIN_URL = '/login/'

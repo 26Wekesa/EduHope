@@ -6,19 +6,21 @@
 {% block content %}
 
 <section class="mentor section">
-  <div style="background: #e9f2ff; font-family: Arial, sans-serif;">
+  <div class="page-shell">
 
-    <div class="container" style="width:100%; min-height:70vh; display:flex; justify-content:center; align-items:center; padding:40px 0;">
+    <div class="container" style="max-width: 700px;">
 
-      <div class="card" style="width:650px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.12);">
+      <div class="page-card p-4 p-md-5">
 
-        <h3 style="text-align:center; color:#1e7221; font-weight:bold; margin-bottom:10px;">Apply to Be a Mentor</h3>
-        <p style="text-align:center; color:#666; margin-bottom:20px;">Share your experience and guide learners through mentorship sessions in leadership, digital literacy, and personal development.</p>
+        <div style="text-align: center; margin-bottom: 30px;">
+          <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">Become a Mentor</span>
+          <h3 style="color: #0d1b4b; font-weight: bold; margin-bottom: 10px; font-size: 28px;">Join Bold Foundation and guide learners to achieve their potential</h3>
+        </div>
 
         {% if messages %}
         <div style="margin-bottom: 20px;">
           {% for message in messages %}
-          <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px;">{{ message }}</div>
+          <div style="background: #d4edda; color: #155724; padding: 12px 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #28a745;">{{ message }}</div>
           {% endfor %}
         </div>
         {% endif %}
@@ -26,51 +28,52 @@
         <form id="mentorForm" method="post" action="/mentor/">
           {% csrf_token %}
 
-          <div style="display:flex; gap:15px; margin-bottom:15px;">
-            <div style="flex:1;">
-              <label style="font-weight:bold; color:#1e7221;">Full name</label>
-              <input type="text" name="name" id="name" required style="width:100%; padding:10px; border:1px solid #7e7e4b; border-radius:5px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+              <label style="font-weight: 600; color: #0a1f44; display: block; margin-bottom: 8px; font-size: 14px;">Full Name</label>
+              <input type="text" name="name" id="name" required style="width: 100%; padding: 12px; border: 2px solid #e0e6f0; border-radius: 8px; font-size: 14px; transition: all 0.3s; box-sizing: border-box;" onFocus="this.style.borderColor='#0a1f44'; this.style.boxShadow='0 0 0 3px rgba(10, 31, 68, 0.1)'" onBlur="this.style.borderColor='#e0e6f0'; this.style.boxShadow='none'">
             </div>
-            <div style="flex:1;">
-              <label style="font-weight:bold; color:#1e7221;">Email address</label>
-              <input type="email" name="email" id="email" required style="width:100%; padding:10px; border:1px solid #7e7e4b; border-radius:5px;">
-            </div>
-          </div>
-
-          <div style="display:flex; gap:15px; margin-bottom:15px;">
-            <div style="flex:1;">
-              <label style="font-weight:bold; color:#1e7221;">Phone</label>
-              <input type="text" name="phone" id="phone" style="width:100%; padding:10px; border:1px solid #7e7e4b; border-radius:5px;">
-            </div>
-            <div style="flex:1;">
-              <label style="font-weight:bold; color:#1e7221;">Organization (optional)</label>
-              <input type="text" name="organization" id="organization" style="width:100%; padding:10px; border:1px solid #7e7e4b; border-radius:5px;">
+            <div>
+              <label style="font-weight: 600; color: #0a1f44; display: block; margin-bottom: 8px; font-size: 14px;">Email Address</label>
+              <input type="email" name="email" id="email" required style="width: 100%; padding: 12px; border: 2px solid #e0e6f0; border-radius: 8px; font-size: 14px; transition: all 0.3s; box-sizing: border-box;" onFocus="this.style.borderColor='#0a1f44'; this.style.boxShadow='0 0 0 3px rgba(10, 31, 68, 0.1)'" onBlur="this.style.borderColor='#e0e6f0'; this.style.boxShadow='none'">
             </div>
           </div>
 
-          <div style="margin-bottom:15px;">
-            <label style="font-weight:bold; color:#1e7221;">Years of experience (optional)</label>
-            <input type="number" name="years" id="years" min="0" style="width:100%; padding:10px; border:1px solid #7e7e4b; border-radius:5px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+              <label style="font-weight: 600; color: #0a1f44; display: block; margin-bottom: 8px; font-size: 14px;">Phone Number</label>
+              <input type="tel" name="phone" id="phone" style="width: 100%; padding: 12px; border: 2px solid #e0e6f0; border-radius: 8px; font-size: 14px; transition: all 0.3s; box-sizing: border-box;" onFocus="this.style.borderColor='#0a1f44'; this.style.boxShadow='0 0 0 3px rgba(10, 31, 68, 0.1)'" onBlur="this.style.borderColor='#e0e6f0'; this.style.boxShadow='none'">
+            </div>
+            <div>
+              <label style="font-weight: 600; color: #0a1f44; display: block; margin-bottom: 8px; font-size: 14px;">Organization</label>
+              <input type="text" name="organization" id="organization" placeholder="e.g., Tech Company, NGO" style="width: 100%; padding: 12px; border: 2px solid #e0e6f0; border-radius: 8px; font-size: 14px; transition: all 0.3s; box-sizing: border-box;" onFocus="this.style.borderColor='#0a1f44'; this.style.boxShadow='0 0 0 3px rgba(10, 31, 68, 0.1)'" onBlur="this.style.borderColor='#e0e6f0'; this.style.boxShadow='none'">
+            </div>
           </div>
 
-          <div style="margin-bottom:15px;">
-            <label style="font-weight:bold; color:#1e7221;">Short bio / mentoring approach</label>
-            <textarea name="message" id="bio" rows="5" placeholder="Tell us about your mentoring experience and availability" style="width:100%; padding:10px; border:1px solid #7e7e4b; border-radius:5px;"></textarea>
+          <div style="margin-bottom: 20px;">
+            <label style="font-weight: 600; color: #0a1f44; display: block; margin-bottom: 8px; font-size: 14px;">Years of Experience</label>
+            <input type="number" name="years" id="years" min="0" placeholder="e.g., 5" style="width: 100%; padding: 12px; border: 2px solid #e0e6f0; border-radius: 8px; font-size: 14px; transition: all 0.3s; box-sizing: border-box;" onFocus="this.style.borderColor='#0a1f44'; this.style.boxShadow='0 0 0 3px rgba(10, 31, 68, 0.1)'" onBlur="this.style.borderColor='#e0e6f0'; this.style.boxShadow='none'">
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <label style="font-weight: 600; color: #0a1f44; display: block; margin-bottom: 8px; font-size: 14px;">About Your Mentoring Approach</label>
+            <textarea name="message" id="bio" rows="5" placeholder="Tell us about your mentoring experience, specialization, and availability..." style="width: 100%; padding: 12px; border: 2px solid #e0e6f0; border-radius: 8px; font-size: 14px; font-family: 'Poppins', sans-serif; transition: all 0.3s; box-sizing: border-box; resize: vertical;" onFocus="this.style.borderColor='#0a1f44'; this.style.boxShadow='0 0 0 3px rgba(10, 31, 68, 0.1)'" onBlur="this.style.borderColor='#e0e6f0'; this.style.boxShadow='none'"></textarea>
           </div>
 
           <input type="hidden" name="subject" id="subject" value="Mentor Registration">
 
-          <button type="submit" style="width:100%; background:#28a745; color:white; padding:12px; border:none; border-radius:5px; font-size:16px; font-weight:bold; cursor:pointer;">Submit Application</button>
+          <button type="submit" class="page-btn-primary" style="margin-bottom: 15px;">Submit Application</button>
 
         </form>
 
-        <div style="margin-top:18px; color:#666; font-size:14px;">
-          <h5 style="color:#1e7221; margin-bottom:8px;">Why Mentor with EduHope?</h5>
-          <p>Mentors provide guidance, share skills, and help learners build confidence. Your time and knowledge create lasting impact.</p>
-          <ul style="margin-left:18px;">
-            <li>Flexible mentorship sessions</li>
-            <li>Focused on leadership and digital skills</li>
-            <li>Support from the EduHope team</li>
+        <div style="background: #f8f9fb; padding: 20px; border-radius: 10px; border-left: 4px solid #0a1f44;">
+          <h5 style="color: #0a1f44; margin-bottom: 10px; font-weight: bold; font-size: 16px;">Why Mentor with Bold Foundation?</h5>
+          <p style="color: #555; margin-bottom: 12px; font-size: 14px;">Make a real difference in a learner's life by sharing your knowledge and experience.</p>
+          <ul style="margin-left: 20px; color: #555; font-size: 14px;">
+            <li style="margin-bottom: 6px;">Flexible mentorship schedules</li>
+            <li style="margin-bottom: 6px;">Mentor in leadership and digital literacy</li>
+            <li style="margin-bottom: 6px;">Full support from Bold Foundation team</li>
+            <li>Track your mentee's progress and growth</li>
           </ul>
         </div>
 

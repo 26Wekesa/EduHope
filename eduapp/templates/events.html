@@ -1,253 +1,156 @@
-{% extends 'starter-page.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
-{% block title %} Events {% endblock %}
+{% block title %}Events | B.O.L.D. Foundation{% endblock %}
 
 {% block content %}
- <!-- Page Title -->
-<div class="page-title">
-  <div class="breadcrumbs">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#"><i class="bi bi-house"></i> Home</a></li>
-        <li class="breadcrumb-item"><a href="#">Events</a></li>
-        <li class="breadcrumb-item active current">Event Details</li>
-      </ol>
-    </nav>
-  </div>
-
-  <div class="title-wrapper">
-    <h1>Event Details</h1>
-    <p>Get insights into our community events aimed at empowering children and supporting the B.OLD Foundation mission.</p>
-  </div>
-</div>
-<!-- End Page Title -->
-
-<!-- Events Details Section -->
-<section id="event-details" class="event-details section">
-
-  <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-    <div class="project-intro">
-      <div class="intro-content" data-aos="fade-up">
-        <div class="project-meta">
-          <span class="project-type">Community Event</span>
-          <span class="project-year">2024</span>
-        </div>
-        <h1 class="project-title">Chapati Festival Fundraiser</h1>
-        <p class="project-description">
-          A community-driven event dedicated to feeding, empowering, and supporting children through charity, mentorship, and engagement.
+<section style="padding-top: 120px; padding-bottom: 80px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: #fff;">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7" data-aos="fade-right">
+        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">
+          Community Events
+        </span>
+        <h1 class="display-5 fw-bold mb-3">Our work is rooted in action, mentorship, and community care.</h1>
+        <p class="fs-5 mb-0" style="line-height: 1.8; color: rgba(255,255,255,0.9);">
+          From fundraising and mentorship drives to public engagement and leadership programs, our events help boys grow into confident, respectful, and purpose-driven men.
         </p>
       </div>
-    </div>
-
-    <div class="project-showcase" data-aos="fade-up" data-aos-delay="200">
-      <div class="showcase-slider swiper init-swiper">
-        <script type="application/json" class="swiper-config">
-          {
-            "loop": true,
-            "speed": 800,
-            "autoplay": { "delay": 5000 },
-            "effect": "fade",
-            "fadeEffect": { "crossFade": true },
-            "slidesPerView": 1,
-            "pagination": { "el": ".swiper-pagination", "type": "bullets", "clickable": true }
-          }
-        </script>
-
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <img src="{% static 'assets/img/events/event-1.webp' %}" alt="Event showcase" class="img-fluid" loading="lazy">
-          </div>
-          <div class="swiper-slide">
-            <img src="{% static 'assets/img/events/event-2.webp' %}" alt="Event showcase" class="img-fluid" loading="lazy">
-          </div>
-          <div class="swiper-slide">
-            <img src="{% static 'assets/img/events/event-3.webp' %}" alt="Event showcase" class="img-fluid" loading="lazy">
-          </div>
-        </div>
-
-        <div class="swiper-pagination"></div>
-      </div>
-    </div>
-
-    <div class="project-details-grid">
-      <div class="row">
-
-        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
-          <div class="project-narrative">
-            <h2>Event Narrative</h2>
-            <p>
-              The Chapati Festival is an annual charity event organized by B.OLD Foundation to support underserved communities. 
-              The event brings together volunteers, parents, youth, and well-wishers to make chapati, distribute food, donate clothes, and mentor children.
-            </p>
-            <p>
-              This event is a pillar of our mission to empower the boy child by addressing emotional, social, and physical needs through direct community involvement.
-            </p>
-          </div>
-        </div>
-
-        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
-          <div class="project-info">
-            <div class="info-block">
-              <div class="info-label">Organizer</div>
-              <div class="info-value">B.OLD Foundation</div>
-            </div>
-            <div class="info-block">
-              <div class="info-label">Duration</div>
-              <div class="info-value">One Day</div>
-            </div>
-            <div class="info-block">
-              <div class="info-label">Location</div>
-              <div class="info-value">Local Community Grounds</div>
-            </div>
-            <div class="info-block">
-              <div class="info-label">Participants</div>
-              <div class="info-value">500+ Attendees</div>
-            </div>
-            <div class="info-block">
-              <div class="info-label">Purpose</div>
-              <div class="info-value">Feeding, Empowerment & Charity</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <div class="solution-approach" data-aos="fade-up" data-aos-delay="100">
-      <div class="approach-header">
-        <h2>Event Activities</h2>
-        <p>Highlights of what happens during the Chapati Festival.</p>
-      </div>
-
-      <div class="approach-steps">
-        <div class="step-item" data-aos="fade-up" data-aos-delay="150">
-          <div class="step-number">01</div>
-          <h3>Food Preparation & Feeding</h3>
-          <p>Volunteers prepare chapati and meals which are distributed to children and families in need.</p>
-        </div>
-
-        <div class="step-item" data-aos="fade-up" data-aos-delay="200">
-          <div class="step-number">02</div>
-          <h3>Clothing Donations</h3>
-          <p>New and gently used clothes are sorted and distributed to less-privileged children.</p>
-        </div>
-
-        <div class="step-item" data-aos="fade-up" data-aos-delay="250">
-          <div class="step-number">03</div>
-          <h3>Mentorship & Engagement</h3>
-          <p>Children are taught leadership, dignity, confidence, and social responsibility.</p>
+      <div class="col-lg-5 text-center" data-aos="fade-left">
+        <div class="p-4 rounded-4 shadow-lg" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);">
+          <i class="bi bi-calendar-event" style="font-size: 4rem; color: #00c2e0;"></i>
         </div>
       </div>
     </div>
-
-    <div class="project-gallery" data-aos="fade-up" data-aos-delay="100">
-      <h2>Event Gallery</h2>
-      <div class="gallery-grid">
-        <div class="gallery-item" data-aos="fade-up" data-aos-delay="150">
-          <img src="{% static 'assets/img/events/event-4.webp' %}" alt="Chapati making" class="img-fluid glightbox" loading="lazy">
-        </div>
-        <div class="gallery-item featured" data-aos="fade-up" data-aos-delay="200">
-          <img src="{% static 'assets/img/events/event-5.webp' %}" alt="Children enjoying" class="img-fluid glightbox" loading="lazy">
-        </div>
-        <div class="gallery-item" data-aos="fade-up" data-aos-delay="250">
-          <img src="{% static 'assets/img/events/event-6.webp' %}" alt="Volunteers" class="img-fluid glightbox" loading="lazy">
-        </div>
-        <div class="gallery-item" data-aos="fade-up" data-aos-delay="300">
-          <img src="{% static 'assets/img/events/event-7.webp' %}" alt="Donations" class="img-fluid glightbox" loading="lazy">
-        </div>
-      </div>
-    </div>
-
-    <div class="technologies-used" data-aos="fade-up" data-aos-delay="100">
-      <div class="row">
-        <div class="col-lg-6">
-          <h2>Partnerships</h2>
-          <p>This event is made possible through collaboration with sponsors, volunteers, and youth organizations dedicated to community empowerment.</p>
-        </div>
-        <div class="col-lg-6">
-          <div class="tech-stack">
-            <div class="tech-group" data-aos="fade-up" data-aos-delay="150">
-              <h4>Key Partners</h4>
-              <div class="tech-tags">
-                <span class="tech-tag">Local NGOs</span>
-                <span class="tech-tag">Community Leaders</span>
-                <span class="tech-tag">Youth Groups</span>
-              </div>
-            </div>
-
-            <div class="tech-group" data-aos="fade-up" data-aos-delay="200">
-              <h4>Sponsors</h4>
-              <div class="tech-tags">
-                <span class="tech-tag">Food Suppliers</span>
-                <span class="tech-tag">Clothing Donors</span>
-                <span class="tech-tag">Corporate Sponsors</span>
-              </div>
-            </div>
-
-            <div class="tech-group" data-aos="fade-up" data-aos-delay="250">
-              <h4>Support Teams</h4>
-              <div class="tech-tags">
-                <span class="tech-tag">Volunteers</span>
-                <span class="tech-tag">Mentors</span>
-                <span class="tech-tag">Community Workers</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="project-outcomes" data-aos="fade-up" data-aos-delay="100">
-      <div class="outcomes-header">
-        <h2>Key Impact</h2>
-      </div>
-
-      <div class="outcomes-grid">
-        <div class="outcome-card" data-aos="fade-up" data-aos-delay="150">
-          <div class="outcome-stat">1500+</div>
-          <div class="outcome-label">Children Fed</div>
-        </div>
-        <div class="outcome-card" data-aos="fade-up" data-aos-delay="200">
-          <div class="outcome-stat">700+</div>
-          <div class="outcome-label">Clothes Donated</div>
-        </div>
-        <div class="outcome-card" data-aos="fade-up" data-aos-delay="250">
-          <div class="outcome-stat">300+</div>
-          <div class="outcome-label">Volunteers Engaged</div>
-        </div>
-        <div class="outcome-card" data-aos="fade-up" data-aos-delay="300">
-          <div class="outcome-stat">10+</div>
-          <div class="outcome-label">Partner Organizations</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="project-navigation" data-aos="fade-up" data-aos-delay="200">
-      <div class="nav-container">
-        <a href="#" class="nav-item prev">
-          <span class="nav-label">Previous Event</span>
-          <span class="nav-title">Boy Child Mentorship Drive</span>
-        </a>
-
-        <a href="#" class="nav-item center">
-          <i class="bi bi-grid"></i>
-          <span>View All Events</span>
-        </a>
-
-        <a href="#" class="nav-item next">
-          <span class="nav-label">Next Event</span>
-          <span class="nav-title">One Boy One Tree Initiative</span>
-        </a>
-      </div>
-    </div>
-
   </div>
-
 </section>
-<!-- /Events Details Section -->
 
+<section class="py-5 bg-white">
+  <div class="container">
+    {% if featured_event %}
+    <div class="row align-items-center g-4 mb-5" data-aos="fade-up">
+      <div class="col-lg-7">
+        <div class="rounded-4 overflow-hidden shadow-sm border-0">
+          {% if featured_event.image %}
+            <img src="{{ featured_event.image.url }}" alt="{{ featured_event.title }}" class="img-fluid w-100" style="height: 430px; object-fit: cover;">
+          {% else %}
+            <div style="height: 430px; background: linear-gradient(135deg, #0d1b4b 0%, #00c2e0 100%); display: flex; align-items: center; justify-content: center;">
+              <i class="bi bi-calendar-event text-white" style="font-size: 5rem;"></i>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">Featured Event</span>
+        <h2 class="fw-bold mb-3" style="color: #0d1b4b;">{{ featured_event.title }}</h2>
+        <p class="text-secondary mb-3">{{ featured_event.description|truncatewords:40 }}</p>
+        <div class="d-flex align-items-center gap-3 mb-3 text-secondary flex-wrap">
+          <span><i class="bi bi-calendar3 me-2"></i>{{ featured_event.date|date:"d M Y" }}</span>
+          <span><i class="bi bi-geo-alt me-2"></i>{{ featured_event.location }}</span>
+        </div>
+        <a href="/events/{{ featured_event.slug }}/" class="btn rounded-pill fw-bold px-4" style="background: #0d1b4b; color: #fff;">Read More</a>
+      </div>
+    </div>
+    {% endif %}
 
+    {% if upcoming_events %}
+    <div class="mb-5" data-aos="fade-up">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+          <span class="badge rounded-pill px-3 py-2 mb-2" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">Upcoming Events</span>
+          <h2 class="fw-bold mb-0" style="color: #0d1b4b;">What’s coming next</h2>
+        </div>
+      </div>
+      <div class="row g-4">
+        {% for event in upcoming_events %}
+        <div class="col-lg-4 col-md-6">
+          <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
+            {% if event.image %}
+              <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}" style="height: 220px; object-fit: cover;">
+            {% else %}
+              <div style="height: 220px; background: linear-gradient(135deg, #0d1b4b 0%, #00c2e0 100%); display: flex; align-items: center; justify-content: center;">
+                <i class="bi bi-calendar-event text-white" style="font-size: 3rem;"></i>
+              </div>
+            {% endif %}
+            <div class="card-body p-4">
+              <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ event.date|date:"d M Y" }}</small>
+              <h5 class="fw-bold mt-3 mb-2" style="color: #0d1b4b;">{{ event.title }}</h5>
+              <p class="text-secondary small mb-3">{{ event.description|truncatewords:20 }}</p>
+              <div class="d-flex align-items-center gap-2 text-muted small">
+                <i class="bi bi-geo-alt text-danger"></i>
+                <span>{{ event.location }}</span>
+              </div>
+            </div>
+            <div class="card-footer bg-white border-0 p-4 pt-0">
+              <a href="/events/{{ event.slug }}/" class="btn w-100 rounded-pill fw-bold mb-2" style="border: 2px solid #0d1b4b; color: #0d1b4b;">View Event</a>
+              <a href="/events/{{ event.slug }}/" class="btn w-100 rounded-pill fw-bold" style="background: #0d1b4b; color: #fff;">Support Event</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5" data-aos="fade-up">
+      <div class="card border-0 shadow-sm rounded-4 p-5">
+        <i class="bi bi-calendar-x text-warning" style="font-size: 4rem;"></i>
+        <h3 class="mt-3 fw-bold" style="color: #0d1b4b;">No upcoming events yet</h3>
+        <p class="text-secondary mb-0">Keep checking back for new community opportunities.</p>
+      </div>
+    </div>
+    {% endif %}
 
+    {% if past_events %}
+    <div class="mb-5" data-aos="fade-up">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+          <span class="badge rounded-pill px-3 py-2 mb-2" style="background: #f4f7fb; color: #0d1b4b; font-weight: 700;">Past Events</span>
+          <h2 class="fw-bold mb-0" style="color: #0d1b4b;">What we have already done</h2>
+        </div>
+      </div>
+      <div class="row g-4">
+        {% for event in past_events %}
+        <div class="col-lg-4 col-md-6">
+          <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
+            {% if event.image %}
+              <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}" style="height: 220px; object-fit: cover; opacity: 0.9;">
+            {% else %}
+              <div style="height: 220px; background: linear-gradient(135deg, #eef4fb 0%, #dfeef8 100%); display: flex; align-items: center; justify-content: center;">
+                <i class="bi bi-clock-history text-primary" style="font-size: 3rem;"></i>
+              </div>
+            {% endif %}
+            <div class="card-body p-4">
+              <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ event.date|date:"d M Y" }}</small>
+              <h5 class="fw-bold mt-3 mb-2" style="color: #0d1b4b;">{{ event.title }}</h5>
+              <p class="text-secondary small mb-3">{{ event.description|truncatewords:20 }}</p>
+              <div class="d-flex align-items-center gap-2 text-muted small">
+                <i class="bi bi-geo-alt text-danger"></i>
+                <span>{{ event.location }}</span>
+              </div>
+            </div>
+            <div class="card-footer bg-white border-0 p-4 pt-0">
+              <a href="/events/{{ event.slug }}/" class="btn w-100 rounded-pill fw-bold" style="border: 2px solid #0d1b4b; color: #0d1b4b;">View Recap</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="py-5" style="background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: white;">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8" data-aos="fade-right">
+        <h2 class="fw-bold mb-3">Want to partner or support an event?</h2>
+        <p class="mb-0 lead" style="color: rgba(255,255,255,0.85);">Your support helps us create meaningful experiences for boys and communities across Kenya. You can also support specific upcoming events through the M-Pesa till below.</p>
+      </div>
+      <div class="col-lg-4 text-lg-end" data-aos="fade-left">
+        <a href="{% url 'patner' %}" class="btn btn-lg rounded-pill fw-bold px-4" style="background: #fff; color: #0d1b4b;">Become a Partner</a>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

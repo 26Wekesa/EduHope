@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Event | B.O.L.D. Foundation{% endblock %}
+
+{% block content %}
+<section style="padding-top: 120px; padding-bottom: 80px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: white;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-lg rounded-4 p-4 p-lg-5">
+          <h2 class="fw-bold mb-4" style="color: #0d1b4b;">{% if event %}Update Event{% else %}Create Event{% endif %}</h2>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Title</label>
+                <input type="text" name="title" class="form-control" value="{{ event.title|default:'' }}" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Slug</label>
+                <input type="text" name="slug" class="form-control" value="{{ event.slug|default:'' }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Date</label>
+                <input type="datetime-local" name="date" class="form-control" value="{% if event and event.date %}{{ event.date|date:'Y-m-d\TH:i' }}{% endif %}" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Location</label>
+                <input type="text" name="location" class="form-control" value="{{ event.location|default:'' }}" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="5" required>{{ event.description|default:'' }}</textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Image</label>
+                <input type="file" name="image" class="form-control" accept="image/*">
+              </div>
+              <div class="col-md-3 d-flex align-items-end">
+                <div class="form-check mt-4">
+                  <input class="form-check-input" type="checkbox" name="is_featured" {% if event and event.is_featured %}checked{% endif %} id="is_featured">
+                  <label class="form-check-label" for="is_featured">Featured</label>
+                </div>
+              </div>
+              <div class="col-md-3 d-flex align-items-end">
+                <div class="form-check mt-4">
+                  <input class="form-check-input" type="checkbox" name="is_published" {% if not event or event.is_published %}checked{% endif %} id="is_published">
+                  <label class="form-check-label" for="is_published">Published</label>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary rounded-pill mt-4 px-4">Save Event</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

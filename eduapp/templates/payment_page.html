@@ -1,19 +1,43 @@
 {% extends 'starter-page.html' %}
 {% load static %}
 
-{% block tittle %} Payment method {% endblock %}
+{% block title %}Mentor Registration Payment{% endblock %}
 {% block content %}
 
-<form action="{% url 'mpesa_pay' %}" method="post">
-    {% csrf_token %}
+<div class="page-shell" style="min-height:60vh;">
+    <div class="container" style="max-width:520px; margin:0 auto;">
+        <div class="page-card p-4 p-md-5">
+            <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">Mentor Registration</span>
+            <h4 style="color:#0d1b4b; margin-bottom:8px;">Complete your registration</h4>
+            <p style="color:#556; margin-bottom:16px;">Complete the required registration fee to finalize your mentor application.</p>
 
-    <input type="number" name="amount" placeholder="Amount (Ksh)" required>
-    <select name="Donation_type"required>
-        <option value="onetime_donation">One-Time</option>
-        <option value="monthly">Monthly</option>
-        <option value="annual">Annual</option>
-    </select>
-    <input type="tel" name="phone_number" placeholder="Phone Number (2547XXXXXXXX)" required>
-    <button type="submit" class="btn btn-outline-success"> Pay with Mpesa</button>
-</form>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-warning" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="{% url 'payment_initiate' mentor.id %}">
+                {% csrf_token %}
+
+                <div style="margin-bottom:12px; background:#f5f7fb; border-radius:10px; padding:14px; border:1px solid #e6edf7;">
+                    <label style="font-weight:700; color:#0a1f44; display:block; margin-bottom:6px;">Registration Fee</label>
+                    <div style="font-size:1.8rem; font-weight:800; color:#0a1f44;">KES {{ fee }}</div>
+                    <input type="hidden" name="amount" value="{{ fee }}">
+                </div>
+
+                <div style="margin-bottom:16px;">
+                    <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Phone Number</label>
+                    <input type="tel" name="phone" placeholder="07XXXXXXXX or 2547XXXXXXXX" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                </div>
+
+                <button type="submit" class="page-btn-primary">
+                    Pay KES {{ fee }} with M-Pesa
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
 {% endblock %}

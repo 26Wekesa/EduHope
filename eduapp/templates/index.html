@@ -1,171 +1,180 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% load static %}
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - EduHope </title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
+{% block title %}B.O.L.D. Foundation | Boys Of Leadership & Dignity{% endblock %}
 
-  {% load static %}
+{% block content %}
+<section class="hero-section" style="padding-top: 120px; padding-bottom: 80px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: #fff;">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6" data-aos="fade-right">
+        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">
+          Boys Of Leadership & Dignity
+        </span>
+        <h1 class="display-4 fw-bold mb-3">Empowering Boys. Building Leaders. Shaping Dignity.</h1>
+        <p class="fs-5 mb-4" style="line-height: 1.8; max-width: 620px; color: rgba(255,255,255,0.9);">
+          B.O.L.D. Foundation is a community-based organization founded on June 25th, 2025 by Kibabii University public speaking club members.
+          We empower, support, and advocate for the holistic development of the boy child through leadership, dignity, emotional intelligence, and social responsibility.
+        </p>
 
-  <!-- Favicons -->
-  <link href="" rel="icon">
-  <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{% url 'mentor' %}" class="btn btn-lg rounded-pill fw-bold px-4" style="background: #fff; color: #0d1b4b;">Get Involved</a>
+          <a href="mailto:boldfoundation59@gmail.com" class="btn btn-lg btn-outline-light rounded-pill fw-bold px-4">Contact Us</a>
+        </div>
+      </div>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
-  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
-
-  <!-- Main CSS File -->
-  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
-
-  <!-- =======================================================
-  * Template Name: Axis
-  * Template URL: https://bootstrapmade.com/axis-bootstrap-corporate-template/
-  * Updated: Sep 13 2025 with Bootstrap v5.3.8
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
-</head>
-
-<body class="index-page bg-white">
-
-  <header id="header" class="header d-flex align-items-center fixed-top bg-warning">
-    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-
-      <a href="index.html" class="logo d-flex align-items-center">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.webp" alt=""> -->
-        <h1 class="sitename text-bg-success rounded-2 px-4 py-2 mx-2">EduHope</h1>
-      </a>
-
-      <nav id="navmenu" class="navmenu">
-        <ul>
-          
-          <li><a href="{% url 'mentor'%}" class="btn btn-outline-success text-dark ms-1 me-2 px-4 py-2 mx-2 text-dark">Become a mentor</a></li>
-          <li><a href="{% url 'patner'%}" class="btn btn-outline-success text-dark me-2 px-4 py-2 mx-2 text-dark">Be part of us</a></li>
-          <li><a href="{% url 'message'%}" class="btn btn-outline-success text-dark me-2 px-4 py-2 mx-2 text-dark">Send us a message</a></li>
-          <li><a href="{% url 'learner'%}" class="btn btn-outline-success text-dark me-2 px-4 py-2 mx-2 text-dark">Register a learner</a></li>
-          <li><a href="{% url 'mentorship_booking'%}" class="btn btn-outline-success text-dark me-2 px-4 py-2 mx-2 text-dark">Book Mentorship</a></li>
-          
-           
-      
-          <li><a href="{% url 'login' %}" class="btn btn-outline-success me-2 px-4 py-2 mx-2 text-dark">Admin login</a></li>
-        </ul>
-        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-      </nav>
-
+      <div class="col-lg-6 text-center" data-aos="fade-left">
+        <img src="{% static 'assets/img/about/bold.jpg' %}" class="img-fluid rounded-4 shadow-lg" alt="B.O.L.D. Foundation" style="max-height: 520px; object-fit: cover; border: 4px solid rgba(255,255,255,0.25);">
+      </div>
     </div>
-  </header>
+  </div>
+</section>
 
-  <main class="main">
+<section class="py-5 bg-white">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-6" data-aos="fade-up">
+        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">About Us</span>
+        <h2 class="fw-bold mb-3" style="color: #0d1b4b;">A movement shaping confident, respectful men of purpose.</h2>
+        <p class="lead text-secondary">
+          B.O.L.D. Foundation was born from the lived experience of mentoring communities and schools through public speaking and mentorship programs.
+          Our mission is to nurture leadership, dignity, emotional intelligence, and social responsibility in every boy we reach.
+        </p>
+        <p class="text-secondary">
+          Our vision is a world where every boy grows into a confident, respectful, and purpose-driven man who leads and contributes positively to society.
+        </p>
+      </div>
 
-  <!-- Hero Section -->
-<section id="hero" class="hero section light-background">
-  <div class="container" data-aos="fade-up" data-aos-delay="100">
-    <div class="row align-items-center">
-      <div class="col-lg-12 text-center">
-        <div class="hero-content">
-
-          <h1 data-aos="fade-up" data-aos-delay="200">EduHope</h1>
-
-          <p class="lead mt-3" data-aos="fade-up" data-aos-delay="300">
-            EduHope is a trusted digital platform designed to bridge the gap
-            between learners, sponsors, mentors, and educational institutions.
-            We create meaningful connections that unlock access to education,
-            mentorship, and long-term opportunity.
-          </p>
-
-          <p class="text-muted mt-2" data-aos="fade-up" data-aos-delay="350">
-            By verifying learner profiles, coordinating sponsorships,
-            facilitating mentorship, and supporting school partnerships,
-            EduHope ensures transparency, accountability, and measurable
-            educational impact for every participant.
-          </p>
-
-          <!-- Centered CTA Buttons -->
-          <div class="hero-cta mt-4 d-flex justify-content-center gap-3"
-               data-aos="fade-up" data-aos-delay="400">
-            <a href="#about" class="btn btn-success">
-              Why Choose EduHope
-            </a>
-            <a href="{% url 'patner' %}" class="btn btn-outline-success">
-              Get Involved
-            </a>
+      <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <div class="card border-0 shadow-sm h-100 p-4 rounded-4" style="background: #f3f9ff;">
+              <h5 class="fw-bold mb-2" style="color: #0d1b4b;">Mission</h5>
+              <p class="mb-0 text-secondary">To empower, support, and advocate for the holistic development of the boy child.</p>
+            </div>
           </div>
-
+          <div class="col-sm-6">
+            <div class="card border-0 shadow-sm h-100 p-4 rounded-4" style="background: #f8f9fb;">
+              <h5 class="fw-bold mb-2" style="color: #0d1b4b;">Vision</h5>
+              <p class="mb-0 text-secondary">To build confident, respectful, and purpose-driven young men.</p>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="card border-0 shadow-sm p-4 rounded-4" style="background: linear-gradient(135deg, #eef9ff 0%, #f7f8fb 100%);">
+              <h5 class="fw-bold mb-3" style="color: #0d1b4b;">Our Core Values</h5>
+              <div class="d-flex flex-wrap gap-2">
+                <span class="badge rounded-pill bg-light text-dark border px-3 py-2">Kindness</span>
+                <span class="badge rounded-pill bg-light text-dark border px-3 py-2">Respect</span>
+                <span class="badge rounded-pill bg-light text-dark border px-3 py-2">Integrity</span>
+                <span class="badge rounded-pill bg-light text-dark border px-3 py-2">Accountability</span>
+                <span class="badge rounded-pill bg-light text-dark border px-3 py-2">Honesty</span>
+                <span class="badge rounded-pill bg-light text-dark border px-3 py-2">Collaboration</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
-<!-- /Hero Section -->
 
-<!-- About Section -->
-<section id="about" class="about section py-4">
-  <div class="container text-center" data-aos="fade-up">
-
-    <h2 class="mb-3">What We Do</h2>
-
-    <p class="mx-auto" style="max-width: 900px;">
-      EduHope connects learners who need support with sponsors willing to
-      invest in education, mentors offering guidance, and schools seeking
-      strategic partnerships. Through a secure and well-managed system,
-      we coordinate resources, track impact, and promote sustainable
-      educational development.
-    </p>
-
-  </div>
-</section>
-<!-- /About Section -->
-
-
-
-  <footer id="footer" class="footer dark-success">
-
-    
-    <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">EduHope Portal</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you've purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-        Designed by <a href="https://bootstrapmade.com/">Christopher Wekesa</a>
-      </div>
+<section class="py-5" style="background: #f8f9fb;">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <span class="badge rounded-pill px-4 py-2 mb-2" style="background: #dff7ff; color: #0d1b4b; font-weight: 700;">How We Help</span>
+      <h2 class="fw-bold" style="color: #0d1b4b;">Programs rooted in mentorship, leadership, and dignity</h2>
     </div>
 
-  </footer>
+    <div class="row g-4">
+      <div class="col-md-4" data-aos="fade-up">
+        <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+          <div class="mb-3" style="width: 52px; height: 52px; border-radius: 16px; background: #0d1b4b; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+            <i class="bi bi-people-fill"></i>
+          </div>
+          <h4 class="fw-bold mb-3" style="color: #0d1b4b;">Mentorship</h4>
+          <p class="text-secondary mb-0">We guide boys through mentorship that builds confidence, discipline, leadership, and self-worth.</p>
+        </div>
+      </div>
 
-  <!-- Scroll Top -->
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+          <div class="mb-3" style="width: 52px; height: 52px; border-radius: 16px; background: #10b981; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+            <i class="bi bi-mic-fill"></i>
+          </div>
+          <h4 class="fw-bold mb-3" style="color: #0d1b4b;">Public Speaking</h4>
+          <p class="text-secondary mb-0">We create spaces for boys to speak boldly, express ideas, and grow into articulate leaders.</p>
+        </div>
+      </div>
 
-  <!-- Preloader -->
-  <div id="preloader"></div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+          <div class="mb-3" style="width: 52px; height: 52px; border-radius: 16px; background: #00c2e0; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+            <i class="bi bi-geo-alt-fill"></i>
+          </div>
+          <h4 class="fw-bold mb-3" style="color: #0d1b4b;">Community Engagement</h4>
+          <p class="text-secondary mb-0">We partner with schools and communities to create opportunities for boys to thrive and contribute.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <!-- Vendor JS Files -->
-  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
-  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
-  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
-  <script src="{% static 'assets/vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+{% if upcoming_events %}
+<section class="py-5 bg-white">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <span class="badge rounded-pill px-4 py-2 mb-2" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">Upcoming Events</span>
+      <h2 class="fw-bold" style="color: #0d1b4b;">What’s happening in our community</h2>
+    </div>
 
-  <!-- Main JS File -->
-  <script src="{% static 'assets/js/main.js' %}"></script>
+    <div class="row g-4">
+      {% for event in upcoming_events %}
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:100 }}">
+        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+          {% if event.image %}
+            <img src="{{ event.image.url }}" class="card-img-top" style="height: 220px; object-fit: cover;" alt="{{ event.title }}">
+          {% else %}
+            <div style="height:220px; background: linear-gradient(135deg, #0d1b4b 0%, #00c2e0 100%); display:flex; align-items:center; justify-content:center;">
+              <i class="bi bi-calendar-event text-white" style="font-size:3rem;"></i>
+            </div>
+          {% endif %}
+          <div class="card-body p-4">
+            <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ event.date|date:"d M Y" }}</small>
+            <h5 class="fw-bold mt-2" style="color: #0d1b4b;">{{ event.title }}</h5>
+            <p class="text-secondary small mb-3">{{ event.description|truncatewords:20 }}</p>
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-geo-alt text-danger"></i>
+              <small class="text-muted">{{ event.location }}</small>
+            </div>
+          </div>
+          <div class="card-footer bg-white border-0 p-4 pt-0">
+            <a href="/events/{{ event.slug }}/" class="btn w-100 rounded-pill fw-bold" style="border: 2px solid #0d1b4b; color: #0d1b4b;">Learn More</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
 
-</body>
+    <div class="text-center mt-5">
+      <a href="/events/" class="btn btn-lg rounded-pill fw-bold text-white px-5" style="background: #0d1b4b;">View All Events</a>
+    </div>
+  </div>
+</section>
+{% endif %}
 
-</html>
+<section class="py-5" style="background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: white;">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8" data-aos="fade-right">
+        <h2 class="fw-bold mb-3">Be part of the change.</h2>
+        <p class="mb-0 lead" style="color: rgba(255,255,255,0.85);">
+          Whether you want to mentor, partner, sponsor, or support a learner, your involvement can help shape a stronger generation of boys and men.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end" data-aos="fade-left">
+        <a href="{% url 'mentor' %}" class="btn btn-lg rounded-pill fw-bold px-4" style="background: #fff; color: #0d1b4b;">Join Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
