@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Privacy - Axis Bootstrap Template</title>
+  <title>Privacy Policy | Bold Foundation</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -26,7 +26,46 @@
   <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 
   <!-- Main CSS File -->
-  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/css/main.css' %}?v=20260916" rel="stylesheet">
+
+  <style>
+    body.privacy-page { background: #fff; color: #586579; }
+    .privacy-page .footer.dark-background { background: #0d1b4b; color: #aaa; }
+    .privacy-page .footer.dark-background a { color: #aaa; }
+    .privacy-page .footer.dark-background a:hover { color: #00c2e0; }
+    .privacy-page .footer.dark-background h4, .privacy-page .footer.dark-background .sitename { color: #fff; }
+    .privacy-page .page-title, .terms-page .page-title { padding: 145px 0 78px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 68%, #00a9c7 100%); color: #fff; }
+    .privacy-page .page-title .breadcrumbs, .terms-page .page-title .breadcrumbs { color: rgba(255,255,255,.7); }
+    .privacy-page .page-title .breadcrumb-item, .privacy-page .page-title .breadcrumb-item a, .terms-page .page-title .breadcrumb-item, .terms-page .page-title .breadcrumb-item a { color: rgba(255,255,255,.78); }
+    .privacy-page .page-title .title-wrapper h1, .terms-page .page-title .title-wrapper h1 { color: #fff; font-weight: 800; }
+    .privacy-page .page-title .title-wrapper p, .terms-page .page-title .title-wrapper p { color: rgba(255,255,255,.86); max-width: 720px; }
+    .privacy-page .privacy, .terms-page .terms-of-service { background: #f8f9fb; }
+    .privacy-page .privacy-content, .terms-page .tos-content { background: #fff; border-radius: 20px; padding: 2rem 2.5rem; box-shadow: 0 1rem 3rem rgba(13,27,75,.1); }
+    .privacy-page .privacy-section { border-bottom: 1px solid #e9eef5; padding: 2rem 0; }
+    .privacy-page .privacy-section:last-child { border-bottom: 0; }
+    .privacy-page .privacy-section h3, .privacy-page .privacy-section h4 { color: #0d1b4b; font-weight: 700; }
+    .privacy-page .privacy-section p, .privacy-page .privacy-section li { color: #586579; line-height: 1.8; }
+    .privacy-page .highlight-box, .privacy-page .info-box { border-radius: 14px; background: #eef9ff; border-left: 4px solid #00c2e0; }
+    .privacy-page .measure-item, .privacy-page .right-item { background: #f8f9fb !important; color: #586579; }
+    .privacy-page .privacy-section h5 { color: #0d1b4b; }
+    .privacy-page .privacy-section p, .privacy-page .privacy-section li { color: #586579; }
+    .privacy-page .highlight-box { background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); }
+    .privacy-page .privacy-content .privacy-section .info-box,
+    .privacy-page .privacy-content .privacy-section .measure-item,
+    .privacy-page .privacy-content .privacy-section .right-item { background: #f8f9fb !important; color: #586579 !important; }
+    .privacy-page .privacy-content .privacy-section .highlight-box { background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%) !important; color: #fff !important; }
+    .privacy-page .privacy-content .privacy-section .info-box h4,
+    .privacy-page .privacy-content .privacy-section .measure-item h5,
+    .privacy-page .privacy-content .privacy-section .right-item h5 { color: #0d1b4b !important; }
+    .privacy-page .privacy-content .privacy-section .info-box li,
+    .privacy-page .privacy-content .privacy-section .measure-item p,
+    .privacy-page .privacy-content .privacy-section .right-item p { color: #586579 !important; }
+    .privacy-page .privacy-content .privacy-section .highlight-box h4,
+    .privacy-page .privacy-content .privacy-section .highlight-box p,
+    .privacy-page .privacy-content .privacy-section .highlight-box i { color: #fff !important; }
+    .privacy-page .contact-section { background: #0d1b4b; border-radius: 18px; padding: 2rem; }
+    .privacy-page .contact-section h3, .privacy-page .contact-section p, .privacy-page .contact-section span { color: #fff; }
+  </style>
 
   <!-- =======================================================
   * Template Name: Axis
@@ -42,7 +81,7 @@
   <nav class="navbar navbar-bold navbar-expand-lg fixed-top" id="mainNav">
     <div class="container">
       <a class="navbar-brand fw-bold text-white fs-4" href="/">
-        <img src="{% static 'assets/img/logo.webp' %}" height="40" alt="Bold Foundation"> EduLink
+        <img src="{% static 'assets/img/logo.webp' %}" height="40" alt="Bold Foundation"> Bold Foundation
       </a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
         <span class="navbar-toggler-icon"></span>
@@ -76,16 +115,15 @@
       <div class="breadcrumbs">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#"><i class="bi bi-house"></i> Home</a></li>
-            <li class="breadcrumb-item"><a href="#">Category</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'index' %}"><i class="bi bi-house"></i> Home</a></li>
             <li class="breadcrumb-item active current">Privacy</li>
           </ol>
         </nav>
       </div>
 
       <div class="title-wrapper">
-        <h1>Privacy</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p>
+        <h1>Privacy Policy</h1>
+        <p>A clear guide to the information Bold Foundation collects, why we use it, and the choices available to you.</p>
       </div>
     </div><!-- End Page Title -->
 
@@ -99,54 +137,54 @@
 
             <div class="privacy-content">
               <div class="last-updated" data-aos="fade-up" data-aos-delay="200">
-                <p><strong>Last updated:</strong> December 15, 2024</p>
+                <p><strong>Last updated:</strong> September 16, 2026</p>
               </div>
 
               <div class="privacy-section" data-aos="fade-up" data-aos-delay="300">
                 <h3>Information We Collect</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>We collect information you submit when you apply for learner support, book mentorship, apply as a mentor, request a partnership, contact us, or support an event.</p>
 
                 <h4>Personal Information</h4>
                 <ul>
-                  <li>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum</li>
-                  <li>Excepteur sint occaecat cupidatat non proident sunt in culpa</li>
-                  <li>Qui officia deserunt mollitia animi id est laborum</li>
-                  <li>Sed ut perspiciatis unde omnis iste natus error sit voluptatem</li>
+                  <li>Names and contact details</li>
+                  <li>School, learner, or organisation information</li>
+                  <li>Programme preferences and messages</li>
+                  <li>Details needed to coordinate support safely</li>
                 </ul>
 
                 <h4>Usage Data</h4>
-                <p>Accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur.</p>
+                <p>Our website may receive basic browser, device, and page-visit information to help us keep the service reliable and secure.</p>
               </div>
 
               <div class="privacy-section" data-aos="fade-up" data-aos-delay="400">
                 <h3>How We Use Your Information</h3>
-                <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.</p>
+                <p>We use your information to respond to requests, coordinate programmes, communicate follow-ups, improve the website, and meet legal, accounting, safeguarding, and fraud-prevention responsibilities.</p>
 
                 <div class="info-box">
                   <h4>Primary Uses</h4>
                   <ol>
-                    <li>Similique sunt in culpa qui officia deserunt mollitia</li>
-                    <li>Et harum quidem rerum facilis est et expedita distinctio</li>
-                    <li>Nam libero tempore cum soluta nobis est eligendi</li>
-                    <li>Temporibus autem quibusdam et aut officiis debitis</li>
+                    <li>Review and respond to applications and bookings</li>
+                    <li>Coordinate mentors, learners, partners, and events</li>
+                    <li>Protect the safety of programme participants</li>
+                    <li>Improve website security and accessibility</li>
                   </ol>
                 </div>
               </div>
 
               <div class="privacy-section" data-aos="fade-up" data-aos-delay="500">
                 <h3>Information Sharing and Disclosure</h3>
-                <p>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet consectetur adipisci velit sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+                <p>We do not sell your personal information. We may share relevant information with trusted providers who help operate the website, where required by law, or where necessary to protect a learner, participant, or staff member.</p>
 
                 <div class="highlight-box" data-aos="fade-up" data-aos-delay="600">
                   <i class="bi bi-shield-check"></i>
                   <h4>We Never Sell Your Data</h4>
-                  <p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam nisi ut aliquid ex ea commodi consequatur.</p>
+                  <p>Your information is used only for legitimate programme, service, communication, security, or legal purposes.</p>
                 </div>
               </div>
 
               <div class="privacy-section" data-aos="fade-up" data-aos-delay="700">
                 <h3>Data Security</h3>
-                <p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur vel illum qui dolorem eum fugiat quo voluptas nulla pariatur.</p>
+                <p>We use reasonable administrative and technical measures to protect information from unauthorized access, loss, misuse, or disclosure. No online service can guarantee absolute security.</p>
 
                 <div class="security-measures">
                   <div class="row">
@@ -154,14 +192,14 @@
                       <div class="measure-item">
                         <i class="bi bi-lock-fill"></i>
                         <h5>Encryption</h5>
-                        <p>Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt.</p>
+                        <p>Access to information is limited to people who need it for an approved programme or operational purpose.</p>
                       </div>
                     </div>
                     <div class="col-md-6" data-aos="fade-left" data-aos-delay="900">
                       <div class="measure-item">
                         <i class="bi bi-server"></i>
                         <h5>Secure Storage</h5>
-                        <p>Mollitia animi id est laborum et dolorum fuga et harum quidem rerum facilis.</p>
+                        <p>We retain information only for as long as reasonably needed for programme records, legal obligations, or dispute resolution.</p>
                       </div>
                     </div>
                   </div>
@@ -170,28 +208,28 @@
 
               <div class="privacy-section" data-aos="fade-up" data-aos-delay="1000">
                 <h3>Your Rights</h3>
-                <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem aperiam eaque ipsa quae ab illo inventore veritatis.</p>
+                <p>You may ask us to access, correct, or delete your personal information, subject to legal and safeguarding requirements.</p>
 
                 <div class="rights-list">
                   <div class="right-item">
                     <i class="bi bi-eye"></i>
                     <div>
                       <h5>Right to Access</h5>
-                      <p>Et quasi architecto beatae vitae dicta sunt explicabo nemo enim ipsam voluptatem.</p>
+                      <p>Ask what personal information we hold about you and how it is being used.</p>
                     </div>
                   </div>
                   <div class="right-item">
                     <i class="bi bi-pencil"></i>
                     <div>
                       <h5>Right to Rectification</h5>
-                      <p>Quia voluptas sit aspernatur aut odit aut fugit sed quia consequuntur magni.</p>
+                      <p>Request corrections where the information we hold is inaccurate or incomplete.</p>
                     </div>
                   </div>
                   <div class="right-item">
                     <i class="bi bi-trash"></i>
                     <div>
                       <h5>Right to Erasure</h5>
-                      <p>Dolores eos qui ratione voluptatem sequi nesciunt neque porro quisquam est.</p>
+                      <p>Request deletion where there is no continuing legal or safeguarding reason to retain it.</p>
                     </div>
                   </div>
                 </div>
@@ -199,7 +237,7 @@
 
               <div class="privacy-section" data-aos="fade-up" data-aos-delay="1100">
                 <h3>Cookies and Tracking</h3>
-                <p>Qui dolorem ipsum quia dolor sit amet consectetur adipisci velit sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+                <p>We may use essential session storage to support navigation, security, and functions such as remembering terms acceptance. You can manage cookies through your browser.</p>
 
                 <div class="cookie-types">
                   <h4>Types of Cookies We Use</h4>
@@ -215,18 +253,18 @@
                       <tbody>
                         <tr>
                           <td>Essential</td>
-                          <td>Ut enim ad minima veniam quis nostrum</td>
+                          <td>Navigation, security, and session functions</td>
                           <td>Session</td>
                         </tr>
                         <tr>
                           <td>Analytics</td>
-                          <td>Exercitationem ullam corporis suscipit</td>
-                          <td>2 Years</td>
+                          <td>Understanding website use</td>
+                          <td>As needed</td>
                         </tr>
                         <tr>
                           <td>Marketing</td>
-                          <td>Laboriosam nisi ut aliquid ex ea commodi</td>
-                          <td>1 Year</td>
+                          <td>Not used</td>
+                          <td>None</td>
                         </tr>
                       </tbody>
                     </table>
@@ -236,25 +274,25 @@
 
               <div class="privacy-section" data-aos="fade-up" data-aos-delay="1200">
                 <h3>Changes to This Privacy Policy</h3>
-                <p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur vel illum qui dolorem eum fugiat quo voluptas nulla pariatur.</p>
+                <p>We may update this policy when our services, legal obligations, or safeguarding practices change. The latest version will be posted here with its revision date.</p>
               </div>
 
               <div class="contact-section" data-aos="fade-up" data-aos-delay="1300">
                 <h3>Contact Us</h3>
-                <p>Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollitia animi id est laborum sed ut perspiciatis unde omnis.</p>
+                <p>For privacy questions or requests, contact Bold Foundation and we will respond as soon as reasonably possible.</p>
 
                 <div class="contact-info">
                   <div class="contact-item">
                     <i class="bi bi-envelope"></i>
-                    <span>privacy@example.com</span>
+                    <span>boldfoundation59@gmail.com</span>
                   </div>
                   <div class="contact-item">
                     <i class="bi bi-geo-alt"></i>
-                    <span>1234 Privacy Street, Legal City, LC 12345</span>
+                    <span>Bold Foundation, Kenya</span>
                   </div>
                   <div class="contact-item">
                     <i class="bi bi-telephone"></i>
-                    <span>+1 (555) 123-4567</span>
+                    <span>Contact us by email</span>
                   </div>
                 </div>
               </div>
@@ -275,10 +313,10 @@
     <div class="container footer-top">
       <div class="row gy-4">
         <div class="col-lg-5 col-md-12 footer-about">
-          <a href="index.html" class="logo d-flex align-items-center">
-            <span class="sitename">Axis</span>
+          <a href="{% url 'index' %}" class="logo d-flex align-items-center">
+            <span class="sitename">Bold Foundation</span>
           </a>
-          <p>Cras fermentum odio eu feugiat lide par naso tierra. Justo eget nada terra videa magna derita valies darta donna mare fermentum iaculis eu non diam phasellus.</p>
+          <p>Empowering the next generation through mentorship, education, and community support.</p>
           <div class="social-links d-flex mt-4">
             <a href=""><i class="bi bi-twitter-x"></i></a>
             <a href=""><i class="bi bi-facebook"></i></a>
@@ -290,45 +328,44 @@
         <div class="col-lg-2 col-6 footer-links">
           <h4>Useful Links</h4>
           <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About us</a></li>
-            <li><a href="#">Services</a></li>
-            <li><a href="#">Terms of service</a></li>
-            <li><a href="#">Privacy policy</a></li>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="{% url 'events' %}">Events</a></li>
+            <li><a href="{% url 'services' %}">Mentorship</a></li>
+            <li><a href="{% url 'terms' %}">Terms of service</a></li>
+            <li><a href="{% url 'privacy' %}">Privacy policy</a></li>
           </ul>
         </div>
 
         <div class="col-lg-2 col-6 footer-links">
           <h4>Our Services</h4>
           <ul>
-            <li><a href="#">Web Design</a></li>
-            <li><a href="#">Web Development</a></li>
-            <li><a href="#">Product Management</a></li>
-            <li><a href="#">Marketing</a></li>
-            <li><a href="#">Graphic Design</a></li>
+            <li><a href="{% url 'mentor' %}">Apply as Mentor</a></li>
+            <li><a href="{% url 'learner' %}">Support a Learner</a></li>
+            <li><a href="{% url 'patner' %}">Partner with Us</a></li>
+            <li><a href="{% url 'events' %}">Community Events</a></li>
+            <li><a href="{% url 'sponser' %}">Sponsor a Programme</a></li>
           </ul>
         </div>
 
         <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
           <h4>Contact Us</h4>
-          <p>A108 Adam Street</p>
-          <p>New York, NY 535022</p>
-          <p>United States</p>
-          <p class="mt-4"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-          <p><strong>Email:</strong> <span>info@example.com</span></p>
+          <p>Bold Foundation</p>
+          <p>Kenya</p>
+          <p class="mt-4"><strong>Support:</strong> <span>Available by email</span></p>
+          <p><strong>Email:</strong> <a href="mailto:boldfoundation59@gmail.com">boldfoundation59@gmail.com</a></p>
         </div>
 
       </div>
     </div>
 
     <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Axis</strong> <span>All Rights Reserved</span></p>
+      <p>© 2025 Bold Foundation. All rights reserved.</p>
       <div class="credits">
         <!-- All the links in the footer should remain intact. -->
         <!-- You can delete the links only if you've purchased the pro version. -->
         <!-- Licensing information: https://bootstrapmade.com/license/ -->
         <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        Bold Foundation
       </div>
     </div>
 

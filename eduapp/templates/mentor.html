@@ -17,6 +17,16 @@
           <h3 style="color: #0d1b4b; font-weight: bold; margin-bottom: 10px; font-size: 28px;">Join Bold Foundation and guide learners to achieve their potential</h3>
         </div>
 
+        <div style="background: #f8f9fb; padding: 20px; border-radius: 10px; border-left: 4px solid #0d1b4b; margin-bottom: 25px;">
+          <h5 style="color: #0d1b4b; margin-bottom: 10px; font-weight: bold;">How to apply</h5>
+          <ol style="color: #555; margin-bottom: 0; padding-left: 20px; font-size: 14px;">
+            <li>Enter your name and contact details.</li>
+            <li>Add your organization and years of experience, if applicable.</li>
+            <li>Tell us about your mentoring approach, skills, and availability.</li>
+            <li>Review your details, then select <strong>Submit Application</strong>.</li>
+          </ol>
+        </div>
+
         {% if messages %}
         <div style="margin-bottom: 20px;">
           {% for message in messages %}
@@ -25,44 +35,82 @@
         </div>
         {% endif %}
 
+        <style>
+          .form-section { margin-bottom: 20px; }
+          .form-section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+          .form-section-title i { font-size: 20px; color: #0a1f44; }
+          .form-section-title h5 { margin: 0; color: #0a1f44; font-weight: 600; font-size: 14px; }
+          .form-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+          .form-group.full { grid-template-columns: 1fr; }
+          .form-group input, .form-group select, .form-group textarea {
+            padding: 12px 18px !important;
+            border-radius: 25px !important;
+            background: #1a1a1a !important;
+            color: white !important;
+            border: 2px solid #333 !important;
+            font-size: 13px !important;
+            transition: all 0.3s;
+          }
+          .form-group input::placeholder, .form-group textarea::placeholder { color: #999 !important; }
+          .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            background: #252525 !important;
+            border-color: #0a1f44 !important;
+            box-shadow: 0 0 0 3px rgba(10, 31, 68, 0.1) !important;
+          }
+          .form-actions { display: flex; gap: 12px; margin-top: 25px; }
+          .btn-back { flex: 1; padding: 12px 20px; border: 2px solid #0a1f44; background: white; color: #0a1f44; border-radius: 25px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+          .btn-back:hover { background: #f0f4f9; }
+          .btn-submit { flex: 1; padding: 12px 20px; background: #e91e8c; color: white; border: none; border-radius: 25px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+          .btn-submit:hover { background: #d11a7a; }
+        </style>
+
         <form id="mentorForm" method="post" action="/mentor/">
           {% csrf_token %}
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-            <div>
-              <label style="font-weight: 600; color: #0a1f44; display: block; margin-bottom: 8px; font-size: 14px;">Full Name</label>
-              <input type="text" name="name" id="name" required style="width: 100%; padding: 12px; border: 2px solid #e0e6f0; border-radius: 8px; font-size: 14px; transition: all 0.3s; box-sizing: border-box;" onFocus="this.style.borderColor='#0a1f44'; this.style.boxShadow='0 0 0 3px rgba(10, 31, 68, 0.1)'" onBlur="this.style.borderColor='#e0e6f0'; this.style.boxShadow='none'">
+          <!-- Personal Information -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="bi bi-person-fill"></i>
+              <h5>Personal Information</h5>
             </div>
-            <div>
-              <label style="font-weight: 600; color: #0a1f44; display: block; margin-bottom: 8px; font-size: 14px;">Email Address</label>
-              <input type="email" name="email" id="email" required style="width: 100%; padding: 12px; border: 2px solid #e0e6f0; border-radius: 8px; font-size: 14px; transition: all 0.3s; box-sizing: border-box;" onFocus="this.style.borderColor='#0a1f44'; this.style.boxShadow='0 0 0 3px rgba(10, 31, 68, 0.1)'" onBlur="this.style.borderColor='#e0e6f0'; this.style.boxShadow='none'">
-            </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-            <div>
-              <label style="font-weight: 600; color: #0a1f44; display: block; margin-bottom: 8px; font-size: 14px;">Phone Number</label>
-              <input type="tel" name="phone" id="phone" style="width: 100%; padding: 12px; border: 2px solid #e0e6f0; border-radius: 8px; font-size: 14px; transition: all 0.3s; box-sizing: border-box;" onFocus="this.style.borderColor='#0a1f44'; this.style.boxShadow='0 0 0 3px rgba(10, 31, 68, 0.1)'" onBlur="this.style.borderColor='#e0e6f0'; this.style.boxShadow='none'">
-            </div>
-            <div>
-              <label style="font-weight: 600; color: #0a1f44; display: block; margin-bottom: 8px; font-size: 14px;">Organization</label>
-              <input type="text" name="organization" id="organization" placeholder="e.g., Tech Company, NGO" style="width: 100%; padding: 12px; border: 2px solid #e0e6f0; border-radius: 8px; font-size: 14px; transition: all 0.3s; box-sizing: border-box;" onFocus="this.style.borderColor='#0a1f44'; this.style.boxShadow='0 0 0 3px rgba(10, 31, 68, 0.1)'" onBlur="this.style.borderColor='#e0e6f0'; this.style.boxShadow='none'">
+            <div class="form-group">
+              <input type="text" name="name" id="name" placeholder="Full Name" required>
+              <input type="email" name="email" id="email" placeholder="Email Address" required>
             </div>
           </div>
 
-          <div style="margin-bottom: 20px;">
-            <label style="font-weight: 600; color: #0a1f44; display: block; margin-bottom: 8px; font-size: 14px;">Years of Experience</label>
-            <input type="number" name="years" id="years" min="0" placeholder="e.g., 5" style="width: 100%; padding: 12px; border: 2px solid #e0e6f0; border-radius: 8px; font-size: 14px; transition: all 0.3s; box-sizing: border-box;" onFocus="this.style.borderColor='#0a1f44'; this.style.boxShadow='0 0 0 3px rgba(10, 31, 68, 0.1)'" onBlur="this.style.borderColor='#e0e6f0'; this.style.boxShadow='none'">
+          <!-- Contact & Organization -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="bi bi-telephone-fill"></i>
+              <h5>Contact Details</h5>
+            </div>
+            <div class="form-group">
+              <input type="tel" name="phone" id="phone" placeholder="Phone Number">
+              <input type="text" name="organization" id="organization" placeholder="Organization (Optional)">
+            </div>
+            <div class="form-group">
+              <input type="number" name="years" id="years" min="0" placeholder="Years of Experience">
+            </div>
           </div>
 
-          <div style="margin-bottom: 20px;">
-            <label style="font-weight: 600; color: #0a1f44; display: block; margin-bottom: 8px; font-size: 14px;">About Your Mentoring Approach</label>
-            <textarea name="message" id="bio" rows="5" placeholder="Tell us about your mentoring experience, specialization, and availability..." style="width: 100%; padding: 12px; border: 2px solid #e0e6f0; border-radius: 8px; font-size: 14px; font-family: 'Poppins', sans-serif; transition: all 0.3s; box-sizing: border-box; resize: vertical;" onFocus="this.style.borderColor='#0a1f44'; this.style.boxShadow='0 0 0 3px rgba(10, 31, 68, 0.1)'" onBlur="this.style.borderColor='#e0e6f0'; this.style.boxShadow='none'"></textarea>
+          <!-- Mentoring Details -->
+          <div class="form-section">
+            <div class="form-section-title">
+              <i class="bi bi-chat-left-text-fill"></i>
+              <h5>Mentoring Approach</h5>
+            </div>
+            <div class="form-group full">
+              <textarea name="message" id="bio" rows="5" placeholder="Tell us about your mentoring experience, specialization, and availability..."></textarea>
+            </div>
           </div>
 
           <input type="hidden" name="subject" id="subject" value="Mentor Registration">
 
-          <button type="submit" class="page-btn-primary" style="margin-bottom: 15px;">Submit Application</button>
+          <div class="form-actions">
+            <button type="button" class="btn-back" onclick="history.back();">Back to Previous</button>
+            <button type="submit" class="btn-submit">Submit Application</button>
+          </div>
 
         </form>
 

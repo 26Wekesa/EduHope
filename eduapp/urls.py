@@ -3,8 +3,12 @@ from eduapp import views
 
 urlpatterns = [
     # Public
+    path('health/', views.health_check, name='health_check'),
     path('', views.index, name='index'),
     path('events/', views.events_list, name='events'),
+    path('events/create/', views.event_create, name='event_create'),
+    path('events/<int:id>/edit/', views.event_edit, name='event_edit'),
+    path('events/<int:id>/delete/', views.event_delete, name='event_delete'),
     path('events/<slug:slug>/', views.event_detail, name='event_detail'),
     path('events/<slug:slug>/support/', views.event_support, name='event_support'),
     path('services/', views.services, name='services'),
@@ -38,11 +42,6 @@ urlpatterns = [
     path('approve_partner/<int:id>/', views.approve_partner, name='approve_partner'),
     path('delete_partner/<int:id>/', views.delete_partner, name='delete_partner'),
     path('delete_message/<int:id>/', views.delete_message, name='delete_message'),
-
-    # Events admin
-    path('events/create/', views.event_create, name='event_create'),
-    path('events/<int:id>/edit/', views.event_edit, name='event_edit'),
-    path('events/<int:id>/delete/', views.event_delete, name='event_delete'),
 
     # Auth
     path('login/', views.login_user, name='login'),

@@ -24,31 +24,68 @@
         </div>
         {% endif %}
 
-        <form method="post">
+        <style>
+          .msg-form input, .msg-form textarea {
+            padding: 12px 18px !important;
+            border-radius: 25px !important;
+            background: #1a1a1a !important;
+            color: white !important;
+            border: 2px solid #333 !important;
+            font-size: 13px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+          }
+          .msg-form textarea { border-radius: 18px !important; }
+          .msg-form input::placeholder, .msg-form textarea::placeholder { color: #999 !important; }
+          .msg-form input:focus, .msg-form textarea:focus {
+            background: #252525 !important;
+            border-color: #0a1f44 !important;
+            box-shadow: 0 0 0 3px rgba(10, 31, 68, 0.1) !important;
+            outline: none !important;
+          }
+          .msg-form .form-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+          .msg-form .form-group.full { grid-template-columns: 1fr; }
+          .msg-form input { margin-bottom: 0 !important; }
+          .msg-form textarea { margin-bottom: 12px !important; }
+          .send-btn {
+            width: 100%;
+            background: #e91e8c;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+          }
+          .send-btn:hover { background: #d11a7a; }
+        </style>
+
+        <form method="post" class="msg-form">
             {% csrf_token %}
 
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
-                <div>
-                    <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Full Name</label>
-                    <input type="text" name="name" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+            <div class="form-group">
+                <div style="position: relative;">
+                    <i class="bi bi-person-fill" style="position: absolute; left: 16px; top: 12px; color: #0a1f44;"></i>
+                    <input type="text" name="name" placeholder="Full Name" required>
                 </div>
-                <div>
-                    <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Email Address</label>
-                    <input type="email" name="email" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                <div style="position: relative;">
+                    <i class="bi bi-envelope-fill" style="position: absolute; left: 16px; top: 12px; color: #0a1f44;"></i>
+                    <input type="email" name="email" placeholder="Email Address" required>
                 </div>
             </div>
 
-            <div style="margin-bottom:12px;">
-                <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Subject</label>
-                <input type="text" name="subject" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+            <div class="form-group full" style="position: relative;">
+                <i class="bi bi-chat-left-text-fill" style="position: absolute; left: 16px; top: 12px; color: #0a1f44;"></i>
+                <input type="text" name="subject" placeholder="Subject" required style="padding-left: 44px !important;">
             </div>
 
-            <div style="margin-bottom:14px;">
-                <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Message</label>
-                <textarea name="message" rows="6" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px; resize:vertical;"></textarea>
+            <div class="form-group full" style="position: relative;">
+                <i class="bi bi-pencil-square" style="position: absolute; left: 16px; top: 12px; color: #0a1f44;"></i>
+                <textarea name="message" rows="6" placeholder="Your message..." required style="padding-left: 44px !important;"></textarea>
             </div>
 
-            <button type="submit" class="page-btn-primary">Send Message</button>
+            <button type="submit" class="send-btn">Send Message</button>
 
         </form>
 

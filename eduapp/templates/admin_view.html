@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Admin Dashboard | B.O.L.D. Foundation{% endblock %}
+{% block title %}Admin Dashboard | Bold Foundation{% endblock %}
 
 {% block content %}
 <section style="padding-top: 120px; padding-bottom: 80px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: #fff;">
@@ -13,7 +13,7 @@
         </span>
         <h1 class="display-6 fw-bold mb-3">Manage members, applications, partnerships, and payments</h1>
         <p class="mb-0 fs-5" style="line-height: 1.8; color: rgba(255,255,255,0.9);">
-          Monitor mentor applications, review payment records, approve requests, and keep the B.O.L.D. Foundation operations organized.
+          Monitor mentor applications, review payment records, approve requests, and keep Bold Foundation operations organized.
         </p>
       </div>
       <div class="col-lg-4 text-center" data-aos="fade-left">
@@ -389,6 +389,7 @@
       <div class="tab-pane fade" id="events" role="tabpanel">
         <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
           <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Create Event</h3>
+          <p class="text-muted mb-4">Use this form for upcoming programs. Events dated before today automatically appear in the public Past Events section.</p>
           <form method="post" action="{% url 'event_create' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row g-3">
@@ -433,9 +434,56 @@
           </form>
         </div>
 
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Upload Past Event</h3>
+          <p class="text-muted mb-4">A past event is any event with a date earlier than today. These appear under the public Past Events section automatically.</p>
+          <form method="post" action="{% url 'event_create' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Past Event Title</label>
+                <input type="text" name="title" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Slug</label>
+                <input type="text" name="slug" class="form-control" placeholder="optional custom url">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Event Date</label>
+                <input type="datetime-local" name="date" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Location</label>
+                <input type="text" name="location" class="form-control" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Summary</label>
+                <textarea name="description" class="form-control" rows="4" required></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Event Image</label>
+                <input type="file" name="image" class="form-control" accept="image/*">
+              </div>
+              <div class="col-md-3 d-flex align-items-end">
+                <div class="form-check mt-4">
+                  <input class="form-check-input" type="checkbox" name="is_featured" id="past_event_featured">
+                  <label class="form-check-label" for="past_event_featured">Featured</label>
+                </div>
+              </div>
+              <div class="col-md-3 d-flex align-items-end">
+                <div class="form-check mt-4">
+                  <input class="form-check-input" type="checkbox" name="is_published" id="past_event_published" checked>
+                  <label class="form-check-label" for="past_event_published">Published</label>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary rounded-pill mt-4">Save Past Event</button>
+          </form>
+        </div>
+
         <div class="card border-0 shadow-sm rounded-4 p-4">
           <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Upcoming Event List</h3>
-          {% if events %}
+          {% if upcoming_events %}
           <div class="table-responsive">
             <table class="table align-middle">
               <thead class="table-light">
@@ -448,7 +496,7 @@
                 </tr>
               </thead>
               <tbody>
-                {% for event in events %}
+                {% for event in upcoming_events %}
                 <tr>
                   <td><strong>{{ event.title }}</strong></td>
                   <td>{{ event.date|date:"d M Y H:i" }}</td>
@@ -470,7 +518,48 @@
             </table>
           </div>
           {% else %}
-          <div class="alert alert-info rounded-4 border-0">No events have been created yet.</div>
+          <div class="alert alert-info rounded-4 border-0">No upcoming events yet.</div>
+          {% endif %}
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 p-4 mt-4">
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Past Event Archive</h3>
+          {% if past_events %}
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Title</th>
+                  <th>Date</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for event in past_events %}
+                <tr>
+                  <td><strong>{{ event.title }}</strong></td>
+                  <td>{{ event.date|date:"d M Y H:i" }}</td>
+                  <td>{{ event.location }}</td>
+                  <td>
+                    {% if event.is_published %}
+                      <span class="badge bg-success rounded-pill">Published</span>
+                    {% else %}
+                      <span class="badge bg-secondary rounded-pill">Draft</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="{% url 'event_edit' event.id %}" class="btn btn-sm btn-primary rounded-pill">Edit</a>
+                    <a href="{% url 'event_delete' event.id %}" class="btn btn-sm btn-danger rounded-pill">Delete</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="alert alert-info rounded-4 border-0">No past events have been uploaded yet.</div>
           {% endif %}
         </div>
       </div>

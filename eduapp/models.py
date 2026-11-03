@@ -84,8 +84,7 @@ class Event(models.Model):
         ordering = ['date']
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
+        self.slug = slugify(self.slug or self.title)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -146,7 +145,7 @@ class MentorshipBooking(models.Model):
     def __str__(self):
         return f"Booking for {self.school_name}"
 
-
+# &mpesatransactions
 class Donation(models.Model):
     event = models.ForeignKey(Event, on_delete=models.SET_NULL, null=True, blank=True, related_name='donations')
     donor_name = models.CharField(max_length=100)

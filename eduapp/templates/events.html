@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Events | B.O.L.D. Foundation{% endblock %}
+{% block title %}Events | Bold Foundation{% endblock %}
 
 {% block content %}
 <section style="padding-top: 120px; padding-bottom: 80px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: #fff;">
@@ -48,7 +48,7 @@
           <span><i class="bi bi-calendar3 me-2"></i>{{ featured_event.date|date:"d M Y" }}</span>
           <span><i class="bi bi-geo-alt me-2"></i>{{ featured_event.location }}</span>
         </div>
-        <a href="/events/{{ featured_event.slug }}/" class="btn rounded-pill fw-bold px-4" style="background: #0d1b4b; color: #fff;">Read More</a>
+        <a href="{% url 'event_detail' featured_event.slug %}" class="btn rounded-pill fw-bold px-4" style="background: #0d1b4b; color: #fff;">Read More</a>
       </div>
     </div>
     {% endif %}
@@ -82,8 +82,8 @@
               </div>
             </div>
             <div class="card-footer bg-white border-0 p-4 pt-0">
-              <a href="/events/{{ event.slug }}/" class="btn w-100 rounded-pill fw-bold mb-2" style="border: 2px solid #0d1b4b; color: #0d1b4b;">View Event</a>
-              <a href="/events/{{ event.slug }}/" class="btn w-100 rounded-pill fw-bold" style="background: #0d1b4b; color: #fff;">Support Event</a>
+              <a href="{% url 'event_detail' event.slug %}" class="btn w-100 rounded-pill fw-bold mb-2" style="border: 2px solid #0d1b4b; color: #0d1b4b;">View Event</a>
+              <a href="{% url 'event_detail' event.slug %}#support-form" class="btn w-100 rounded-pill fw-bold" style="background: #0d1b4b; color: #fff;">Support Event</a>
             </div>
           </div>
         </div>
@@ -129,7 +129,7 @@
               </div>
             </div>
             <div class="card-footer bg-white border-0 p-4 pt-0">
-              <a href="/events/{{ event.slug }}/" class="btn w-100 rounded-pill fw-bold" style="border: 2px solid #0d1b4b; color: #0d1b4b;">View Recap</a>
+              <a href="{% url 'event_detail' event.slug %}" class="btn w-100 rounded-pill fw-bold" style="border: 2px solid #0d1b4b; color: #0d1b4b;">View Recap</a>
             </div>
           </div>
         </div>

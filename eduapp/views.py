@@ -1,12 +1,16 @@
 import json
+import logging
 from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.db import OperationalError, connection
 from django.utils import timezone
 from django.utils.text import slugify
 from django.conf import settings
@@ -15,10 +19,37 @@ from .models import (
     SupportApplication, PartnershipRequest,
     MentorshipBooking, Donation
 )
-from .mpesa import initiate_stk_push, query_stk_status
+from .mpesa import initiate_stk_push
+
+
+TERMS_VERSION = '2026-09-16'
+TERMS_SESSION_KEY = 'edulink_terms_accepted'
+logger = logging.getLogger(__name__)
+
+
+def terms_accepted(request):
+    return request.session.get(TERMS_SESSION_KEY) == TERMS_VERSION
+
+
+def require_terms(request):
+    if terms_accepted(request):
+        return None
+
+    terms_url = reverse('terms')
+    return redirect(f'{terms_url}?next={request.get_full_path()}')
 
 
 # ─── Public Pages ───────────────────────────────────────────────────────────
+
+def health_check(request):
+    try:
+        connection.ensure_connection()
+    except OperationalError:
+        logger.exception('Health check failed because the database is unavailable')
+        return JsonResponse({'status': 'unhealthy'}, status=503)
+
+    return JsonResponse({'status': 'ok'})
+
 
 def index(request):
     featured_events = Event.objects.filter(is_featured=True, is_published=True)[:3]
@@ -48,6 +79,10 @@ def event_detail(request, slug):
 
 
 def event_support(request, slug):
+    terms_redirect = require_terms(request)
+    if terms_redirect:
+        return terms_redirect
+
     event = get_object_or_404(Event, slug=slug, is_published=True)
 
     if request.method == 'POST':
@@ -69,6 +104,7 @@ def event_support(request, slug):
             return redirect('event_detail', slug=slug)
 
         Donation.objects.create(
+            event=event,
             donor_name=donor_name,
             email=email,
             phone=phone,
@@ -91,7 +127,29 @@ def services(request):
 
 
 def terms(request):
-    return render(request, 'terms.html')
+    if request.method == 'POST':
+        if request.POST.get('accept_terms') != 'on':
+            messages.error(request, 'Please read and accept the Terms and Conditions before continuing.')
+            return render(request, 'terms.html', {'next_url': request.POST.get('next', '')})
+
+        request.session[TERMS_SESSION_KEY] = TERMS_VERSION
+        next_url = request.POST.get('next', '')
+        if not url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={request.get_host()},
+            require_https=request.is_secure(),
+        ):
+            next_url = reverse('index')
+        return redirect(next_url)
+
+    next_url = request.GET.get('next', '')
+    if not url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        next_url = ''
+    return render(request, 'terms.html', {'next_url': next_url})
 
 
 def privacy(request):
@@ -121,6 +179,10 @@ def message(request):
 
 def mentor(request):
     """Step 1: Fill application form."""
+    terms_redirect = require_terms(request)
+    if terms_redirect:
+        return terms_redirect
+
     if request.method == 'POST':
         mentor_obj = Mentor.objects.create(
             name=request.POST.get('name', ''),
@@ -145,6 +207,10 @@ def mentor(request):
 
 def payment_initiate(request, mentor_id):
     """Step 2: Fixed KES 100 mentor registration payment."""
+    terms_redirect = require_terms(request)
+    if terms_redirect:
+        return terms_redirect
+
     mentor_obj = get_object_or_404(Mentor, id=mentor_id)
     fee = int(settings.MENTOR_APPLICATION_FEE)
 
@@ -225,23 +291,6 @@ def check_payment_status(request):
     except MpesaTransaction.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Transaction not found'})
 
-    if transaction.status == 'pending':
-        # Ask Daraja for the latest status
-        result = query_stk_status(checkout_id)
-        result_code = result.get('ResultCode')
-        if result_code is not None:
-            transaction.result_code = result_code
-            transaction.result_description = result.get('ResultDesc', '')
-            if str(result_code) == '0':
-                transaction.status = 'success'
-                transaction.completed_at = timezone.now()
-                # Move mentor to pending review
-                transaction.mentor.status = 'pending_review'
-                transaction.mentor.save()
-            else:
-                transaction.status = 'failed'
-            transaction.save()
-
     return JsonResponse({
         'status': transaction.status,
         'receipt': transaction.mpesa_receipt_number,
@@ -252,41 +301,54 @@ def check_payment_status(request):
 @csrf_exempt
 def mpesa_callback(request):
     """Daraja calls this URL after payment is completed/failed."""
-    if request.method == 'POST':
+    if request.method != 'POST':
+        return JsonResponse({'ResultCode': 1, 'ResultDesc': 'POST required'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        callback_data = data['Body']['stkCallback']
+        checkout_request_id = callback_data['CheckoutRequestID']
+        result_code = int(callback_data['ResultCode'])
+    except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+        logger.warning('Received malformed M-Pesa callback')
+        return JsonResponse({'ResultCode': 1, 'ResultDesc': 'Invalid callback'}, status=400)
+
+    transaction = MpesaTransaction.objects.filter(
+        checkout_request_id=checkout_request_id
+    ).select_related('mentor').first()
+    if transaction is None:
+        logger.warning('M-Pesa callback references unknown checkout %s', checkout_request_id)
+        return JsonResponse({'ResultCode': 0, 'ResultDesc': 'Accepted'})
+
+    if transaction.status != 'pending':
+        return JsonResponse({'ResultCode': 0, 'ResultDesc': 'Accepted'})
+
+    transaction.result_code = result_code
+    transaction.result_description = callback_data.get('ResultDesc', '')
+    if result_code == 0:
+        callback_items = callback_data.get('CallbackMetadata', {}).get('Item', [])
+        metadata = {item.get('Name'): item.get('Value') for item in callback_items}
         try:
-            data = json.loads(request.body)
-            callback_data = data.get('Body', {}).get('stkCallback', {})
-            checkout_request_id = callback_data.get('CheckoutRequestID')
-            result_code = callback_data.get('ResultCode')
-            result_desc = callback_data.get('ResultDesc', '')
+            callback_amount = Decimal(str(metadata['Amount']))
+            receipt_number = metadata['MpesaReceiptNumber']
+        except (KeyError, ArithmeticError, TypeError, ValueError):
+            logger.warning('Successful M-Pesa callback is missing amount or receipt')
+            return JsonResponse({'ResultCode': 1, 'ResultDesc': 'Incomplete callback'}, status=400)
 
-            try:
-                transaction = MpesaTransaction.objects.get(
-                    checkout_request_id=checkout_request_id
-                )
-                transaction.result_code = result_code
-                transaction.result_description = result_desc
-                transaction.completed_at = timezone.now()
+        if callback_amount != transaction.amount or not receipt_number:
+            logger.warning('M-Pesa callback amount/receipt does not match checkout %s', checkout_request_id)
+            return JsonResponse({'ResultCode': 1, 'ResultDesc': 'Payment details do not match'}, status=400)
 
-                if result_code == 0:
-                    transaction.status = 'success'
-                    # Extract receipt number from callback metadata
-                    items = callback_data.get('CallbackMetadata', {}).get('Item', [])
-                    for item in items:
-                        if item.get('Name') == 'MpesaReceiptNumber':
-                            transaction.mpesa_receipt_number = item.get('Value')
-                    # Advance mentor status
-                    transaction.mentor.status = 'pending_review'
-                    transaction.mentor.save()
-                else:
-                    transaction.status = 'failed'
+        transaction.status = 'success'
+        transaction.mpesa_receipt_number = str(receipt_number)
+        transaction.completed_at = timezone.now()
+        transaction.mentor.status = 'pending_review'
+        transaction.mentor.save(update_fields=['status', 'updated_at'])
+    else:
+        transaction.status = 'failed'
+        transaction.completed_at = timezone.now()
 
-                transaction.save()
-            except MpesaTransaction.DoesNotExist:
-                pass
-        except Exception:
-            pass
-
+    transaction.save()
     return JsonResponse({'ResultCode': 0, 'ResultDesc': 'Accepted'})
 
 
@@ -321,6 +383,8 @@ def admin_view(request):
     partnerships = PartnershipRequest.objects.all().order_by('-submitted_at')
     all_messages = Message.objects.all().order_by('-created_at')
     events = Event.objects.all().order_by('-created_at')
+    upcoming_events = events.filter(date__gte=timezone.now()).order_by('-created_at')
+    past_events = events.filter(date__lt=timezone.now()).order_by('-date')
     bookings = MentorshipBooking.objects.all().order_by('-submitted_at')
     donations = Donation.objects.all().order_by('-submitted_at')
     transactions = MpesaTransaction.objects.select_related('mentor').order_by('-initiated_at')
@@ -347,6 +411,8 @@ def admin_view(request):
         'messages_list': all_messages,
         'all_messages': all_messages,
         'events': events,
+        'upcoming_events': upcoming_events,
+        'past_events': past_events,
         'bookings': bookings,
         'donations': donations,
         'transactions': transactions,
@@ -425,17 +491,33 @@ def event_create(request):
         return redirect('/')
     if request.method == 'POST':
         title = (request.POST.get('title') or '').strip()
+        description = (request.POST.get('description') or '').strip()
+        date_value = request.POST.get('date')
+        location = (request.POST.get('location') or '').strip()
+
         if not title:
             messages.error(request, 'Event title is required.')
             return redirect('admin_view')
+        if not date_value:
+            messages.error(request, 'Event date is required.')
+            return redirect('admin_view')
+        if not location:
+            messages.error(request, 'Event location is required.')
+            return redirect('admin_view')
 
-        slug_value = (request.POST.get('slug') or slugify(title)).strip() or slugify(title)
+        slug_value = slugify(request.POST.get('slug') or title) or slugify(title)
+        original_slug = slug_value
+        slug_counter = 2
+        while Event.objects.filter(slug=slug_value).exists():
+            slug_value = f'{original_slug}-{slug_counter}'
+            slug_counter += 1
+
         event = Event.objects.create(
             title=title,
             slug=slug_value,
-            description=request.POST.get('description', ''),
-            date=request.POST.get('date'),
-            location=request.POST.get('location', ''),
+            description=description,
+            date=date_value,
+            location=location,
             image=request.FILES.get('image'),
             is_featured=request.POST.get('is_featured') == 'on',
             is_published=request.POST.get('is_published') == 'on',
@@ -451,17 +533,41 @@ def event_edit(request, id):
         return redirect('/')
     event = get_object_or_404(Event, id=id)
     if request.method == 'POST':
-        event.title = (request.POST.get('title') or '').strip()
-        event.description = request.POST.get('description', '')
-        event.date = request.POST.get('date')
-        event.location = request.POST.get('location', '')
+        title = (request.POST.get('title') or '').strip()
+        description = (request.POST.get('description') or '').strip()
+        date_value = request.POST.get('date')
+        location = (request.POST.get('location') or '').strip()
+
+        if not title:
+            messages.error(request, 'Event title is required.')
+            return redirect('admin_view')
+        if not date_value:
+            messages.error(request, 'Event date is required.')
+            return redirect('admin_view')
+        if not location:
+            messages.error(request, 'Event location is required.')
+            return redirect('admin_view')
+
+        event.title = title
+        event.description = description
+        event.date = date_value
+        event.location = location
         event.is_featured = request.POST.get('is_featured') == 'on'
         event.is_published = request.POST.get('is_published') == 'on'
-        slug_value = (request.POST.get('slug') or '').strip()
+
+        slug_value = slugify(request.POST.get('slug') or '')
         if slug_value:
-            event.slug = slug_value
-        elif event.title:
-            event.slug = slugify(event.title)
+            candidate = slug_value
+        else:
+            candidate = slugify(event.title)
+
+        slug_counter = 2
+        original_slug = candidate
+        while Event.objects.filter(slug=candidate).exclude(id=event.id).exists():
+            candidate = f'{original_slug}-{slug_counter}'
+            slug_counter += 1
+        event.slug = candidate
+
         if request.FILES.get('image'):
             event.image = request.FILES.get('image')
         event.save()
@@ -482,6 +588,10 @@ def event_delete(request, id):
 # ─── Forms ───────────────────────────────────────────────────────────────────
 
 def support_application(request):
+    terms_redirect = require_terms(request)
+    if terms_redirect:
+        return terms_redirect
+
     if request.method == 'POST':
         SupportApplication.objects.create(
             learner_name=request.POST.get('learner_name'),
@@ -505,6 +615,10 @@ def support_application(request):
 
 
 def patner(request):
+    terms_redirect = require_terms(request)
+    if terms_redirect:
+        return terms_redirect
+
     if request.method == 'POST':
         PartnershipRequest.objects.create(
             org_name=request.POST.get('org_name'),
@@ -522,6 +636,10 @@ def patner(request):
 
 
 def mentorship_booking(request):
+    terms_redirect = require_terms(request)
+    if terms_redirect:
+        return terms_redirect
+
     if request.method == 'POST':
         MentorshipBooking.objects.create(
             school_name=request.POST.get('school_name'),

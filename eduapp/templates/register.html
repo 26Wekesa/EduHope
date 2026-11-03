@@ -17,25 +17,59 @@
 
             <h3 style="text-align:center; color:#0d1b4b; font-weight:700; margin-bottom:12px;">Create an Admin Account</h3>
 
-            <form method="post">
+            <style>
+              .signup-form input {
+                padding: 12px 18px !important;
+                border-radius: 25px !important;
+                background: #1a1a1a !important;
+                color: white !important;
+                border: 2px solid #333 !important;
+                font-size: 13px !important;
+                margin-bottom: 12px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+              }
+              .signup-form input::placeholder { color: #999 !important; }
+              .signup-form input:focus {
+                background: #252525 !important;
+                border-color: #0a1f44 !important;
+                box-shadow: 0 0 0 3px rgba(10, 31, 68, 0.1) !important;
+                outline: none !important;
+              }
+              .signup-btn {
+                width: 100%;
+                background: #e91e8c;
+                color: white;
+                padding: 12px;
+                border: none;
+                border-radius: 25px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: 0.3s;
+                margin-top: 6px;
+              }
+              .signup-btn:hover { background: #d11a7a; }
+            </style>
+
+            <form method="post" class="signup-form">
                 {% csrf_token %}
 
                 <div style="margin-bottom:12px;">
-                    <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Username</label>
-                    <input type="text" name="username" placeholder="Enter username" style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                    <i class="bi bi-person-fill" style="color:#0a1f44; margin-right:8px;"></i>
+                    <input type="text" name="username" placeholder="Username" required>
                 </div>
 
                 <div style="margin-bottom:12px;">
-                    <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Password</label>
-                    <input name="password" type="password" placeholder="Enter password" style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                    <i class="bi bi-lock-fill" style="color:#0a1f44; margin-right:8px;"></i>
+                    <input name="password" type="password" placeholder="Password" required>
                 </div>
 
                 <div style="margin-bottom:18px;">
-                    <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Confirm Password</label>
-                    <input name="confirm_password" type="password" placeholder="Re-enter password" style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                    <i class="bi bi-lock-check" style="color:#0a1f44; margin-right:8px;"></i>
+                    <input name="confirm_password" type="password" placeholder="Confirm Password" required>
                 </div>
 
-                <button type="submit" class="page-btn-primary">Sign Up</button>
+                <button type="submit" class="signup-btn">Sign Up</button>
 
             </form>
 

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ event.title }} | B.O.L.D. Foundation{% endblock %}
+{% block title %}{{ event.title }} | Bold Foundation{% endblock %}
 
 {% block content %}
 <section style="padding-top: 120px; padding-bottom: 60px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: #fff;">
@@ -42,11 +42,11 @@
       </div>
 
       <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
-        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+        <div id="support-form" class="card border-0 shadow-sm rounded-4 p-4 h-100">
           <h4 class="fw-bold mb-3" style="color: #0d1b4b;">Support this event</h4>
           <p class="text-secondary">Help us make this initiative a success by contributing through the same M-Pesa till used for mentor registration.</p>
           <div class="alert alert-light border rounded-4 mb-3">
-            <strong>Till Number:</strong> {{ settings.MPESA_SHORTCODE|default:'174379' }}
+            <strong>Till Number:</strong> {{ settings.MPESA_SHORTCODE|default:'Not configured' }}
           </div>
           <form method="post" action="{% url 'event_support' event.slug %}">
             {% csrf_token %}
