@@ -4,7 +4,10 @@
 {% block title %}Mentor Registration Payment{% endblock %}
 {% block content %}
 
-<div class="page-shell" style="min-height:60vh;">
+<div class="page-shell form-page-shell">
+    <div class="form-experience">
+        {% include 'partials/form_story_panel.html' with story_title="Make your mentorship official." story_copy="Complete the secure registration step to finalize your mentor application." %}
+        <div class="form-experience__content">
     <div class="container" style="max-width:520px; margin:0 auto;">
         <div class="page-card p-4 p-md-5">
             <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">Mentor Registration</span>
@@ -22,7 +25,7 @@
 
                 <div style="margin-bottom:12px; background:#f5f7fb; border-radius:10px; padding:14px; border:1px solid #e6edf7;">
                     <label style="font-weight:700; color:#0a1f44; display:block; margin-bottom:6px;">Registration Fee</label>
-                    <div style="font-size:1.8rem; font-weight:800; color:#0a1f44;">KES {{ fee }}</div>
+                    <div class="tabular-nums" style="font-size:1.8rem; font-weight:800; color:#0a1f44;">KES {{ fee }}</div>
                     <input type="hidden" name="amount" value="{{ fee }}">
                 </div>
 
@@ -36,6 +39,8 @@
                 </button>
             </form>
 
+        </div>
+            </div>
         </div>
     </div>
 </div>

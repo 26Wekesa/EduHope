@@ -4,125 +4,96 @@
 {% block title %}Admin Dashboard | Bold Foundation{% endblock %}
 
 {% block content %}
-<section style="padding-top: 120px; padding-bottom: 80px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: #fff;">
-  <div class="container">
-    <div class="row align-items-center g-4">
-      <div class="col-lg-8" data-aos="fade-right">
-        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">
-          Admin Dashboard
-        </span>
-        <h1 class="display-6 fw-bold mb-3">Manage members, applications, partnerships, and payments</h1>
-        <p class="mb-0 fs-5" style="line-height: 1.8; color: rgba(255,255,255,0.9);">
-          Monitor mentor applications, review payment records, approve requests, and keep Bold Foundation operations organized.
-        </p>
+<section class="admin-console">
+  <div class="admin-console__layout">
+    <aside class="admin-sidebar">
+      <a class="admin-sidebar__brand" href="{% url 'admin_view' %}">
+        <span class="admin-sidebar__mark"><i class="bi bi-hexagon-fill"></i></span>
+        <span>Bold Foundation<small>OPERATIONS</small></span>
+      </a>
+      <p class="admin-sidebar__label">WORKSPACE</p>
+      <ul class="nav nav-pills flex-column admin-sidebar__nav" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab"><i class="bi bi-inbox"></i><span>Messages</span><span class="admin-sidebar__count">{{ total_messages }}</span></button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="learners-tab" data-bs-toggle="tab" data-bs-target="#learners" type="button" role="tab"><i class="bi bi-mortarboard"></i><span>Learners</span></button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="mentors-tab" data-bs-toggle="tab" data-bs-target="#mentors" type="button" role="tab"><i class="bi bi-people"></i><span>Mentors</span></button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab"><i class="bi bi-credit-card"></i><span>Payments</span></button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="partners-tab" data-bs-toggle="tab" data-bs-target="#partners" type="button" role="tab"><i class="bi bi-diagram-3"></i><span>Partners</span></button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab"><i class="bi bi-calendar2-check"></i><span>Bookings</span></button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab"><i class="bi bi-calendar-event"></i><span>Events</span></button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="donations-tab" data-bs-toggle="tab" data-bs-target="#donations" type="button" role="tab"><i class="bi bi-heart"></i><span>Donations</span></button>
+        </li>
+      </ul>
+      <div class="admin-sidebar__footer">
+        <a href="{% url 'index' %}"><i class="bi bi-box-arrow-up-right"></i> View website</a>
+        <a href="{% url 'logout' %}"><i class="bi bi-box-arrow-left"></i> Sign out</a>
       </div>
-      <div class="col-lg-4 text-center" data-aos="fade-left">
-        <div class="p-4 rounded-4 shadow-lg" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);">
-          <i class="bi bi-speedometer2" style="font-size: 4rem; color: #00c2e0;"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </aside>
 
-<section class="py-5 bg-white">
-  <div class="container">
-    <div class="row g-4 mb-5">
-      <div class="col-md-4 col-lg-2" data-aos="fade-up">
-        <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: #f4f9ff;">
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <span class="badge rounded-pill" style="background: #dff7ff; color: #0d1b4b;">Learners</span>
-            <i class="bi bi-people-fill text-primary fs-4"></i>
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div>
+          <p class="admin-eyebrow">BOLD FOUNDATION / ADMIN</p>
+          <h1>Operations dashboard</h1>
+        </div>
+        <div class="admin-topbar__actions">
+          <label class="admin-search">
+            <i class="bi bi-search"></i>
+            <input id="adminTableSearch" type="search" placeholder="Search current list" aria-label="Search current list">
+            <kbd>/</kbd>
+          </label>
+          <span class="admin-avatar" title="{{ request.user.get_full_name|default:request.user.username }}">{{ request.user.username|first|upper }}</span>
+        </div>
+      </header>
+
+      <div class="admin-overview">
+        <a href="#learners" class="admin-metric" data-bs-toggle="tab" data-bs-target="#learners" role="tab">
+          <span class="admin-metric__icon admin-metric__icon--blue"><i class="bi bi-mortarboard"></i></span>
+          <span><small>Approved learners</small><strong>{{ approved_learners }}</strong></span>
+          <i class="bi bi-arrow-up-right admin-metric__arrow"></i>
+        </a>
+        <a href="#mentors" class="admin-metric" data-bs-toggle="tab" data-bs-target="#mentors" role="tab">
+          <span class="admin-metric__icon admin-metric__icon--green"><i class="bi bi-people"></i></span>
+          <span><small>Approved mentors</small><strong>{{ approved_mentors }}</strong></span>
+          <i class="bi bi-arrow-up-right admin-metric__arrow"></i>
+        </a>
+        <a href="#partners" class="admin-metric" data-bs-toggle="tab" data-bs-target="#partners" role="tab">
+          <span class="admin-metric__icon admin-metric__icon--orange"><i class="bi bi-diagram-3"></i></span>
+          <span><small>Approved partners</small><strong>{{ approved_partners }}</strong></span>
+          <i class="bi bi-arrow-up-right admin-metric__arrow"></i>
+        </a>
+        <a href="#payments" class="admin-metric" data-bs-toggle="tab" data-bs-target="#payments" role="tab">
+          <span class="admin-metric__icon admin-metric__icon--violet"><i class="bi bi-cash-stack"></i></span>
+          <span><small>Successful payments</small><strong>{{ stats.successful_payments }}</strong></span>
+          <i class="bi bi-arrow-up-right admin-metric__arrow"></i>
+        </a>
+      </div>
+
+      <div class="admin-dashboard-grid">
+        <div class="admin-primary-column">
+          <div class="admin-section-heading">
+            <div>
+              <span class="admin-section-heading__overline">MANAGE YOUR ORGANIZATION</span>
+              <h2>Activity &amp; requests</h2>
+            </div>
+            <span class="admin-live-status"><i></i> Live data</span>
           </div>
-          <h3 class="fw-bold mb-0" style="color: #0d1b4b;">{{ approved_learners }}</h3>
-          <small class="text-secondary">Approved</small>
-        </div>
-      </div>
 
-      <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="50">
-        <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: #f8f9fb;">
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <span class="badge rounded-pill" style="background: #eaf8ff; color: #0d1b4b;">Mentors</span>
-            <i class="bi bi-person-badge text-success fs-4"></i>
-          </div>
-          <h3 class="fw-bold mb-0" style="color: #0d1b4b;">{{ approved_mentors }}</h3>
-          <small class="text-secondary">Approved</small>
-        </div>
-      </div>
-
-      <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="100">
-        <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: #f4f9ff;">
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <span class="badge rounded-pill" style="background: #dff7ff; color: #0d1b4b;">Partners</span>
-            <i class="bi bi-building text-info fs-4"></i>
-          </div>
-          <h3 class="fw-bold mb-0" style="color: #0d1b4b;">{{ approved_partners }}</h3>
-          <small class="text-secondary">Approved</small>
-        </div>
-      </div>
-
-      <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="150">
-        <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: #f8f9fb;">
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <span class="badge rounded-pill" style="background: #eaf8ff; color: #0d1b4b;">Messages</span>
-            <i class="bi bi-envelope-open text-warning fs-4"></i>
-          </div>
-          <h3 class="fw-bold mb-0" style="color: #0d1b4b;">{{ total_messages }}</h3>
-          <small class="text-secondary">Inbox</small>
-        </div>
-      </div>
-
-      <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="200">
-        <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: #f4f9ff;">
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <span class="badge rounded-pill" style="background: #dff7ff; color: #0d1b4b;">Bookings</span>
-            <i class="bi bi-calendar-check text-primary fs-4"></i>
-          </div>
-          <h3 class="fw-bold mb-0" style="color: #0d1b4b;">{{ total_bookings }}</h3>
-          <small class="text-secondary">Total</small>
-        </div>
-      </div>
-
-      <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="250">
-        <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: #f8f9fb;">
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <span class="badge rounded-pill" style="background: #eaf8ff; color: #0d1b4b;">Payments</span>
-            <i class="bi bi-cash-stack text-success fs-4"></i>
-          </div>
-          <h3 class="fw-bold mb-0" style="color: #0d1b4b;">{{ stats.successful_payments }}</h3>
-          <small class="text-secondary">Successful</small>
-        </div>
-      </div>
-    </div>
-
-    <ul class="nav nav-tabs mb-4 border-0" id="adminTabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active rounded-top" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab">Messages</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link rounded-top" id="learners-tab" data-bs-toggle="tab" data-bs-target="#learners" type="button" role="tab">Learners</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link rounded-top" id="mentors-tab" data-bs-toggle="tab" data-bs-target="#mentors" type="button" role="tab">Mentors</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link rounded-top" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab">Payments</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link rounded-top" id="partners-tab" data-bs-toggle="tab" data-bs-target="#partners" type="button" role="tab">Partners</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link rounded-top" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab">Bookings</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link rounded-top" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab">Events</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link rounded-top" id="donations-tab" data-bs-toggle="tab" data-bs-target="#donations" type="button" role="tab">Donations</button>
-      </li>
-    </ul>
-
-    <div class="tab-content" id="adminTabContent">
+          <div class="tab-content admin-tab-content" id="adminTabContent">
       <div class="tab-pane fade show active" id="messages" role="tabpanel">
         <div class="card border-0 shadow-sm rounded-4 p-4">
           <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Latest Messages</h3>
@@ -145,7 +116,7 @@
                   <td><a href="mailto:{{ msg.email }}">{{ msg.email }}</a></td>
                   <td>{{ msg.subject }}</td>
                   <td>{{ msg.message|truncatewords:12 }}</td>
-                  <td><a href="/delete/{{ msg.id }}" class="btn btn-sm btn-danger rounded-pill">Delete</a></td>
+                  <td><a href="{% url 'delete_message' msg.id %}" class="btn btn-sm btn-danger rounded-pill">Delete</a></td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -436,7 +407,7 @@
 
         <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
           <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Upload Past Event</h3>
-          <p class="text-muted mb-4">A past event is any event with a date earlier than today. These appear under the public Past Events section automatically.</p>
+          <p class="text-muted mb-4">An event moves to Past Events automatically when its scheduled date and time have passed.</p>
           <form method="post" action="{% url 'event_create' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row g-3">
@@ -533,6 +504,7 @@
                   <th>Date</th>
                   <th>Location</th>
                   <th>Status</th>
+                  <th>Past-event recap</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -548,6 +520,20 @@
                     {% else %}
                       <span class="badge bg-secondary rounded-pill">Draft</span>
                     {% endif %}
+                  </td>
+                  <td>
+                    <form method="post" action="{% url 'event_recap_upload' event.id %}" enctype="multipart/form-data" class="d-grid gap-2" style="min-width: 220px;">
+                      {% csrf_token %}
+                      <label class="form-label small mb-0">Photos</label>
+                      <input type="file" name="photos" class="form-control form-control-sm" accept="image/*" multiple>
+                      <label class="form-label small mb-0">Report (PDF, DOC, DOCX)</label>
+                      <input type="file" name="report" class="form-control form-control-sm" accept=".pdf,.doc,.docx">
+                      <button type="submit" class="btn btn-sm btn-success rounded-pill">Save recap</button>
+                    </form>
+                    <small class="d-block mt-2 text-muted">
+                      {{ event.photos.count }} photo{{ event.photos.count|pluralize }}
+                      {% if event.report %} · Report uploaded{% endif %}
+                    </small>
                   </td>
                   <td>
                     <a href="{% url 'event_edit' event.id %}" class="btn btn-sm btn-primary rounded-pill">Edit</a>
@@ -600,46 +586,744 @@
         </div>
       </div>
     </div>
+          </div>
+        </div>
+
+        <aside class="admin-insight-panel">
+          <div class="admin-insight-panel__profile">
+            <span class="admin-insight-panel__avatar">{{ request.user.username|first|upper }}</span>
+            <div>
+              <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+              <small>Foundation administrator</small>
+            </div>
+            <i class="bi bi-three-dots"></i>
+          </div>
+
+          <div class="admin-insight-panel__divider"></div>
+          <span class="admin-section-heading__overline">AT A GLANCE</span>
+          <h3>Workspace summary</h3>
+          <p class="admin-insight-panel__copy">A quick overview of the work moving through your foundation.</p>
+
+          <div class="admin-summary-list">
+            <button type="button" class="admin-summary-item" data-bs-toggle="tab" data-bs-target="#messages">
+              <span class="admin-summary-item__icon"><i class="bi bi-envelope"></i></span>
+              <span><strong>Messages</strong><small>Inbox activity</small></span>
+              <b>{{ total_messages }}</b>
+            </button>
+            <button type="button" class="admin-summary-item" data-bs-toggle="tab" data-bs-target="#bookings">
+              <span class="admin-summary-item__icon"><i class="bi bi-calendar2-check"></i></span>
+              <span><strong>Bookings</strong><small>Mentorship requests</small></span>
+              <b>{{ total_bookings }}</b>
+            </button>
+            <button type="button" class="admin-summary-item" data-bs-toggle="tab" data-bs-target="#donations">
+              <span class="admin-summary-item__icon"><i class="bi bi-heart"></i></span>
+              <span><strong>Donations</strong><small>Contributions received</small></span>
+              <b>{{ total_donations }}</b>
+            </button>
+            <button type="button" class="admin-summary-item" data-bs-toggle="tab" data-bs-target="#events">
+              <span class="admin-summary-item__icon"><i class="bi bi-calendar-event"></i></span>
+              <span><strong>Events</strong><small>Programs and recaps</small></span>
+              <b>{{ stats.total_events }}</b>
+            </button>
+          </div>
+
+          <div class="admin-insight-callout">
+            <span><i class="bi bi-lightning-charge"></i></span>
+            <div>
+              <strong>Keep things moving</strong>
+              <p>Review new applications and requests regularly to support your community.</p>
+            </div>
+          </div>
+          <a class="admin-view-site" href="{% url 'events' %}">Explore public events <i class="bi bi-arrow-up-right"></i></a>
+        </aside>
+      </div>
+    </main>
   </div>
 </section>
 
 <style>
-  .nav-tabs .nav-link {
-    color: #0d1b4b;
-    font-weight: 600;
-    border: 1px solid #e9edf5;
-    border-bottom: none;
-    background: #f7f9fc;
-    margin-right: 10px;
-    border-radius: 12px 12px 0 0;
+  .admin-console {
+    --admin-ink: #1c2633;
+    --admin-muted: #78838f;
+    --admin-border: #e8ebee;
+    --admin-accent: #d6ef79;
+    min-height: calc(100vh - 76px);
+    padding-top: 76px;
+    background: #f4f6f7;
+    color: var(--admin-ink);
+    font-family: "Segoe UI", sans-serif;
   }
 
-  .nav-tabs .nav-link.active {
-    background: #0d1b4b;
+  .admin-console__layout {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    min-height: calc(100vh - 76px);
+  }
+
+  .admin-sidebar {
+    position: sticky;
+    top: 76px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 76px);
+    min-height: 620px;
+    padding: 26px 14px 18px;
+    background: #17212b;
     color: #fff;
-    border-color: #0d1b4b;
   }
 
-  .table th {
+  .admin-sidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 5px 44px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 750;
+    text-decoration: none;
+  }
+
+  .admin-sidebar__brand small {
+    display: block;
+    margin-top: 3px;
+    color: #98a3ad;
+    font-size: 9px;
     font-weight: 700;
-    color: #0d1b4b;
+    letter-spacing: 0.14em;
   }
 
-  .table td {
-    color: #495057;
+  .admin-sidebar__mark {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border-radius: 9px;
+    background: var(--admin-accent);
+    color: #17212b;
+    font-size: 15px;
   }
 
-  .badge {
-    font-weight: 600;
-    padding: 7px 12px;
+  .admin-sidebar__label {
+    margin: 0 10px 12px;
+    color: #87939e;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
   }
 
-  .btn {
-    transition: 0.2s ease;
+  .admin-sidebar__nav {
+    gap: 4px;
   }
 
-  .btn:hover {
+  .admin-sidebar__nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 11px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #b7c0c8;
+    font-size: 12px;
+    text-align: left;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  .admin-sidebar__nav .nav-link i {
+    width: 17px;
+    font-size: 15px;
+  }
+
+  .admin-sidebar__nav .nav-link:hover {
+    background: #25323e;
+    color: #fff;
+  }
+
+  .admin-sidebar__nav .nav-link.active {
+    background: #2b3742;
+    color: #fff;
+    box-shadow: inset 3px 0 var(--admin-accent);
+  }
+
+  .admin-sidebar__count {
+    margin-left: auto;
+    color: #aeb8c1;
+    font-size: 10px;
+  }
+
+  .admin-sidebar__footer {
+    display: grid;
+    gap: 8px;
+    margin-top: auto;
+    padding: 16px 8px 0;
+    border-top: 1px solid #33404b;
+  }
+
+  .admin-sidebar__footer a {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #aeb8c1;
+    font-size: 11px;
+    text-decoration: none;
+  }
+
+  .admin-sidebar__footer a:hover {
+    color: #fff;
+  }
+
+  .admin-main {
+    min-width: 0;
+    padding: 28px clamp(18px, 3vw, 42px) 48px;
+  }
+
+  .admin-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+
+  .admin-eyebrow,
+  .admin-section-heading__overline {
+    margin: 0 0 6px;
+    color: #86919b;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: 0.14em;
+  }
+
+  .admin-topbar h1 {
+    margin: 0;
+    color: var(--admin-ink);
+    font-size: clamp(22px, 2vw, 29px);
+    font-weight: 750;
+    letter-spacing: -0.04em;
+  }
+
+  .admin-topbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .admin-search {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: clamp(180px, 23vw, 280px);
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--admin-border);
+    border-radius: 7px;
+    background: #fff;
+    color: #929ca5;
+  }
+
+  .admin-search input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    color: var(--admin-ink);
+    font: inherit;
+    font-size: 11px;
+  }
+
+  .admin-search input::placeholder {
+    color: #9aa3aa;
+  }
+
+  .admin-search kbd {
+    padding: 1px 5px;
+    border: 1px solid var(--admin-border);
+    border-radius: 4px;
+    background: #f8f9fa;
+    color: #76818b;
+    font: inherit;
+    font-size: 10px;
+  }
+
+  .admin-avatar,
+  .admin-insight-panel__avatar {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    background: #f4d0b1;
+    color: #74442e;
+    font-size: 13px;
+    font-weight: 750;
+  }
+
+  .admin-overview {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 27px;
+  }
+
+  .admin-metric {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+    padding: 15px 13px;
+    border: 1px solid var(--admin-border);
+    border-radius: 9px;
+    background: #fff;
+    color: var(--admin-ink);
+    text-decoration: none;
+    transition: transform 150ms ease, border-color 150ms ease;
+  }
+
+  .admin-metric:hover {
+    transform: translateY(-2px);
+    border-color: #cbd3d9;
+    color: var(--admin-ink);
+  }
+
+  .admin-metric__icon,
+  .admin-summary-item__icon {
+    display: grid;
+    width: 33px;
+    height: 33px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .admin-metric__icon--blue { background: #e8f1ff; color: #427ac1; }
+  .admin-metric__icon--green { background: #e8f5ed; color: #398454; }
+  .admin-metric__icon--orange { background: #fff1e5; color: #c97839; }
+  .admin-metric__icon--violet { background: #f0ebff; color: #7562b2; }
+
+  .admin-metric small,
+  .admin-metric strong {
+    display: block;
+  }
+
+  .admin-metric small {
+    overflow: hidden;
+    color: var(--admin-muted);
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .admin-metric strong {
+    margin-top: 2px;
+    font-size: 19px;
+    line-height: 1.1;
+  }
+
+  .admin-metric__arrow {
+    margin-left: auto;
+    color: #a0a9b0;
+    font-size: 12px;
+  }
+
+  .admin-dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 245px;
+    align-items: start;
+    gap: 18px;
+  }
+
+  .admin-primary-column {
+    min-width: 0;
+  }
+
+  .admin-section-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 13px;
+  }
+
+  .admin-section-heading h2 {
+    margin: 0;
+    color: var(--admin-ink);
+    font-size: 18px;
+    font-weight: 750;
+    letter-spacing: -0.025em;
+  }
+
+  .admin-live-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #78838f;
+    font-size: 10px;
+  }
+
+  .admin-live-status i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #5aa878;
+  }
+
+  .admin-tab-content > .tab-pane > .card {
+    padding: 18px !important;
+    border: 1px solid var(--admin-border) !important;
+    border-radius: 9px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  .admin-tab-content > .tab-pane > .card + .card {
+    margin-top: 14px;
+  }
+
+  .admin-tab-content h3 {
+    margin-bottom: 14px !important;
+    color: var(--admin-ink) !important;
+    font-size: 15px;
+    font-weight: 750 !important;
+  }
+
+  .admin-tab-content .table-responsive {
+    overflow-x: auto;
+    border: 1px solid #edf0f2;
+    border-radius: 7px;
+    box-shadow: none;
+  }
+
+  .admin-tab-content .table {
+    min-width: 640px;
+    margin: 0;
+    font-size: 11px;
+  }
+
+  .admin-tab-content .table > :not(caption) > * > * {
+    padding: 10px 11px;
+    border-color: #edf0f2;
+    vertical-align: middle;
+  }
+
+  .admin-tab-content .table thead th {
+    background: #f6f8f9;
+    color: #7a858f;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .admin-tab-content .table td {
+    color: #59636d;
+  }
+
+  .admin-tab-content .table td strong {
+    color: var(--admin-ink);
+  }
+
+  .admin-tab-content .badge {
+    padding: 5px 8px;
+    font-size: 9px;
+    font-weight: 650;
+  }
+
+  .admin-tab-content .btn {
+    font-size: 10px;
+    transition: 150ms ease;
+  }
+
+  .admin-tab-content .btn:hover {
     transform: translateY(-1px);
   }
+
+  .admin-insight-panel {
+    padding: 18px 15px;
+    border: 1px solid var(--admin-border);
+    border-radius: 9px;
+    background: #fff;
+  }
+
+  .admin-insight-panel__profile {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .admin-insight-panel__profile strong,
+  .admin-insight-panel__profile small {
+    display: block;
+  }
+
+  .admin-insight-panel__profile strong {
+    color: var(--admin-ink);
+    font-size: 11px;
+  }
+
+  .admin-insight-panel__profile small {
+    margin-top: 2px;
+    color: var(--admin-muted);
+    font-size: 9px;
+  }
+
+  .admin-insight-panel__profile > i {
+    margin-left: auto;
+    color: #929ca5;
+  }
+
+  .admin-insight-panel__divider {
+    height: 1px;
+    margin: 17px 0;
+    background: var(--admin-border);
+  }
+
+  .admin-insight-panel > h3 {
+    margin: 0;
+    color: var(--admin-ink);
+    font-size: 15px;
+    font-weight: 750;
+  }
+
+  .admin-insight-panel__copy {
+    margin: 7px 0 15px;
+    color: var(--admin-muted);
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .admin-summary-list {
+    display: grid;
+    gap: 5px;
+  }
+
+  .admin-summary-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 5px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    text-align: left;
+  }
+
+  .admin-summary-item:hover {
+    background: #f6f8f9;
+  }
+
+  .admin-summary-item__icon {
+    width: 29px;
+    height: 29px;
+    background: #f0f3f5;
+    color: #586574;
+    font-size: 12px;
+  }
+
+  .admin-summary-item span:nth-child(2) {
+    min-width: 0;
+  }
+
+  .admin-summary-item strong,
+  .admin-summary-item small {
+    display: block;
+  }
+
+  .admin-summary-item strong {
+    color: var(--admin-ink);
+    font-size: 10px;
+  }
+
+  .admin-summary-item small {
+    margin-top: 2px;
+    color: var(--admin-muted);
+    font-size: 9px;
+  }
+
+  .admin-summary-item b {
+    margin-left: auto;
+    color: #626e79;
+    font-size: 10px;
+  }
+
+  .admin-insight-callout {
+    display: flex;
+    gap: 9px;
+    margin-top: 17px;
+    padding: 12px 10px;
+    border: 1px solid #edf0e3;
+    border-radius: 7px;
+    background: #fafbf4;
+  }
+
+  .admin-insight-callout > span {
+    color: #8d9f36;
+    font-size: 14px;
+  }
+
+  .admin-insight-callout strong {
+    color: var(--admin-ink);
+    font-size: 10px;
+  }
+
+  .admin-insight-callout p {
+    margin: 4px 0 0;
+    color: #77816a;
+    font-size: 9px;
+    line-height: 1.5;
+  }
+
+  .admin-view-site {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    color: #455668;
+    font-size: 10px;
+    font-weight: 650;
+    text-decoration: none;
+  }
+
+  .admin-view-site:hover {
+    color: #1b2b3c;
+  }
+
+  @media (max-width: 1120px) {
+    .admin-dashboard-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .admin-insight-panel {
+      display: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .admin-console__layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .admin-sidebar {
+      position: static;
+      height: auto;
+      min-height: 0;
+      padding: 12px;
+    }
+
+    .admin-sidebar__brand {
+      margin: 0 4px 13px;
+    }
+
+    .admin-sidebar__label,
+    .admin-sidebar__footer {
+      display: none;
+    }
+
+    .admin-sidebar__nav {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .admin-sidebar__nav .nav-link {
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      min-height: 54px;
+      padding: 6px 4px;
+      font-size: 9px;
+      text-align: center;
+    }
+
+    .admin-sidebar__nav .nav-link i {
+      width: auto;
+      font-size: 15px;
+    }
+
+    .admin-sidebar__count {
+      display: none;
+    }
+
+    .admin-main {
+      padding: 21px 14px 32px;
+    }
+
+    .admin-topbar {
+      align-items: flex-start;
+    }
+
+    .admin-topbar__actions {
+      gap: 8px;
+    }
+
+    .admin-search {
+      width: 38px;
+      padding: 0 10px;
+    }
+
+    .admin-search input,
+    .admin-search kbd {
+      display: none;
+    }
+
+    .admin-overview {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 420px) {
+    .admin-sidebar__nav {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .admin-metric {
+      gap: 7px;
+      padding: 11px 8px;
+    }
+
+    .admin-metric__icon {
+      width: 28px;
+      height: 28px;
+    }
+  }
 </style>
+<script>
+  (() => {
+    const search = document.getElementById('adminTableSearch');
+    const tabContent = document.getElementById('adminTabContent');
+    if (!search || !tabContent) return;
+
+    const filterRows = () => {
+      const query = search.value.trim().toLocaleLowerCase();
+      const activePane = tabContent.querySelector('.tab-pane.active');
+      if (!activePane) return;
+      activePane.querySelectorAll('tbody tr').forEach((row) => {
+        row.hidden = query !== '' && !row.innerText.toLocaleLowerCase().includes(query);
+      });
+    };
+
+    search.addEventListener('input', filterRows);
+    document.addEventListener('shown.bs.tab', (event) => {
+      const target = event.target.getAttribute('data-bs-target');
+      document.querySelectorAll('.admin-sidebar__nav .nav-link').forEach((link) => {
+        const selected = link.getAttribute('data-bs-target') === target;
+        link.classList.toggle('active', selected);
+        link.setAttribute('aria-selected', selected ? 'true' : 'false');
+      });
+      search.value = '';
+      filterRows();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+        event.preventDefault();
+        search.focus();
+      }
+    });
+  })();
+</script>
 {% endblock %}

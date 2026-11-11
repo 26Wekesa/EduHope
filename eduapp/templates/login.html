@@ -6,7 +6,10 @@
 
 {% block content %}
 
-<div class="page-shell">
+<div class="page-shell form-page-shell">
+<div class="form-experience">
+    {% include 'partials/form_story_panel.html' with story_title="Welcome back." story_copy="Sign in to securely manage Bold Foundation applications and community programs." %}
+    <div class="form-experience__content">
 
 <div class="container" style="max-width:420px; margin:0 auto;">
 
@@ -16,40 +19,6 @@
             <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">Admin Login</span>
             <h3 style="color:#0d1b4b; font-weight:700; font-size:22px; margin-bottom:6px;">Sign in to manage Bold Foundation data</h3>
         </div>
-
-        <style>
-          .login-form input {
-            padding: 12px 18px !important;
-            border-radius: 25px !important;
-            background: #1a1a1a !important;
-            color: white !important;
-            border: 2px solid #333 !important;
-            font-size: 13px !important;
-            margin-bottom: 12px !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
-          }
-          .login-form input::placeholder { color: #999 !important; }
-          .login-form input:focus {
-            background: #252525 !important;
-            border-color: #0a1f44 !important;
-            box-shadow: 0 0 0 3px rgba(10, 31, 68, 0.1) !important;
-            outline: none !important;
-          }
-          .login-btn {
-            width: 100%;
-            background: #e91e8c;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 25px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 6px;
-          }
-          .login-btn:hover { background: #d11a7a; }
-        </style>
 
         <form method="post" class="login-form">
             {% csrf_token %}
@@ -76,5 +45,7 @@
     </div>
 
 </div>
+</div>
+</div>
+</div>
 {% endblock %}
-

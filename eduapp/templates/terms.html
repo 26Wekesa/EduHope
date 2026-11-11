@@ -26,7 +26,7 @@
   <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 
   <!-- Main CSS File -->
-  <link href="{% static 'assets/css/main.css' %}?v=20260916" rel="stylesheet">
+  <link href="{% static 'assets/css/main.css' %}?v=20261109-forms" rel="stylesheet">
 
   <style>
     body.terms-page { background: #fff; color: #586579; }
@@ -41,7 +41,82 @@
     .privacy-page .page-title .title-wrapper p, .terms-page .page-title .title-wrapper p { color: rgba(255,255,255,.86); max-width: 720px; }
     .privacy-page .privacy, .terms-page .terms-of-service { background: #f8f9fb; }
     .privacy-page .privacy-content, .terms-page .tos-content { background: #fff; border-radius: 20px; padding: 2rem 2.5rem; box-shadow: 0 1rem 3rem rgba(13,27,75,.1); }
-    .terms-page .terms-consent { background: linear-gradient(135deg, #eef9ff 0%, #f7f8fb 100%); border: 1px solid #d9edf5; border-radius: 16px; }
+    .terms-page .terms-panel {
+      position: sticky;
+      top: 76px;
+      z-index: 5;
+      display: flex;
+      max-height: calc(100svh - 96px);
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .terms-page .terms-scroll {
+      min-height: 180px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 1.5rem 2rem;
+      scrollbar-gutter: stable;
+    }
+    .terms-page .tos-content {
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .terms-page .terms-consent-footer {
+      flex: 0 0 auto;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid #d1d5db;
+      background: #fff;
+    }
+    .terms-page .terms-consent-footer .form-check {
+      margin-bottom: 1rem;
+    }
+    .terms-page .terms-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+    .terms-page .terms-decline {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      padding: 10px 16px;
+      border: 1px solid #4b5563;
+      border-radius: 6px;
+      color: #374151;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .terms-page .terms-decline:hover,
+    .terms-page .terms-decline:focus-visible {
+      background: #f3f4f6;
+      color: #111827;
+    }
+    @media (max-width: 575.98px) {
+      .terms-page .terms-panel {
+        top: 68px;
+        max-height: calc(100svh - 84px);
+      }
+      .terms-page .terms-scroll {
+        padding: 1.25rem 1rem;
+      }
+      .terms-page .terms-consent-footer {
+        padding: 1rem;
+      }
+      .terms-page .terms-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+      .terms-page .terms-actions .btn,
+      .terms-page .terms-decline {
+        justify-content: center;
+        width: 100%;
+      }
+    }
     .terms-page .alert-box, .terms-page .prohibited-item, .terms-page .disclaimer-box { background: #f8f9fb !important; color: #586579; }
     .terms-page .info-box, .terms-page .notice-box { background: #eef9ff !important; }
     .terms-page .content-section h3, .terms-page .content-section h4, .terms-page .content-section h5 { color: #0d1b4b; }
@@ -76,7 +151,7 @@
       <a class="navbar-brand fw-bold text-white fs-4" href="/">
         <img src="{% static 'assets/img/logo.webp' %}" height="40" alt="Bold Foundation"> Bold Foundation
       </a>
-      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navMenu">
@@ -135,20 +210,11 @@
           </div>
         {% endif %}
 
-        <form method="post" action="{% url 'terms' %}#terms-of-service" class="terms-consent p-4 mb-4">
+        <form method="post" action="{% url 'terms' %}#terms-of-service" class="terms-panel mb-4">
           {% csrf_token %}
           <input type="hidden" name="next" value="{{ next_url }}">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="accept_terms" id="acceptTerms" required>
-            <label class="form-check-label" for="acceptTerms">
-              I confirm that I have read and understood the <strong>Bold Foundation Terms and Conditions</strong> and agree to follow them.
-            </label>
-          </div>
-          <button type="submit" class="btn btn-primary rounded-pill mt-3 px-4">Accept and continue</button>
-        </form>
-
-        <!-- Content -->
-        <div class="tos-content" data-aos="fade-up" data-aos-delay="200">
+          <div class="terms-scroll" id="termsDocument" tabindex="0" aria-label="Scrollable Terms and Conditions">
+            <div class="tos-content">
           <!-- Agreement Section -->
           <div id="agreement" class="content-section">
             <h3>1. Agreement to Terms</h3>
@@ -256,7 +322,21 @@
               <p>By continuing to access or use our service after those revisions become effective, you agree to be bound by the revised terms.</p>
             </div>
           </div>
-        </div>
+            </div>
+          </div>
+          <div class="terms-consent-footer">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="accept_terms" id="acceptTerms" required>
+              <label class="form-check-label" for="acceptTerms">
+                I confirm that I have read and understood the <strong>Bold Foundation Terms and Conditions</strong> and agree to follow them.
+              </label>
+            </div>
+            <div class="terms-actions">
+              <button type="submit" class="btn btn-primary px-4">Accept and continue</button>
+              <a href="{% url 'index' %}" class="terms-decline">Decline and return home</a>
+            </div>
+          </div>
+        </form>
 
         <!-- Contact Section -->
         <div class="tos-contact" data-aos="fade-up" data-aos-delay="300">
@@ -277,68 +357,7 @@
 
   </main>
 
-  <footer id="footer" class="footer dark-background">
-
-    <div class="container footer-top">
-      <div class="row gy-4">
-        <div class="col-lg-5 col-md-12 footer-about">
-          <a href="{% url 'index' %}" class="logo d-flex align-items-center">
-            <span class="sitename">Bold Foundation</span>
-          </a>
-          <p>Empowering the next generation through mentorship, education, and community support.</p>
-          <div class="social-links d-flex mt-4">
-            <a href=""><i class="bi bi-twitter-x"></i></a>
-            <a href=""><i class="bi bi-facebook"></i></a>
-            <a href=""><i class="bi bi-instagram"></i></a>
-            <a href=""><i class="bi bi-linkedin"></i></a>
-          </div>
-        </div>
-
-        <div class="col-lg-2 col-6 footer-links">
-          <h4>Useful Links</h4>
-          <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'events' %}">Events</a></li>
-            <li><a href="{% url 'services' %}">Mentorship</a></li>
-            <li><a href="{% url 'terms' %}">Terms of service</a></li>
-            <li><a href="{% url 'privacy' %}">Privacy policy</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-2 col-6 footer-links">
-          <h4>Our Services</h4>
-          <ul>
-            <li><a href="{% url 'mentor' %}">Apply as Mentor</a></li>
-            <li><a href="{% url 'learner' %}">Support a Learner</a></li>
-            <li><a href="{% url 'patner' %}">Partner with Us</a></li>
-            <li><a href="{% url 'events' %}">Community Events</a></li>
-            <li><a href="{% url 'sponser' %}">Sponsor a Programme</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
-          <h4>Contact Us</h4>
-          <p>Bold Foundation</p>
-          <p>Kenya</p>
-          <p class="mt-4"><strong>Support:</strong> <span>Available by email</span></p>
-          <p><strong>Email:</strong> <a href="mailto:boldfoundation59@gmail.com">boldfoundation59@gmail.com</a></p>
-        </div>
-
-      </div>
-    </div>
-
-    <div class="container copyright text-center mt-4">
-      <p>© 2025 Bold Foundation. All rights reserved.</p>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you've purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-        Bold Foundation
-      </div>
-    </div>
-
-  </footer>
+  {% include 'partials/site_footer.html' %}
 
   <!-- Scroll Top -->
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

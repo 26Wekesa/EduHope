@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import FileExtensionValidator
 from django.utils.text import slugify
 
 
@@ -73,6 +74,11 @@ class Event(models.Model):
     slug = models.SlugField(max_length=220, unique=True, blank=True)
     description = models.TextField()
     image = models.ImageField(upload_to='events/', blank=True, null=True)
+    report = models.FileField(
+        upload_to='events/reports/',
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx'])],
+    )
     date = models.DateTimeField()
     location = models.CharField(max_length=300)
     is_featured = models.BooleanField(default=False)
@@ -89,6 +95,18 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class EventPhoto(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='photos')
+    image = models.ImageField(upload_to='events/gallery/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['uploaded_at', 'id']
+
+    def __str__(self):
+        return f'Photo for {self.event.title}'
 
 
 class SupportApplication(models.Model):

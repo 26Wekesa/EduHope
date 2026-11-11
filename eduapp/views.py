@@ -1,6 +1,8 @@
 import json
 import logging
 from decimal import Decimal
+from django import forms
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -9,16 +11,18 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from django.db import OperationalError, connection
 from django.utils import timezone
 from django.utils.text import slugify
 from django.conf import settings
 from .models import (
-    Message, Mentor, MpesaTransaction, Event,
+    Message, Mentor, MpesaTransaction, Event, EventPhoto,
     SupportApplication, PartnershipRequest,
     MentorshipBooking, Donation
 )
+from .forms import EventRecapUploadForm
 from .mpesa import initiate_stk_push
 
 
@@ -52,8 +56,16 @@ def health_check(request):
 
 
 def index(request):
-    featured_events = Event.objects.filter(is_featured=True, is_published=True)[:3]
-    upcoming_events = Event.objects.filter(is_published=True).order_by('date')[:6]
+    now = timezone.now()
+    featured_events = Event.objects.filter(
+        is_featured=True,
+        is_published=True,
+        date__gte=now,
+    )[:3]
+    upcoming_events = Event.objects.filter(
+        is_published=True,
+        date__gte=now,
+    ).order_by('date')[:6]
     return render(request, 'index.html', {
         'featured_events': featured_events,
         'upcoming_events': upcoming_events,
@@ -64,7 +76,11 @@ def events_list(request):
     now = timezone.now()
     upcoming_events = Event.objects.filter(is_published=True, date__gte=now).order_by('date')
     past_events = Event.objects.filter(is_published=True, date__lt=now).order_by('-date')
-    featured_event = Event.objects.filter(is_published=True, is_featured=True).order_by('date').first()
+    featured_event = Event.objects.filter(
+        is_published=True,
+        is_featured=True,
+        date__gte=now,
+    ).order_by('date').first()
     return render(request, 'events.html', {
         'upcoming_events': upcoming_events,
         'past_events': past_events,
@@ -75,7 +91,10 @@ def events_list(request):
 
 def event_detail(request, slug):
     event = get_object_or_404(Event, slug=slug, is_published=True)
-    return render(request, 'event_detail.html', {'event': event})
+    return render(request, 'event_detail.html', {
+        'event': event,
+        'is_past_event': event.date < timezone.now(),
+    })
 
 
 def event_support(request, slug):
@@ -382,7 +401,7 @@ def admin_view(request):
     applications = SupportApplication.objects.all().order_by('-submitted_at')
     partnerships = PartnershipRequest.objects.all().order_by('-submitted_at')
     all_messages = Message.objects.all().order_by('-created_at')
-    events = Event.objects.all().order_by('-created_at')
+    events = Event.objects.prefetch_related('photos').order_by('-created_at')
     upcoming_events = events.filter(date__gte=timezone.now()).order_by('-created_at')
     past_events = events.filter(date__lt=timezone.now()).order_by('-date')
     bookings = MentorshipBooking.objects.all().order_by('-submitted_at')
@@ -501,6 +520,11 @@ def event_create(request):
         if not date_value:
             messages.error(request, 'Event date is required.')
             return redirect('admin_view')
+        try:
+            event_date = forms.DateTimeField().clean(date_value)
+        except ValidationError:
+            messages.error(request, 'Please enter a valid event date and time.')
+            return redirect('admin_view')
         if not location:
             messages.error(request, 'Event location is required.')
             return redirect('admin_view')
@@ -516,7 +540,7 @@ def event_create(request):
             title=title,
             slug=slug_value,
             description=description,
-            date=date_value,
+            date=event_date,
             location=location,
             image=request.FILES.get('image'),
             is_featured=request.POST.get('is_featured') == 'on',
@@ -544,13 +568,18 @@ def event_edit(request, id):
         if not date_value:
             messages.error(request, 'Event date is required.')
             return redirect('admin_view')
+        try:
+            event_date = forms.DateTimeField().clean(date_value)
+        except ValidationError:
+            messages.error(request, 'Please enter a valid event date and time.')
+            return redirect('admin_view')
         if not location:
             messages.error(request, 'Event location is required.')
             return redirect('admin_view')
 
         event.title = title
         event.description = description
-        event.date = date_value
+        event.date = event_date
         event.location = location
         event.is_featured = request.POST.get('is_featured') == 'on'
         event.is_published = request.POST.get('is_published') == 'on'
@@ -582,6 +611,39 @@ def event_delete(request, id):
         return redirect('/')
     get_object_or_404(Event, id=id).delete()
     messages.success(request, 'Event deleted.')
+    return redirect('admin_view')
+
+
+@login_required
+@require_POST
+def event_recap_upload(request, id):
+    if not request.user.is_staff:
+        messages.error(request, 'Only authenticated staff users can upload event recaps.')
+        return redirect('login')
+
+    event = get_object_or_404(Event, id=id)
+    if event.date >= timezone.now():
+        messages.error(request, 'Photos and reports can only be uploaded after the event has passed.')
+        return redirect('admin_view')
+
+    form = EventRecapUploadForm(request.POST, request.FILES)
+    if not form.is_valid():
+        messages.error(request, 'Please choose at least one valid photo or report (PDF, DOC, or DOCX).')
+        return redirect('admin_view')
+
+    report = form.cleaned_data['report']
+    if report:
+        event.report = report
+        event.save(update_fields=['report', 'updated_at'])
+
+    photos = [
+        EventPhoto(event=event, image=image)
+        for image in form.cleaned_data['photos']
+    ]
+    if photos:
+        EventPhoto.objects.bulk_create(photos)
+
+    messages.success(request, f'Past event recap updated for "{event.title}".')
     return redirect('admin_view')
 
 

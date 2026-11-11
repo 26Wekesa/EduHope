@@ -13,49 +13,28 @@
   <!-- AOS Animations -->
   <link rel="stylesheet" href="{% static 'assets/vendor/aos/aos.css' %}">
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/main.css' %}?v=20261109-forms">
   {% block extra_css %}{% endblock %}
 
   <style>
     :root {
       --navy: #0d1b4b;
-      --navy-light: #1a2d6b;
-      --cyan: #00c2e0;
-      --sky: #4fc3f7;
-      --emerald: #10b981;
-      --gray-bg: #f8f9fb;
+      --accent: #b84a1b;
+      --ink: #111827;
+      --body-text: #4b5563;
+      --surface: #f7f7f5;
+      --radius: 8px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 16px;
+      --space-4: 24px;
+      --space-5: 32px;
     }
-    body { font-family: 'Segoe UI', sans-serif; background: #fff; }
-
-    /* Sticky Navbar */
-    .navbar-bold {
-      background: transparent;
-      transition: background 0.3s, box-shadow 0.3s;
-      padding: 1rem 0;
-    }
-    .navbar-bold.scrolled {
-      background: var(--navy) !important;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      padding: 0.6rem 0;
-    }
-    .navbar-bold .nav-link { color: rgba(255,255,255,0.9) !important; font-weight: 500; }
-    .navbar-bold .nav-link:hover { color: var(--cyan) !important; }
-    .btn-apply {
-      background: var(--cyan);
-      color: var(--navy) !important;
-      font-weight: 700;
-      border-radius: 50px;
-      padding: 8px 24px;
-    }
-    .btn-apply:hover { background: #fff; color: var(--navy) !important; }
+    body { font-family: 'Segoe UI', sans-serif; background: #fff; color: var(--body-text); }
 
     /* Toast messages */
     .django-messages { position: fixed; top: 80px; right: 20px; z-index: 9999; min-width: 300px; }
 
-    /* Footer */
-    footer { background: var(--navy); color: #aaa; }
-    footer a { color: #aaa; text-decoration: none; }
-    footer a:hover { color: var(--cyan); }
   </style>
 </head>
 <body>
@@ -66,7 +45,7 @@
       <a class="navbar-brand fw-bold text-white fs-4" href="/">
         <img src="{% static 'assets/img/logo.webp' %}" height="40" alt="Bold Foundation"> Bold Foundation
       </a>
-      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navMenu">
@@ -106,44 +85,7 @@
   <!-- Page Content -->
   {% block content %}{% endblock %}
 
-  <!-- Footer -->
-  <footer class="pt-5 pb-3 mt-5">
-    <div class="container">
-      <div class="row g-4">
-        <div class="col-md-4">
-          <h5 class="text-white fw-bold">Bold Foundation</h5>
-          <p class="small">Empowering the next generation through mentorship, education, and community support.</p>
-        </div>
-        <div class="col-md-2">
-          <h6 class="text-white">Quick Links</h6>
-          <ul class="list-unstyled small">
-            <li><a href="/">Home</a></li>
-            <li><a href="/events/">Events</a></li>
-            <li><a href="/mentor/">Apply as Mentor</a></li>
-            <li><a href="/learner/">Support Application</a></li>
-          </ul>
-        </div>
-        <div class="col-md-2">
-          <h6 class="text-white">Legal</h6>
-          <ul class="list-unstyled small">
-            <li><a href="/terms/">Terms of Service</a></li>
-            <li><a href="/privacy/">Privacy Policy</a></li>
-          </ul>
-        </div>
-        <div class="col-md-4">
-          <h6 class="text-white">Contact Us</h6>
-          <p class="small"><i class="bi bi-envelope me-2"></i><a href="mailto:boldfoundation59@gmail.com">boldfoundation59@gmail.com</a></p>
-          <div class="d-flex gap-3 mt-2">
-            <a href="#"><i class="bi bi-facebook fs-5"></i></a>
-            <a href="#"><i class="bi bi-twitter-x fs-5"></i></a>
-            <a href="#"><i class="bi bi-instagram fs-5"></i></a>
-          </div>
-        </div>
-      </div>
-      <hr class="border-secondary mt-4">
-      <p class="text-center small mb-0">© 2025 Bold Foundation. All rights reserved.</p>
-    </div>
-  </footer>
+  {% include 'partials/site_footer.html' %}
 
   <!-- Scripts -->
   <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>

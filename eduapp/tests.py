@@ -1,5 +1,7 @@
 import json
+import tempfile
 from datetime import timedelta
+from io import BytesIO
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import OperationalError
@@ -8,7 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 from unittest.mock import patch
 
-from .models import Donation, Event, Mentor, MpesaTransaction
+from .models import Donation, Event, EventPhoto, Mentor, MpesaTransaction
 from .mpesa import initiate_stk_push, query_stk_status
 from .views import events_list
 
@@ -59,6 +61,72 @@ class EventsPageTests(TestCase):
         self.assertEqual(len(response.context['upcoming_events']), 1)
         self.assertEqual(len(response.context['past_events']), 1)
         self.assertIn('Upcoming Events', response.content.decode())
+        self.assertContains(response, 'View Details')
+
+    def test_staff_admin_dashboard_renders_workspace_navigation(self):
+        self._create_staff_user()
+        client = Client()
+        self.assertTrue(client.login(username='adminuser', password='StrongPass123!'))
+
+        response = client.get(reverse('admin_view'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Operations dashboard')
+        self.assertContains(response, 'Activity &amp; requests')
+        self.assertContains(response, 'Workspace summary')
+        self.assertContains(response, 'data-bs-target="#events"')
+
+    def test_past_event_detail_shows_recap_area(self):
+        response = self.client.get(reverse('event_detail', args=['past-mentorship-day']))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context['is_past_event'])
+        self.assertContains(response, 'Past Event Details')
+        self.assertContains(response, 'The event report has not been uploaded yet.')
+        self.assertNotContains(response, 'Support this event')
+
+    def test_staff_can_upload_past_event_photos_and_report(self):
+        self._create_staff_user()
+        client = Client()
+        self.assertTrue(client.login(username='adminuser', password='StrongPass123!'))
+        admin_response = client.get(reverse('admin_view'))
+        self.assertContains(admin_response, 'Past-event recap')
+        self.assertContains(admin_response, 'Save recap')
+
+        from PIL import Image
+
+        image_buffer = BytesIO()
+        Image.new('RGB', (1, 1), color='blue').save(image_buffer, format='PNG')
+        photo = SimpleUploadedFile('recap.png', image_buffer.getvalue(), content_type='image/png')
+        report = SimpleUploadedFile('report.pdf', b'%PDF-1.4 recap', content_type='application/pdf')
+
+        with tempfile.TemporaryDirectory() as media_root:
+            with override_settings(MEDIA_ROOT=media_root):
+                response = client.post(
+                    reverse('event_recap_upload', args=[Event.objects.get(slug='past-mentorship-day').id]),
+                    {'photos': [photo], 'report': report},
+                )
+
+                self.assertRedirects(response, reverse('admin_view'), fetch_redirect_response=False)
+                event = Event.objects.get(slug='past-mentorship-day')
+                self.assertEqual(EventPhoto.objects.filter(event=event).count(), 1)
+                self.assertTrue(event.report.name.endswith('report.pdf'))
+
+                detail_response = client.get(reverse('event_detail', args=[event.slug]))
+                self.assertContains(detail_response, 'Download event report')
+                self.assertContains(detail_response, 'Event photos')
+
+    def test_staff_cannot_upload_recap_before_event_has_passed(self):
+        self._create_staff_user()
+        client = Client()
+        self.assertTrue(client.login(username='adminuser', password='StrongPass123!'))
+        event = Event.objects.get(slug='upcoming-community-talk')
+
+        response = client.post(reverse('event_recap_upload', args=[event.id]), {})
+
+        self.assertRedirects(response, reverse('admin_view'), fetch_redirect_response=False)
+        self.assertFalse(EventPhoto.objects.filter(event=event).exists())
+        self.assertFalse(event.report)
 
     def test_event_actions_open_details_and_support_form(self):
         event = Event.objects.get(slug='upcoming-community-talk')

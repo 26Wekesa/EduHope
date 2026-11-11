@@ -9,7 +9,7 @@
     <div class="row align-items-center g-4">
       <div class="col-lg-8" data-aos="fade-right">
         <span class="badge rounded-pill px-3 py-2 mb-3" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">
-          Event Details
+          {% if is_past_event %}Past Event Details{% else %}Event Details{% endif %}
         </span>
         <h1 class="display-5 fw-bold mb-3">{{ event.title }}</h1>
         <div class="d-flex flex-wrap gap-3 text-white-50 mb-0">
@@ -42,6 +42,17 @@
       </div>
 
       <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+        {% if is_past_event %}
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+          <h4 class="fw-bold mb-3" style="color: #0d1b4b;">Event recap</h4>
+          <p class="text-secondary">This event has passed. View any uploaded photos and download the event report below.</p>
+          {% if event.report %}
+          <a href="{{ event.report.url }}" class="btn w-100 fw-bold text-white mt-auto" target="_blank" rel="noopener">Download event report</a>
+          {% else %}
+          <p class="text-muted mb-0">The event report has not been uploaded yet.</p>
+          {% endif %}
+        </div>
+        {% else %}
         <div id="support-form" class="card border-0 shadow-sm rounded-4 p-4 h-100">
           <h4 class="fw-bold mb-3" style="color: #0d1b4b;">Support this event</h4>
           <p class="text-secondary">Help us make this initiative a success by contributing through the same M-Pesa till used for mentor registration.</p>
@@ -78,11 +89,31 @@
               <label class="form-label">Message</label>
               <textarea class="form-control" name="message" rows="3"></textarea>
             </div>
-            <button type="submit" class="btn w-100 rounded-pill fw-bold text-white" style="background: #0d1b4b;">Support Event</button>
+            <button type="submit" class="btn w-100 fw-bold text-white">Support Event</button>
           </form>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if is_past_event and event.photos.all %}
+    <div class="row mt-5" data-aos="fade-up">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Event photos</h3>
+          <div class="row g-3">
+            {% for photo in event.photos.all %}
+            <div class="col-6 col-md-4 col-lg-3">
+              <a href="{{ photo.image.url }}" target="_blank" rel="noopener">
+                <img src="{{ photo.image.url }}" alt="Photo from {{ event.title }}" class="img-fluid w-100 rounded-3" style="height: 220px; object-fit: cover;">
+              </a>
+            </div>
+            {% endfor %}
+          </div>
         </div>
       </div>
     </div>
+    {% endif %}
 
     <div class="row mt-5" data-aos="fade-up">
       <div class="col-12">

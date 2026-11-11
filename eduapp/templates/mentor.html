@@ -6,7 +6,10 @@
 {% block content %}
 
 <section class="mentor section">
-  <div class="page-shell">
+  <div class="page-shell form-page-shell">
+    <div class="form-experience">
+      {% include 'partials/form_story_panel.html' with story_title="Share your experience." story_copy="Mentor learners as they build confidence, skills, and opportunities for their future." show_mentor_guidance=True %}
+      <div class="form-experience__content">
 
     <div class="container" style="max-width: 700px;">
 
@@ -17,16 +20,6 @@
           <h3 style="color: #0d1b4b; font-weight: bold; margin-bottom: 10px; font-size: 28px;">Join Bold Foundation and guide learners to achieve their potential</h3>
         </div>
 
-        <div style="background: #f8f9fb; padding: 20px; border-radius: 10px; border-left: 4px solid #0d1b4b; margin-bottom: 25px;">
-          <h5 style="color: #0d1b4b; margin-bottom: 10px; font-weight: bold;">How to apply</h5>
-          <ol style="color: #555; margin-bottom: 0; padding-left: 20px; font-size: 14px;">
-            <li>Enter your name and contact details.</li>
-            <li>Add your organization and years of experience, if applicable.</li>
-            <li>Tell us about your mentoring approach, skills, and availability.</li>
-            <li>Review your details, then select <strong>Submit Application</strong>.</li>
-          </ol>
-        </div>
-
         {% if messages %}
         <div style="margin-bottom: 20px;">
           {% for message in messages %}
@@ -34,35 +27,6 @@
           {% endfor %}
         </div>
         {% endif %}
-
-        <style>
-          .form-section { margin-bottom: 20px; }
-          .form-section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
-          .form-section-title i { font-size: 20px; color: #0a1f44; }
-          .form-section-title h5 { margin: 0; color: #0a1f44; font-weight: 600; font-size: 14px; }
-          .form-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-          .form-group.full { grid-template-columns: 1fr; }
-          .form-group input, .form-group select, .form-group textarea {
-            padding: 12px 18px !important;
-            border-radius: 25px !important;
-            background: #1a1a1a !important;
-            color: white !important;
-            border: 2px solid #333 !important;
-            font-size: 13px !important;
-            transition: all 0.3s;
-          }
-          .form-group input::placeholder, .form-group textarea::placeholder { color: #999 !important; }
-          .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            background: #252525 !important;
-            border-color: #0a1f44 !important;
-            box-shadow: 0 0 0 3px rgba(10, 31, 68, 0.1) !important;
-          }
-          .form-actions { display: flex; gap: 12px; margin-top: 25px; }
-          .btn-back { flex: 1; padding: 12px 20px; border: 2px solid #0a1f44; background: white; color: #0a1f44; border-radius: 25px; font-weight: 600; cursor: pointer; transition: 0.3s; }
-          .btn-back:hover { background: #f0f4f9; }
-          .btn-submit { flex: 1; padding: 12px 20px; background: #e91e8c; color: white; border: none; border-radius: 25px; font-weight: 600; cursor: pointer; transition: 0.3s; }
-          .btn-submit:hover { background: #d11a7a; }
-        </style>
 
         <form id="mentorForm" method="post" action="/mentor/">
           {% csrf_token %}
@@ -89,7 +53,7 @@
               <input type="tel" name="phone" id="phone" placeholder="Phone Number">
               <input type="text" name="organization" id="organization" placeholder="Organization (Optional)">
             </div>
-            <div class="form-group">
+            <div class="form-group full">
               <input type="number" name="years" id="years" min="0" placeholder="Years of Experience">
             </div>
           </div>
@@ -114,21 +78,12 @@
 
         </form>
 
-        <div style="background: #f8f9fb; padding: 20px; border-radius: 10px; border-left: 4px solid #0a1f44;">
-          <h5 style="color: #0a1f44; margin-bottom: 10px; font-weight: bold; font-size: 16px;">Why Mentor with Bold Foundation?</h5>
-          <p style="color: #555; margin-bottom: 12px; font-size: 14px;">Make a real difference in a learner's life by sharing your knowledge and experience.</p>
-          <ul style="margin-left: 20px; color: #555; font-size: 14px;">
-            <li style="margin-bottom: 6px;">Flexible mentorship schedules</li>
-            <li style="margin-bottom: 6px;">Mentor in leadership and digital literacy</li>
-            <li style="margin-bottom: 6px;">Full support from Bold Foundation team</li>
-            <li>Track your mentee's progress and growth</li>
-          </ul>
-        </div>
-
       </div>
 
     </div>
 
+  </div>
+  </div>
   </div>
 </section>
 

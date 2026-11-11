@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Message, Mentor, MpesaTransaction, Event,
-    SupportApplication, PartnershipRequest,
+    SupportApplication, PartnershipRequest, EventPhoto,
     MentorshipBooking, Donation
 )
 
@@ -36,6 +36,12 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ('is_featured', 'is_published')
     search_fields = ('title', 'location')
     prepopulated_fields = {'slug': ('title',)}
+
+
+@admin.register(EventPhoto)
+class EventPhotoAdmin(admin.ModelAdmin):
+    list_display = ('event', 'uploaded_at')
+    list_filter = ('event',)
 
 
 @admin.register(SupportApplication)

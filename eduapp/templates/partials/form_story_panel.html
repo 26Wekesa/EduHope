@@ -1,0 +1,42 @@
+{% load static %}
+<aside class="form-experience__story">
+  <img src="{% static 'assets/img/about/bold.jpg' %}" alt="Bold Foundation logo">
+  <p class="form-experience__eyebrow">Bold Foundation</p>
+  <h2>{{ story_title|default:"Let's build a brighter future together." }}</h2>
+  <p class="form-experience__story-copy">{{ story_copy|default:"Share a little about yourself and join a community committed to mentorship, dignity, and opportunity." }}</p>
+
+  {% if show_mentor_guidance %}
+    <div style="margin-top: 24px; padding: 18px 0 12px;">
+      <h5 style="color: #fff; margin-bottom: 10px; font-weight: bold; font-size: 16px;">Why Mentor with Bold Foundation?</h5>
+      <p style="color: #fff; margin-bottom: 12px; font-size: 14px;">Make a real difference in a learner's life by sharing your knowledge and experience.</p>
+      <ul style="margin-left: 20px; color: #fff; font-size: 14px; line-height: 1.9; padding-left: 12px;">
+        <li>Flexible mentorship schedules</li>
+        <li>Mentor in leadership and digital literacy</li>
+        <li>Full support from Bold Foundation team</li>
+        <li>Track your mentee's progress and growth</li>
+      </ul>
+    </div>
+
+    <div style="margin-top: 8px; padding: 18px 0 0;">
+      <p style="margin: 0 0 10px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; font-weight: 700;">How to apply</p>
+      <ol style="margin: 0; padding-left: 18px; color: #fff; font-size: 14px; line-height: 1.8;">
+        <li>Enter your name and contact details.</li>
+        <li>Add your organization and years of experience, if applicable.</li>
+        <li>Tell us about your mentoring approach, skills, and availability.</li>
+        <li>Review your details, then select <strong>Submit Application</strong>.</li>
+      </ol>
+    </div>
+  {% endif %}
+
+  {% if show_learner_guidance %}
+    <div style="margin-top: 24px; padding: 18px 0 12px;">
+      <p style="margin: 0 0 10px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; font-weight: 700;">How to complete this form</p>
+      <ol style="margin: 0; padding-left: 18px; color: #fff; font-size: 14px; line-height: 1.8;">
+        <li>Enter the learner's details, school, and grade.</li>
+        <li>Select the type of support needed and explain the learner's situation.</li>
+        <li>Provide the parent or guardian's contact details.</li>
+        <li>Add your own contact details so we can verify the case, then submit the application.</li>
+      </ol>
+    </div>
+  {% endif %}
+</aside>

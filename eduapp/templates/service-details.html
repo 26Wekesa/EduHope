@@ -1,23 +1,115 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Mentorship Programme | Bold Foundation{% endblock %}
 
 {% block content %}
-<section style="padding-top: 120px; padding-bottom: 80px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: #fff;">
+<style>
+  .mentor-programme-hero {
+    padding-top: 120px;
+    padding-bottom: 80px;
+    background: linear-gradient(135deg, #0d1b4b 0%, #132d68 100%);
+    color: #fff;
+  }
+
+  .mentor-programme-badge {
+    background: rgba(184, 74, 27, 0.12);
+    border: 1px solid rgba(184, 74, 27, 0.35);
+    color: #fff;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .mentor-programme-hero img {
+    max-height: 420px;
+    object-fit: cover;
+    border: 4px solid rgba(255,255,255,0.25);
+  }
+
+  .mentor-programme-surface {
+    background: #f7f7f5;
+  }
+
+  .mentor-programme-pill {
+    background: rgba(184, 74, 27, 0.12);
+    color: #0d1b4b;
+    font-weight: 700;
+  }
+
+  .mentor-programme-card {
+    background: linear-gradient(135deg, #fffaf6 0%, #f7f7f5 100%);
+  }
+
+  .mentor-programme-goal {
+    color: #0d1b4b;
+  }
+
+  .mentor-programme-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: #0d1b4b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.5rem;
+  }
+
+  .mentor-programme-icon--accent {
+    background: #b84a1b;
+  }
+
+  .mentor-programme-icon--light {
+    background: #0d1b4b;
+  }
+
+  .mentor-programme-check {
+    color: #b84a1b;
+  }
+
+  .mentor-programme-info {
+    color: #0d1b4b;
+  }
+
+  .mentor-programme-panel {
+    background: linear-gradient(135deg, #0d1b4b 0%, #132d68 100%);
+    color: #fff;
+  }
+
+  .mentor-programme-panel ol,
+  .mentor-programme-panel li {
+    color: rgba(255,255,255,0.9);
+  }
+
+  .mentor-programme-cta {
+    background: #b84a1b;
+    color: #fff;
+    border: none;
+  }
+
+  .mentor-programme-cta:hover,
+  .mentor-programme-cta:focus {
+    background: #9f3e18;
+    color: #fff;
+  }
+</style>
+
+<section class="mentor-programme-hero">
   <div class="container">
     <div class="row align-items-center g-5">
       <div class="col-lg-7" data-aos="fade-right">
-        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">
+        <span class="badge rounded-pill px-3 py-2 mb-3 mentor-programme-badge">
           Mentorship Programme
         </span>
-        <h1 class="display-5 fw-bold mb-3" style="color: #fff;">Helping young people grow into confident, responsible, and purpose-driven leaders.</h1>
+        <h1 class="display-5 fw-bold mb-3 text-white">Helping young people grow into confident, responsible, and purpose-driven leaders.</h1>
         <p class="fs-5 mb-0" style="line-height: 1.8; color: rgba(255,255,255,0.9);">
           Through mentorship, leadership sessions, public speaking, and community engagement, Bold Foundation equips both boys and girls with the confidence, emotional intelligence, and values they need to lead with dignity while responding to today’s environmental and socio-economic challenges.
         </p>
       </div>
       <div class="col-lg-5 text-center" data-aos="fade-left">
-        <img src="{% static 'assets/img/about/bold.jpg' %}" class="img-fluid rounded-4 shadow-lg" alt="Bold Foundation Mentorship" style="max-height: 420px; object-fit: cover; border: 4px solid rgba(255,255,255,0.25);">
+        <img src="{% static 'assets/img/about/bold.jpg' %}" class="img-fluid rounded-4 shadow-lg" alt="Bold Foundation Mentorship">
       </div>
     </div>
   </div>
@@ -27,20 +119,20 @@
   <div class="container">
     <div class="row g-4">
       <div class="col-lg-8" data-aos="fade-up">
-        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #dff7ff; color: #0d1b4b; font-weight: 700;">Programme Overview</span>
-        <h2 class="fw-bold mb-3" style="color: #0d1b4b;">A mentorship experience built on leadership, dignity, inclusion, and social responsibility.</h2>
+        <span class="badge rounded-pill px-3 py-2 mb-3 mentor-programme-pill">Programme Overview</span>
+        <h2 class="fw-bold mb-3 mentor-programme-info">A mentorship experience built on leadership, dignity, inclusion, and social responsibility.</h2>
         <p class="text-secondary lead">The mentorship programme is designed to support young people in schools and communities as they grow through adolescence into responsible, aware, and resilient leaders. We create safe, encouraging spaces where they can learn, reflect, and build positive habits for life.</p>
         <p class="text-secondary">Each participant is guided through sessions focused on self-awareness, discipline, public speaking, leadership, emotional intelligence, gender equity, environmental care, and emerging social and economic realities. We believe mentorship should not only inform, but transform.</p>
       </div>
       <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
-        <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background: linear-gradient(135deg, #eef9ff 0%, #f7f8fb 100%);">
-          <h4 class="fw-bold mb-3" style="color: #0d1b4b;">Programme Goals</h4>
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100 mentor-programme-card">
+          <h4 class="fw-bold mb-3 mentor-programme-goal">Programme Goals</h4>
           <ul class="list-unstyled mb-0 text-secondary">
-            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Build confidence and resilience</li>
-            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Strengthen leadership and participation</li>
-            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Promote dignity, equality, and respect</li>
-            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Address emerging social and economic challenges</li>
-            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Encourage environmental stewardship and community responsibility</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill mentor-programme-check me-2"></i>Build confidence and resilience</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill mentor-programme-check me-2"></i>Strengthen leadership and participation</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill mentor-programme-check me-2"></i>Promote dignity, equality, and respect</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill mentor-programme-check me-2"></i>Address emerging social and economic challenges</li>
+            <li><i class="bi bi-check-circle-fill mentor-programme-check me-2"></i>Encourage environmental stewardship and community responsibility</li>
           </ul>
         </div>
       </div>
@@ -48,40 +140,40 @@
   </div>
 </section>
 
-<section class="py-5" style="background: #f8f9fb;">
+<section class="py-5 mentor-programme-surface">
   <div class="container">
     <div class="text-center mb-5" data-aos="fade-up">
-      <span class="badge rounded-pill px-4 py-2 mb-2" style="background: #dff7ff; color: #0d1b4b; font-weight: 700;">What We Offer</span>
-      <h2 class="fw-bold" style="color: #0d1b4b;">Mentorship that speaks to the realities of young people today.</h2>
+      <span class="badge rounded-pill px-4 py-2 mb-2 mentor-programme-pill">What We Offer</span>
+      <h2 class="fw-bold mentor-programme-info">Mentorship that speaks to the realities of young people today.</h2>
     </div>
 
     <div class="row g-4">
       <div class="col-md-4" data-aos="fade-up">
         <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
-          <div class="mb-3" style="width: 52px; height: 52px; border-radius: 16px; background: #0d1b4b; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+          <div class="mb-3 mentor-programme-icon">
             <i class="bi bi-people-fill"></i>
           </div>
-          <h4 class="fw-bold mb-3" style="color: #0d1b4b;">Peer and Adult Mentorship</h4>
+          <h4 class="fw-bold mb-3 mentor-programme-info">Peer and Adult Mentorship</h4>
           <p class="text-secondary mb-0">Young people are matched with mentors who guide them through life challenges, purpose discovery, and positive behavior change across school, home, and community settings.</p>
         </div>
       </div>
 
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
         <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
-          <div class="mb-3" style="width: 52px; height: 52px; border-radius: 16px; background: #10b981; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+          <div class="mb-3 mentor-programme-icon mentor-programme-icon--accent">
             <i class="bi bi-mic-fill"></i>
           </div>
-          <h4 class="fw-bold mb-3" style="color: #0d1b4b;">Public Speaking & Confidence</h4>
+          <h4 class="fw-bold mb-3 mentor-programme-info">Public Speaking &amp; Confidence</h4>
           <p class="text-secondary mb-0">We help both boys and girls build voice, clarity, and confidence through speaking sessions, presentations, and leadership practice.</p>
         </div>
       </div>
 
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
         <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
-          <div class="mb-3" style="width: 52px; height: 52px; border-radius: 16px; background: #00c2e0; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+          <div class="mb-3 mentor-programme-icon mentor-programme-icon--light">
             <i class="bi bi-geo-alt-fill"></i>
           </div>
-          <h4 class="fw-bold mb-3" style="color: #0d1b4b;">Community Outreach</h4>
+          <h4 class="fw-bold mb-3 mentor-programme-info">Community Outreach</h4>
           <p class="text-secondary mb-0">We conduct outreach programmes in schools and communities on climate action, youth employability, social issues, and community well-being.</p>
         </div>
       </div>
@@ -93,33 +185,33 @@
   <div class="container">
     <div class="row g-5 align-items-center">
       <div class="col-lg-6" data-aos="fade-up">
-        <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Who is this programme for?</h3>
+        <h3 class="fw-bold mb-4 mentor-programme-info">Who is this programme for?</h3>
         <div class="d-flex mb-3">
-          <div class="me-3 mt-1"><i class="bi bi-person-check-fill text-primary fs-4"></i></div>
+          <div class="me-3 mt-1"><i class="bi bi-person-check-fill fs-4" style="color: #b84a1b;"></i></div>
           <div>
-            <h5 class="fw-bold" style="color: #0d1b4b;">Young people in school</h5>
+            <h5 class="fw-bold mentor-programme-info">Young people in school</h5>
             <p class="text-secondary mb-0">We support learners who need guidance, confidence, mentorship, and positive role models, including both boys and girls.</p>
           </div>
         </div>
         <div class="d-flex mb-3">
-          <div class="me-3 mt-1"><i class="bi bi-people-fill text-primary fs-4"></i></div>
+          <div class="me-3 mt-1"><i class="bi bi-people-fill fs-4" style="color: #b84a1b;"></i></div>
           <div>
-            <h5 class="fw-bold" style="color: #0d1b4b;">Community youth groups</h5>
+            <h5 class="fw-bold mentor-programme-info">Community youth groups</h5>
             <p class="text-secondary mb-0">We partner with communities to create mentorship circles and leadership-building sessions on social, economic, and environmental issues.</p>
           </div>
         </div>
         <div class="d-flex">
-          <div class="me-3 mt-1"><i class="bi bi-mortarboard-fill text-primary fs-4"></i></div>
+          <div class="me-3 mt-1"><i class="bi bi-mortarboard-fill fs-4" style="color: #b84a1b;"></i></div>
           <div>
-            <h5 class="fw-bold" style="color: #0d1b4b;">Young leaders preparing for the future</h5>
+            <h5 class="fw-bold mentor-programme-info">Young leaders preparing for the future</h5>
             <p class="text-secondary mb-0">We help emerging leaders grow in discipline, responsibility, communication, environmental awareness, and service to others.</p>
           </div>
         </div>
       </div>
       <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-        <div class="card border-0 rounded-4 shadow-sm p-4" style="background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: #fff;">
-          <h4 class="fw-bold mb-4">How the programme works</h4>
-          <ol class="mb-0 ps-3" style="line-height: 2; color: rgba(255,255,255,0.9);">
+        <div class="card border-0 rounded-4 shadow-sm p-4 mentor-programme-panel">
+          <h4 class="fw-bold mb-4 text-white">How the programme works</h4>
+          <ol class="mb-0 ps-3" style="line-height: 2;">
             <li>We identify boys and youth in need of support and guidance.</li>
             <li>We match them with mentors and facilitators who model leadership and integrity.</li>
             <li>We run structured sessions around confidence, values, communication, and purpose.</li>
@@ -131,144 +223,19 @@
   </div>
 </section>
 
-<section class="py-5" style="background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: white;">
+<section class="py-5" style="background: linear-gradient(135deg, #0d1b4b 0%, #132d68 100%); color: white;">
   <div class="container">
     <div class="row align-items-center g-4">
       <div class="col-lg-8" data-aos="fade-right">
-        <h2 class="fw-bold mb-3">Become part of the mentorship journey.</h2>
+        <h2 class="fw-bold mb-3 text-white">Become part of the mentorship journey.</h2>
         <p class="mb-0 lead" style="color: rgba(255,255,255,0.85);">
           Whether you want to mentor, support, or partner with Bold Foundation, your contribution helps young people—boys and girls—grow into stronger leaders, environmental stewards, and responsible citizens.
         </p>
       </div>
       <div class="col-lg-4 text-lg-end" data-aos="fade-left">
-        <a href="{% url 'mentor' %}" class="btn btn-lg rounded-pill fw-bold px-4" style="background: #fff; color: #0d1b4b;">Apply as Mentor</a>
+        <a href="{% url 'mentor' %}" class="btn btn-lg rounded-pill fw-bold px-4 mentor-programme-cta">Apply as Mentor</a>
       </div>
     </div>
   </div>
 </section>
 {% endblock %}
-
-              <div class="sidebar-widget cta-widget" data-aos="fade-up" data-aos-delay="400">
-                <div class="cta-content">
-                  <h4>Ready to Get Started?</h4>
-                  <p>Let's discuss how our digital marketing expertise can help grow your business.</p>
-                  <a href="#" class="btn-cta">Schedule Consultation</a>
-                </div>
-              </div>
-
-              <div class="sidebar-widget contact-info" data-aos="fade-up" data-aos-delay="500">
-                <h4>Need Help?</h4>
-                <div class="contact-item">
-                  <i class="bi bi-telephone"></i>
-                  <div>
-                    <strong>Call Us</strong>
-                    <span>+1 (555) 123-4567</span>
-                  </div>
-                </div>
-                <div class="contact-item">
-                  <i class="bi bi-envelope"></i>
-                  <div>
-                    <strong>Email</strong>
-                    <span>info@example.com</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section><!-- /Service Details Section -->
-
-  </main>
-
-  <footer id="footer" class="footer dark-background">
-
-    <div class="container footer-top">
-      <div class="row gy-4">
-        <div class="col-lg-5 col-md-12 footer-about">
-          <a href="index.html" class="logo d-flex align-items-center">
-            <span class="sitename">Axis</span>
-          </a>
-          <p>Cras fermentum odio eu feugiat lide par naso tierra. Justo eget nada terra videa magna derita valies darta donna mare fermentum iaculis eu non diam phasellus.</p>
-          <div class="social-links d-flex mt-4">
-            <a href=""><i class="bi bi-twitter-x"></i></a>
-            <a href=""><i class="bi bi-facebook"></i></a>
-            <a href=""><i class="bi bi-instagram"></i></a>
-            <a href=""><i class="bi bi-linkedin"></i></a>
-          </div>
-        </div>
-
-        <div class="col-lg-2 col-6 footer-links">
-          <h4>Useful Links</h4>
-          <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About us</a></li>
-            <li><a href="#">Services</a></li>
-            <li><a href="#">Terms of service</a></li>
-            <li><a href="#">Privacy policy</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-2 col-6 footer-links">
-          <h4>Our Services</h4>
-          <ul>
-            <li><a href="#">Web Design</a></li>
-            <li><a href="#">Web Development</a></li>
-            <li><a href="#">Product Management</a></li>
-            <li><a href="#">Marketing</a></li>
-            <li><a href="#">Graphic Design</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
-          <h4>Contact Us</h4>
-          <p>A108 Adam Street</p>
-          <p>New York, NY 535022</p>
-          <p>United States</p>
-          <p class="mt-4"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-          <p><strong>Email:</strong> <span>info@example.com</span></p>
-        </div>
-
-      </div>
-    </div>
-
-    <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Axis</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you've purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-      </div>
-    </div>
-
-  </footer>
-
-  <!-- Scroll Top -->
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-  <!-- Preloader -->
-  <div id="preloader"></div>
-
-  <!-- Vendor JS Files -->
-  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
-  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
-  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
-  <script src="{% static 'assets/vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
-
-  <!-- Main JS File -->
-  <script src="{% static 'assets/js/main.js' %}"></script>
-
-</body>
-
-</html>

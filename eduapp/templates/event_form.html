@@ -4,11 +4,12 @@
 {% block title %}Edit Event | Bold Foundation{% endblock %}
 
 {% block content %}
-<section style="padding-top: 120px; padding-bottom: 80px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: white;">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="card border-0 shadow-lg rounded-4 p-4 p-lg-5">
+<section class="page-shell form-page-shell">
+  <div class="form-experience">
+    {% include 'partials/form_story_panel.html' with story_title="Bring your event to life." story_copy="Add the details your community needs to discover and take part in your event." %}
+    <div class="form-experience__content">
+        <div class="container" style="max-width:760px;">
+        <div class="page-card p-4 p-lg-5">
           <h2 class="fw-bold mb-4" style="color: #0d1b4b;">{% if event %}Update Event{% else %}Create Event{% endif %}</h2>
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
@@ -53,7 +54,7 @@
             <button type="submit" class="btn btn-primary rounded-pill mt-4 px-4">Save Event</button>
           </form>
         </div>
-      </div>
+    </div>
     </div>
   </div>
 </section>

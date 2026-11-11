@@ -75,6 +75,9 @@
 
     <!-- ================= ONE-TIME DONATION FORM ================= -->
     <section id="one-time-section">
+      <div class="form-experience">
+        {% include 'partials/form_story_panel.html' with story_title="Make a difference today." story_copy="Choose a contribution that works for you and help a learner move forward." %}
+        <div class="form-experience__content">
       <div class="section-title">
         <h2>One-Time Donation</h2>
         <p>Choose your amount and support a learner today.</p>
@@ -113,12 +116,17 @@
         </form>
 
       </div>
+        </div>
+      </div>
     </section>
 
     <hr class="my-5">
 
     <!-- ================= CONTINUOUS DONATION FORM ================= -->
     <section id="continuous-section">
+      <div class="form-experience">
+        {% include 'partials/form_story_panel.html' with story_title="Support for the long term." story_copy="Set up a regular contribution to give learners consistent support throughout the year." %}
+        <div class="form-experience__content">
       <div class="section-title">
         <h2>Continuous Donation Registration</h2>
         <p>Support a learner every month, term or annually.</p>
@@ -171,6 +179,8 @@
 
         </form>
 
+      </div>
+        </div>
       </div>
     </section>
 
