@@ -1,4 +1,5 @@
 import json
+import re
 import tempfile
 from datetime import timedelta
 from io import BytesIO
@@ -53,6 +54,14 @@ class EventsPageTests(TestCase):
             date=timezone.now() - timedelta(days=7),
             is_published=True,
         )
+        Event.objects.create(
+            title='Unpublished Community Event',
+            slug='unpublished-community-event',
+            description='Draft event',
+            location='Nairobi',
+            date=timezone.now() + timedelta(days=14),
+            is_published=False,
+        )
 
     def test_events_are_split_into_upcoming_and_past(self):
         response = self.client.get('/events/')
@@ -62,6 +71,56 @@ class EventsPageTests(TestCase):
         self.assertEqual(len(response.context['past_events']), 1)
         self.assertIn('Upcoming Events', response.content.decode())
         self.assertContains(response, 'View Details')
+
+    def test_sitemap_lists_public_pages_and_published_events(self):
+        response = self.client.get(reverse('sitemap'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse('events'))
+        self.assertContains(response, reverse('event_detail', args=['past-mentorship-day']))
+        self.assertNotContains(response, 'unpublished-community-event')
+        self.assertNotContains(response, reverse('admin_view'))
+
+    def test_robots_txt_points_to_sitemap_and_excludes_private_routes(self):
+        response = self.client.get(reverse('robots_txt'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f'Sitemap: http://testserver{reverse("sitemap")}')
+        self.assertContains(response, 'Disallow: /admin_view/')
+        self.assertContains(response, 'Disallow: /dashboard/')
+
+    def test_public_page_has_search_metadata_and_canonical_url(self):
+        response = self.client.get(reverse('index'))
+
+        self.assertContains(response, 'name="description"')
+        self.assertContains(response, 'rel="canonical" href="http://testserver/"')
+        self.assertContains(response, 'property="og:title"')
+        self.assertContains(response, 'name="twitter:card"')
+        schema = re.search(
+            r'<script type="application/ld\+json">\s*(.*?)\s*</script>',
+            response.content.decode(),
+            flags=re.DOTALL,
+        )
+        self.assertEqual(json.loads(schema.group(1))['@type'], 'NGO')
+
+    def test_application_login_is_not_indexed_and_partner_has_clean_route(self):
+        response = self.client.get(reverse('login'))
+
+        self.assertContains(response, 'name="robots" content="noindex,follow"')
+        self.assertContains(response, f'rel="canonical" href="http://testserver{reverse("login")}"')
+        self.assertEqual(reverse('partner'), '/partner/')
+
+    def test_upcoming_event_has_event_structured_data(self):
+        response = self.client.get(reverse('event_detail', args=['upcoming-community-talk']))
+        page = response.content.decode()
+        schema = re.search(
+            r'<script type="application/ld\+json">\s*(.*?)\s*</script>',
+            page,
+            flags=re.DOTALL,
+        )
+
+        self.assertIsNotNone(schema)
+        self.assertEqual(json.loads(schema.group(1))['@type'], 'Event')
 
     def test_staff_admin_dashboard_renders_workspace_navigation(self):
         self._create_staff_user()

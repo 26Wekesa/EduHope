@@ -6,8 +6,8 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>404 - Bold Foundation</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
+  <meta name="description" content="The page you requested could not be found. Visit Bold Foundation to explore our mentorship and community programs.">
+  <meta name="robots" content="noindex,nofollow">
 
   <!-- Favicons -->
   <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
@@ -78,7 +78,7 @@
           <li class="nav-item"><a class="nav-link" href="/events/">Events</a></li>
           <li class="nav-item"><a class="nav-link" href="/services/">Mentorship</a></li>
           <li class="nav-item"><a class="nav-link" href="/learner/">Support</a></li>
-          <li class="nav-item"><a class="nav-link" href="/patner/">Partner</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'partner' %}">Partner</a></li>
           {% if user.is_authenticated %}
             {% if user.is_staff %}
               <li class="nav-item"><a class="nav-link" href="/admin_view/"><i class="bi bi-speedometer2"></i> Admin</a></li>

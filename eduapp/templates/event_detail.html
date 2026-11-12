@@ -2,8 +2,38 @@
 {% load static %}
 
 {% block title %}{{ event.title }} | Bold Foundation{% endblock %}
+{% block meta_description %}{{ event.description|striptags|truncatechars:160|default:"Explore this Bold Foundation community event, its program details, location and impact." }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}{{ event.title }} | Bold Foundation{% endblock %}
+{% block og_description %}{{ event.description|striptags|truncatechars:160|default:"Explore this Bold Foundation community event, its program details, location and impact." }}{% endblock %}
+{% block twitter_title %}{{ event.title }} | Bold Foundation{% endblock %}
+{% block twitter_description %}{{ event.description|striptags|truncatechars:160|default:"Explore this Bold Foundation community event, its program details, location and impact." }}{% endblock %}
+{% block og_image %}{% if event.image %}{{ request.scheme }}://{{ request.get_host }}{{ event.image.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block twitter_image %}{% if event.image %}{{ request.scheme }}://{{ request.get_host }}{{ event.image.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 
 {% block content %}
+{% if not is_past_event %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "{{ event.title|escapejs }}",
+  "description": "{{ event.description|striptags|truncatechars:500|escapejs }}",
+  "startDate": "{{ event.date|date:'c' }}",
+  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+  "location": {
+    "@type": "Place",
+    "name": "{{ event.location|escapejs }}"
+  },
+  "organizer": {
+    "@type": "NGO",
+    "name": "Bold Foundation",
+    "url": "{{ request.scheme }}://{{ request.get_host }}/"
+  },
+  "url": "{{ request.scheme }}://{{ request.get_host }}{{ request.path }}"
+}
+</script>
+{% endif %}
 <section style="padding-top: 120px; padding-bottom: 60px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); color: #fff;">
   <div class="container">
     <div class="row align-items-center g-4">

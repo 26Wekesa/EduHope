@@ -4,7 +4,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Bold Foundation{% endblock %}</title>
+  <title>{% block title %}Bold Foundation | Mentorship, Leadership &amp; Community Support{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Bold Foundation empowers boys in Kenya through mentorship, public speaking and leadership programs. Help boys grow into confident, respectful leaders.{% endblock %}">
+  <meta name="robots" content="{% block robots %}index,follow{% endblock %}">
+  <link rel="canonical" href="{% block canonical_url %}{{ request.scheme }}://{{ request.get_host }}{{ request.path }}{% endblock %}">
+  {% static 'assets/img/about/bold.jpg' as default_social_image %}
+  <meta property="og:site_name" content="Bold Foundation">
+  <meta property="og:locale" content="en_KE">
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}Bold Foundation | Mentorship, Leadership &amp; Community Support{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Bold Foundation supports boys in Kenya through mentorship, leadership development, public speaking and community programs.{% endblock %}">
+  <meta property="og:url" content="{% block og_url %}{{ request.scheme }}://{{ request.get_host }}{{ request.path }}{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{{ default_social_image }}{% endblock %}">
+  <meta property="og:image:alt" content="Bold Foundation">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}Bold Foundation | Mentorship, Leadership &amp; Community Support{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Bold Foundation supports boys in Kenya through mentorship, leadership development, public speaking and community programs.{% endblock %}">
+  <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{{ default_social_image }}{% endblock %}">
+  <link rel="icon" href="{% static 'assets/img/favicon.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'assets/img/apple-touch-icon.png' %}">
 
   <!-- Bootstrap 5 -->
   <link rel="stylesheet" href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}">
@@ -54,7 +72,7 @@
           <li class="nav-item"><a class="nav-link" href="/events/">Events</a></li>
           <li class="nav-item"><a class="nav-link" href="/services/">Mentorship</a></li>
           <li class="nav-item"><a class="nav-link" href="/learner/">Support</a></li>
-          <li class="nav-item"><a class="nav-link" href="/patner/">Partner</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'partner' %}">Partner</a></li>
           {% if user.is_authenticated %}
             {% if user.is_staff %}
               <li class="nav-item"><a class="nav-link" href="/admin_view/"><i class="bi bi-speedometer2"></i> Admin</a></li>

@@ -5,9 +5,10 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Bold Foundation - Empowering Education Through Partnership</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
+  <title>{% block title %}Bold Foundation | Applications and Community Programs{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Connect with Bold Foundation to apply for mentorship, request learner support, or take part in our community programs.{% endblock %}">
+  <meta name="robots" content="{% block robots %}noindex,follow{% endblock %}">
+  <link rel="canonical" href="{% block canonical_url %}{{ request.scheme }}://{{ request.get_host }}{{ request.path }}{% endblock %}">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -271,7 +272,7 @@
           <li class="nav-item"><a class="nav-link" href="/events/">Events</a></li>
           <li class="nav-item"><a class="nav-link" href="/services/">Mentorship</a></li>
           <li class="nav-item"><a class="nav-link" href="/learner/">Support</a></li>
-          <li class="nav-item"><a class="nav-link" href="/patner/">Partner</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'partner' %}">Partner</a></li>
           {% if user.is_authenticated %}
             {% if user.is_staff %}
               <li class="nav-item"><a class="nav-link" href="/admin_view/"><i class="bi bi-speedometer2"></i> Admin</a></li>

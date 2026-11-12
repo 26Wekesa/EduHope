@@ -2,8 +2,28 @@
 {% load static %}
 
 {% block title %}Bold Foundation | Boys Of Leadership & Dignity{% endblock %}
+{% block meta_description %}Bold Foundation empowers boys in Kenya through mentorship, public speaking and leadership programs. Help boys grow into confident, respectful leaders.{% endblock %}
+{% block og_title %}Bold Foundation | Mentorship and Leadership for Boys in Kenya{% endblock %}
+{% block og_description %}We support boys in schools and communities through mentorship, public speaking and practical leadership programs.{% endblock %}
+{% block twitter_title %}Bold Foundation | Mentorship and Leadership for Boys in Kenya{% endblock %}
+{% block twitter_description %}We support boys in schools and communities through mentorship, public speaking and practical leadership programs.{% endblock %}
 
 {% block content %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NGO",
+  "name": "Bold Foundation",
+  "alternateName": "B.O.L.D. Boys Of Leadership & Dignity",
+  "url": "{{ request.scheme }}://{{ request.get_host }}/",
+  "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'assets/img/logo.webp' %}",
+  "description": "Bold Foundation empowers boys through mentorship, public speaking, leadership development and community programs.",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Kenya"
+  }
+}
+</script>
 <section class="home-hero">
   <div class="container">
     <div class="row align-items-center g-4 g-lg-5">

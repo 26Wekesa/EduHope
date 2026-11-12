@@ -2,7 +2,9 @@ import json
 import logging
 from decimal import Decimal
 from django import forms
+from django.contrib.sitemaps.views import sitemap
 from django.core.exceptions import ValidationError
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -12,7 +14,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.http import JsonResponse
 from django.db import OperationalError, connection
 from django.utils import timezone
 from django.utils.text import slugify
@@ -24,6 +25,7 @@ from .models import (
 )
 from .forms import EventRecapUploadForm
 from .mpesa import initiate_stk_push
+from .sitemaps import EventSitemap, StaticPageSitemap
 
 
 TERMS_VERSION = '2026-09-16'
@@ -53,6 +55,39 @@ def health_check(request):
         return JsonResponse({'status': 'unhealthy'}, status=503)
 
     return JsonResponse({'status': 'ok'})
+
+
+def robots_txt(request):
+    sitemap_url = request.build_absolute_uri(reverse('sitemap'))
+    content = '\n'.join([
+        'User-agent: *',
+        'Allow: /',
+        'Disallow: /admin/',
+        'Disallow: /admin_view/',
+        'Disallow: /dashboard/',
+        'Disallow: /login/',
+        'Disallow: /logout/',
+        'Disallow: /register/',
+        'Disallow: /payment/',
+        'Disallow: /mpesa/',
+        'Disallow: /events/create/',
+        'Disallow: /events/*/edit/',
+        'Disallow: /events/*/delete/',
+        'Disallow: /events/*/recap/',
+        'Disallow: /events/*/support/',
+        'Disallow: /health/',
+        f'Sitemap: {sitemap_url}',
+        '',
+    ])
+    return HttpResponse(content, content_type='text/plain; charset=utf-8')
+
+
+def sitemap_view(request):
+    sitemaps = {
+        'pages': StaticPageSitemap,
+        'events': EventSitemap,
+    }
+    return sitemap(request, sitemaps=sitemaps)
 
 
 def index(request):
@@ -693,7 +728,7 @@ def patner(request):
             reason=request.POST.get('reason'),
         )
         messages.success(request, 'Partnership request submitted.')
-        return redirect('patner')
+        return redirect('partner')
     return render(request, 'patner.html')
 
 

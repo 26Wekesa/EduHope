@@ -4,7 +4,9 @@ from eduapp import views
 urlpatterns = [
     # Public
     path('health/', views.health_check, name='health_check'),
+    path('robots.txt', views.robots_txt, name='robots_txt'),
     path('', views.index, name='index'),
+    path('sitemap.xml', views.sitemap_view, name='sitemap'),
     path('events/', views.events_list, name='events'),
     path('events/create/', views.event_create, name='event_create'),
     path('events/<int:id>/edit/', views.event_edit, name='event_edit'),
@@ -16,6 +18,7 @@ urlpatterns = [
     path('terms/', views.terms, name='terms'),
     path('privacy/', views.privacy, name='privacy'),
     path('sponser/', views.sponser, name='sponser'),
+    path('partner/', views.patner, name='partner'),
     path('message/', views.message, name='message'),
 
     # Mentor application flow
