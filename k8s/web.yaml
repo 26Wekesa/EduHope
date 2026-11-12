@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eduhope-web
+  namespace: eduhope
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: eduhope-web
+  template:
+    metadata:
+      labels:
+        app: eduhope-web
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:17-alpine
+          command:
+            - sh
+            - -c
+            - until pg_isready -h postgres -p 5432 -U "$POSTGRES_USER" -d "$POSTGRES_DB"; do echo "Waiting for PostgreSQL"; sleep 2; done
+          envFrom:
+            - configMapRef:
+                name: eduhope-config
+      containers:
+        - name: web
+          image: eduhope-web:local
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - python manage.py migrate --noinput && exec gunicorn Edulink.wsgi:application --bind 0.0.0.0:8000
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: eduhope-config
+            - secretRef:
+                name: eduhope-secrets
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: eduhope-secrets
+                  key: DATABASE_URL
+          readinessProbe:
+            httpGet:
+              path: /health/
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+          volumeMounts:
+            - name: media
+              mountPath: /app/media
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: eduhope-media
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: eduhope-media
+  namespace: eduhope
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eduhope-web
+  namespace: eduhope
+spec:
+  type: ClusterIP
+  selector:
+    app: eduhope-web
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

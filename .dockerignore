@@ -1,0 +1,16 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+link/
+venv/
+.venv/
+media/
+staticfiles/
+scratch_debug.py
+.pytest_cache/
