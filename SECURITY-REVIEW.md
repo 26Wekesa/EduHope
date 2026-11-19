@@ -6,7 +6,7 @@
 
 ## Summary
 
-One high-severity access-control finding was identified. No SQL injection vulnerability or unsafe raw SQL construction was found. Upload validation has hardening gaps, but the review did not identify a confirmed unauthenticated exploit path for them in the configured production serving paths.
+The review identified one high-severity access-control issue and upload-validation gaps. The original access-control issue was confirmed with an isolated Django client request against an in-memory database. Remediation is now implemented locally and covered by tests. No SQL injection vulnerability or unsafe raw SQL construction was found.
 
 This was a source-code review, not a penetration test or a verification of every deployed environment.
 
@@ -20,23 +20,24 @@ This was a source-code review, not a penetration test or a verification of every
 
 An unauthenticated remote caller who can identify or guess a record ID can reach approval or deletion actions for mentors, learners, partners, or messages. Since the actions are not restricted to POST, they can be triggered by GET requests and do not receive the intended CSRF protection for state-changing requests.
 
-### Recommended remediation
+### Remediation applied
 
-- Require an authenticated staff user in each state-changing handler.
-- Require POST for approval and deletion actions.
-- Submit those actions through CSRF-protected forms.
+- All affected admin actions now require an authenticated staff user and POST.
+- Dashboard action controls now use CSRF-protected POST forms.
+- Event deletion received the same protections.
+- Tests verify anonymous and non-staff denial, GET non-mutation, successful staff POST, and CSRF enforcement.
 
 ## Upload hardening notes
 
-These are recommendations, not confirmed exploitable findings from this review:
+Upload validation has also been tightened:
 
-- Recap photos use Django image-field form validation, which checks that the content is a valid image.
-- Event reports are checked by filename extension; this does not prove that the file content matches the extension. See [eduapp/forms.py](eduapp/forms.py:23).
-- Event image uploads are assigned without the same form-level validation. See [eduapp/views.py](eduapp/views.py:675).
-- No upload size limit was found.
-- The review found recap uploads restricted to staff and Django's development media serving enabled only when `DEBUG` is true. Production media serving depends on the configured storage/deployment.
+- Recap photos and event images are decoded/validated as images before saving.
+- Reports must pass format-specific checks in addition to the extension check: PDF header/xref/EOF structure, legacy DOC compound-file signature, or DOCX ZIP/XML structure.
+- DOCX ZIP entry count, total uncompressed size, XML size, and per-entry compression ratio are bounded.
+- Event images, recap photos, and reports are limited to 5 MB per file.
+- Tests cover malformed image/report payloads, oversized files, and oversized DOCX XML.
 
-Consider enforcing size limits, validating report content in addition to its extension, and validating/re-encoding images before storage. Keep uploaded documents out of executable paths and use production storage/serving configured for untrusted files.
+These checks are file-format validation, not antivirus or malware scanning. Production storage and media-serving behavior still depends on the deployment configuration.
 
 ## Other checks
 
@@ -45,4 +46,4 @@ Consider enforcing size limits, validating report content in addition to its ext
 
 ## Remediation status
 
-This report documents findings only. No security code fixes were included in the report-only follow-up.
+The fixes are implemented and covered by the test suite. All 40 tests pass locally, and Django system and migration checks pass. Verify the hosted environment after deployment to confirm it is running this revision.

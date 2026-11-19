@@ -117,12 +117,18 @@
                   <td><a href="mailto:{{ msg.email }}">{{ msg.email }}</a></td>
                   <td>{{ msg.subject }}</td>
                   <td>{{ msg.message|truncatewords:12 }}</td>
-                  <td><a href="{% url 'delete_message' msg.id %}" class="btn btn-sm btn-danger rounded-pill">Delete</a></td>
+                  <td>
+                    <form method="post" action="{% url 'delete_message' msg.id %}" class="d-inline">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-danger rounded-pill">Delete</button>
+                    </form>
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
+          {% include 'partials/pagination.html' with page_obj=all_messages page_key='messages_page' tab_id='messages' %}
           {% else %}
           <div class="alert alert-info rounded-4 border-0">No messages yet.</div>
           {% endif %}
@@ -161,15 +167,22 @@
                   </td>
                   <td>
                     {% if not app.approved %}
-                      <a href="{% url 'approve_learner' app.id %}" class="btn btn-sm btn-success rounded-pill">Approve</a>
+                      <form method="post" action="{% url 'approve_learner' app.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-success rounded-pill">Approve</button>
+                      </form>
                     {% endif %}
-                    <a href="{% url 'delete_learner' app.id %}" class="btn btn-sm btn-danger rounded-pill">Delete</a>
+                    <form method="post" action="{% url 'delete_learner' app.id %}" class="d-inline">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-danger rounded-pill">Delete</button>
+                    </form>
                   </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
+          {% include 'partials/pagination.html' with page_obj=applications page_key='applications_page' tab_id='learners' %}
           {% else %}
           <div class="alert alert-info rounded-4 border-0">No support applications submitted yet.</div>
           {% endif %}
@@ -214,15 +227,22 @@
                   </td>
                   <td>
                     {% if mentor.status != 'approved' %}
-                      <a href="{% url 'approve_mentor' mentor.id %}" class="btn btn-sm btn-success rounded-pill">Approve</a>
+                      <form method="post" action="{% url 'approve_mentor' mentor.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-success rounded-pill">Approve</button>
+                      </form>
                     {% endif %}
-                    <a href="{% url 'delete_mentor' mentor.id %}" class="btn btn-sm btn-danger rounded-pill">Delete</a>
+                    <form method="post" action="{% url 'delete_mentor' mentor.id %}" class="d-inline">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-danger rounded-pill">Delete</button>
+                    </form>
                   </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
+          {% include 'partials/pagination.html' with page_obj=mentors page_key='mentors_page' tab_id='mentors' %}
           {% else %}
           <div class="alert alert-info rounded-4 border-0">No mentors registered yet.</div>
           {% endif %}
@@ -271,6 +291,7 @@
               </tbody>
             </table>
           </div>
+          {% include 'partials/pagination.html' with page_obj=transactions page_key='transactions_page' tab_id='payments' %}
           {% else %}
           <div class="alert alert-info rounded-4 border-0">No M-Pesa payment records yet.</div>
           {% endif %}
@@ -309,15 +330,22 @@
                   </td>
                   <td>
                     {% if not partner.approved %}
-                      <a href="{% url 'approve_partner' partner.id %}" class="btn btn-sm btn-success rounded-pill">Approve</a>
+                      <form method="post" action="{% url 'approve_partner' partner.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-success rounded-pill">Approve</button>
+                      </form>
                     {% endif %}
-                    <a href="{% url 'delete_partner' partner.id %}" class="btn btn-sm btn-danger rounded-pill">Delete</a>
+                    <form method="post" action="{% url 'delete_partner' partner.id %}" class="d-inline">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-danger rounded-pill">Delete</button>
+                    </form>
                   </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
+          {% include 'partials/pagination.html' with page_obj=all_partners page_key='partnerships_page' tab_id='partners' %}
           {% else %}
           <div class="alert alert-info rounded-4 border-0">No partnership requests yet.</div>
           {% endif %}
@@ -352,6 +380,7 @@
               </tbody>
             </table>
           </div>
+          {% include 'partials/pagination.html' with page_obj=bookings page_key='bookings_page' tab_id='bookings' %}
           {% else %}
           <div class="alert alert-info rounded-4 border-0">No bookings yet.</div>
           {% endif %}
@@ -482,13 +511,17 @@
                   </td>
                   <td>
                     <a href="{% url 'event_edit' event.id %}" class="btn btn-sm btn-primary rounded-pill">Edit</a>
-                    <a href="{% url 'event_delete' event.id %}" class="btn btn-sm btn-danger rounded-pill">Delete</a>
+                    <form method="post" action="{% url 'event_delete' event.id %}" class="d-inline">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-danger rounded-pill">Delete</button>
+                    </form>
                   </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
+          {% include 'partials/pagination.html' with page_obj=upcoming_events page_key='upcoming_events_page' tab_id='events' %}
           {% else %}
           <div class="alert alert-info rounded-4 border-0">No upcoming events yet.</div>
           {% endif %}
@@ -525,26 +558,30 @@
                   <td>
                     <form method="post" action="{% url 'event_recap_upload' event.id %}" enctype="multipart/form-data" class="d-grid gap-2" style="min-width: 220px;">
                       {% csrf_token %}
-                      <label class="form-label small mb-0">Photos</label>
+                      <label class="form-label small mb-0">Photos (max 5 MB each)</label>
                       <input type="file" name="photos" class="form-control form-control-sm" accept="image/*" multiple>
-                      <label class="form-label small mb-0">Report (PDF, DOC, DOCX)</label>
+                      <label class="form-label small mb-0">Report (PDF, DOC, DOCX; max 5 MB)</label>
                       <input type="file" name="report" class="form-control form-control-sm" accept=".pdf,.doc,.docx">
                       <button type="submit" class="btn btn-sm btn-success rounded-pill">Save recap</button>
                     </form>
                     <small class="d-block mt-2 text-muted">
-                      {{ event.photos.count }} photo{{ event.photos.count|pluralize }}
+                      {{ event.photo_count }} photo{{ event.photo_count|pluralize }}
                       {% if event.report %} · Report uploaded{% endif %}
                     </small>
                   </td>
                   <td>
                     <a href="{% url 'event_edit' event.id %}" class="btn btn-sm btn-primary rounded-pill">Edit</a>
-                    <a href="{% url 'event_delete' event.id %}" class="btn btn-sm btn-danger rounded-pill">Delete</a>
+                    <form method="post" action="{% url 'event_delete' event.id %}" class="d-inline">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-danger rounded-pill">Delete</button>
+                    </form>
                   </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
+          {% include 'partials/pagination.html' with page_obj=past_events page_key='past_events_page' tab_id='events' %}
           {% else %}
           <div class="alert alert-info rounded-4 border-0">No past events have been uploaded yet.</div>
           {% endif %}
@@ -581,6 +618,7 @@
               </tbody>
             </table>
           </div>
+          {% include 'partials/pagination.html' with page_obj=donations page_key='donations_page' tab_id='donations' %}
           {% else %}
           <div class="alert alert-info rounded-4 border-0">No donations yet.</div>
           {% endif %}
@@ -1325,6 +1363,16 @@
         search.focus();
       }
     });
+
+    const pane = window.location.hash
+      ? document.getElementById(window.location.hash.slice(1))
+      : null;
+    const tabTrigger = pane
+      ? document.querySelector(`[data-bs-target="#${pane.id}"]`)
+      : null;
+    if (tabTrigger && window.bootstrap) {
+      bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+    }
   })();
 </script>
 {% endblock %}

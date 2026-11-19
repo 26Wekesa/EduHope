@@ -5030,3 +5030,42 @@ a[class*="btn"]:active,
   outline-offset: 3px;
   box-shadow: none;
 }
+
+.page-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 2000;
+  height: 3px;
+  overflow: hidden;
+  background: transparent;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+.page-progress__bar {
+  display: block;
+  width: 35%;
+  height: 100%;
+  background: #00c2e0;
+  box-shadow: 0 0 8px rgba(0, 194, 224, 0.65);
+  animation: page-progress-slide 1.1s ease-in-out infinite;
+}
+
+.is-loading .page-progress {
+  opacity: 1;
+  visibility: visible;
+}
+
+@keyframes page-progress-slide {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(290%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-progress__bar {
+    width: 100%;
+    animation: none;
+  }
+}

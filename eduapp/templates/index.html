@@ -38,7 +38,7 @@
         </div>
       </div>
       <div class="col-lg-7 home-hero-visual" data-aos="fade-left">
-        <img src="{% static 'assets/img/about/bold.jpg' %}" alt="B.O.L.D. Boys Of Leadership & Dignity logo">
+        <img src="{% static 'assets/img/about/bold.jpg' %}" alt="B.O.L.D. Boys Of Leadership & Dignity logo" fetchpriority="high" decoding="async">
       </div>
     </div>
   </div>
@@ -116,7 +116,7 @@
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:100 }}">
         <article class="home-event">
           {% if event.image %}
-            <img src="{{ event.image.url }}" class="home-event-image" alt="{{ event.title }}">
+            <img src="{{ event.image.url }}" class="home-event-image" alt="{{ event.title }}" loading="lazy" decoding="async">
           {% else %}
             <div class="home-event-placeholder" aria-hidden="true">
               <i class="bi bi-calendar-event"></i>

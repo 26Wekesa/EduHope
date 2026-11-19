@@ -62,7 +62,7 @@
       <div class="col-lg-8" data-aos="fade-up">
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
           {% if event.image %}
-            <img src="{{ event.image.url }}" class="img-fluid w-100" alt="{{ event.title }}" style="height: 420px; object-fit: cover;">
+            <img src="{{ event.image.url }}" class="img-fluid w-100" alt="{{ event.title }}" fetchpriority="high" decoding="async" style="height: 420px; object-fit: cover;">
           {% else %}
             <div style="height: 420px; background: linear-gradient(135deg, #0d1b4b 0%, #00c2e0 100%); display: flex; align-items: center; justify-content: center;">
               <i class="bi bi-calendar-event text-white" style="font-size: 5rem;"></i>
@@ -126,16 +126,16 @@
       </div>
     </div>
 
-    {% if is_past_event and event.photos.all %}
+    {% if event_photos %}
     <div class="row mt-5" data-aos="fade-up">
       <div class="col-12">
         <div class="card border-0 shadow-sm rounded-4 p-4">
           <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Event photos</h3>
           <div class="row g-3">
-            {% for photo in event.photos.all %}
+            {% for photo in event_photos %}
             <div class="col-6 col-md-4 col-lg-3">
               <a href="{{ photo.image.url }}" target="_blank" rel="noopener">
-                <img src="{{ photo.image.url }}" alt="Photo from {{ event.title }}" class="img-fluid w-100 rounded-3" style="height: 220px; object-fit: cover;">
+                <img src="{{ photo.image.url }}" alt="Photo from {{ event.title }}" class="img-fluid w-100 rounded-3" loading="lazy" decoding="async" style="height: 220px; object-fit: cover;">
               </a>
             </div>
             {% endfor %}

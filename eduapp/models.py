@@ -88,6 +88,9 @@ class Event(models.Model):
 
     class Meta:
         ordering = ['date']
+        indexes = [
+            models.Index(fields=['is_published', 'date'], name='evt_pub_date_idx'),
+        ]
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.slug or self.title)

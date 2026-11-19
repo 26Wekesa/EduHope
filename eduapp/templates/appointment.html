@@ -8,9 +8,11 @@
   <meta name="description" content="Your message to Bold Foundation has been received.">
   <meta name="robots" content="noindex,nofollow">
   <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/css/main.css' %}?v=20261109-forms" rel="stylesheet">
+  <link href="{% static 'assets/css/main.css' %}?v=20261120-performance" rel="stylesheet">
 </head>
 <body>
+  {% include 'partials/page_progress.html' %}
+
   <div class="container py-5">
     <div class="row justify-content-center">
       <div class="col-md-8 text-center">
@@ -24,5 +26,6 @@
   {% include 'partials/site_footer.html' %}
 
   <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/js/page-feedback.js' %}"></script>
 </body>
 </html>

@@ -1,8 +1,10 @@
 import json
 import re
 import tempfile
+import zipfile
 from datetime import timedelta
 from io import BytesIO
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import OperationalError
@@ -11,9 +13,38 @@ from django.urls import reverse
 from django.utils import timezone
 from unittest.mock import patch
 
-from .models import Donation, Event, EventPhoto, Mentor, MpesaTransaction
+from .forms import EventImageForm, EventRecapUploadForm, MAX_EVENT_UPLOAD_SIZE
+from .models import (
+    Donation, Event, EventPhoto, Mentor, Message, MpesaTransaction,
+    PartnershipRequest, SupportApplication,
+)
 from .mpesa import initiate_stk_push, query_stk_status
 from .views import events_list
+
+
+def minimal_valid_pdf():
+    content = bytearray(b'%PDF-1.4\n')
+    offsets = [0]
+    objects = [
+        b'<< /Type /Catalog /Pages 2 0 R >>',
+        b'<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+        b'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] >>',
+    ]
+    for number, body in enumerate(objects, start=1):
+        offsets.append(len(content))
+        content.extend(f'{number} 0 obj\n'.encode())
+        content.extend(body + b'\nendobj\n')
+
+    xref_offset = len(content)
+    content.extend(b'xref\n0 4\n0000000000 65535 f \n')
+    for offset in offsets[1:]:
+        content.extend(f'{offset:010d} 00000 n \n'.encode())
+    content.extend(
+        b'trailer\n<< /Size 4 /Root 1 0 R >>\n'
+        + f'startxref\n{xref_offset}\n'.encode()
+        + b'%%EOF\n'
+    )
+    return bytes(content)
 
 
 class HealthCheckTests(SimpleTestCase):
@@ -72,6 +103,25 @@ class EventsPageTests(TestCase):
         self.assertIn('Upcoming Events', response.content.decode())
         self.assertContains(response, 'View Details')
 
+    def test_public_event_lists_are_paginated(self):
+        for number in range(6):
+            Event.objects.create(
+                title=f'Past Community Event {number}',
+                slug=f'past-community-event-{number}',
+                description='Past event',
+                location='Nairobi',
+                date=timezone.now() - timedelta(days=number + 10),
+                is_published=True,
+            )
+
+        first_page = self.client.get(reverse('events'))
+        second_page = self.client.get(reverse('events'), {'past_page': '2'})
+
+        self.assertEqual(len(first_page.context['past_events']), 6)
+        self.assertTrue(first_page.context['past_events'].has_next())
+        self.assertEqual(len(second_page.context['past_events']), 1)
+        self.assertContains(first_page, '?past_page=2#past-events')
+
     def test_sitemap_lists_public_pages_and_published_events(self):
         response = self.client.get(reverse('sitemap'))
 
@@ -102,6 +152,43 @@ class EventsPageTests(TestCase):
             flags=re.DOTALL,
         )
         self.assertEqual(json.loads(schema.group(1))['@type'], 'NGO')
+
+    def test_loading_feedback_is_present_without_remote_fonts_or_unused_scripts(self):
+        for path in (reverse('index'), reverse('login')):
+            with self.subTest(path=path):
+                response = self.client.get(path)
+
+                self.assertContains(response, 'id="pageProgress"')
+                self.assertContains(response, 'page-feedback.')
+                self.assertNotContains(response, 'fonts.googleapis.com')
+                self.assertNotContains(response, 'assets/vendor/swiper/swiper-bundle.min.js')
+
+    def test_standalone_pages_include_navigation_progress(self):
+        for path in (reverse('terms'), reverse('privacy')):
+            with self.subTest(path=path):
+                response = self.client.get(path)
+
+                self.assertContains(response, 'id="pageProgress"')
+                self.assertContains(response, 'page-feedback.')
+
+    def test_public_pages_use_gzip_when_the_client_supports_it(self):
+        response = self.client.get(reverse('index'), HTTP_ACCEPT_ENCODING='gzip')
+
+        self.assertEqual(response.get('Content-Encoding'), 'gzip')
+        self.assertIn('Accept-Encoding', response.get('Vary', ''))
+
+    def test_localhost_origin_is_allowed_for_csrf_protected_forms(self):
+        client = Client(enforce_csrf_checks=True)
+        client.get(reverse('terms'))
+        csrf_token = client.cookies['csrftoken'].value
+
+        response = client.post(
+            reverse('terms'),
+            {'accept_terms': 'on', 'csrfmiddlewaretoken': csrf_token},
+            HTTP_ORIGIN='http://localhost:8000',
+        )
+
+        self.assertEqual(response.status_code, 302)
 
     def test_application_login_is_not_indexed_and_partner_has_clean_route(self):
         response = self.client.get(reverse('login'))
@@ -135,6 +222,28 @@ class EventsPageTests(TestCase):
         self.assertContains(response, 'Workspace summary')
         self.assertContains(response, 'data-bs-target="#events"')
 
+    def test_admin_dashboard_paginates_large_message_lists(self):
+        self._create_staff_user()
+        client = Client()
+        self.assertTrue(client.login(username='adminuser', password='StrongPass123!'))
+        Message.objects.bulk_create([
+            Message(
+                name=f'Contact {number}',
+                email=f'contact{number}@example.com',
+                subject='Question',
+                message='A message',
+            )
+            for number in range(21)
+        ])
+
+        first_page = client.get(reverse('admin_view'))
+        second_page = client.get(reverse('admin_view'), {'messages_page': '2'})
+
+        self.assertEqual(len(first_page.context['all_messages']), 20)
+        self.assertEqual(first_page.context['all_messages'].paginator.count, 21)
+        self.assertEqual(len(second_page.context['all_messages']), 1)
+        self.assertContains(first_page, '?messages_page=2#messages')
+
     def test_past_event_detail_shows_recap_area(self):
         response = self.client.get(reverse('event_detail', args=['past-mentorship-day']))
 
@@ -157,7 +266,15 @@ class EventsPageTests(TestCase):
         image_buffer = BytesIO()
         Image.new('RGB', (1, 1), color='blue').save(image_buffer, format='PNG')
         photo = SimpleUploadedFile('recap.png', image_buffer.getvalue(), content_type='image/png')
-        report = SimpleUploadedFile('report.pdf', b'%PDF-1.4 recap', content_type='application/pdf')
+        report = SimpleUploadedFile(
+            'report.pdf',
+            minimal_valid_pdf(),
+            content_type='application/pdf',
+        )
+        recap_form = EventRecapUploadForm(
+            files={'photos': [photo], 'report': report},
+        )
+        self.assertTrue(recap_form.is_valid(), recap_form.errors)
 
         with tempfile.TemporaryDirectory() as media_root:
             with override_settings(MEDIA_ROOT=media_root):
@@ -249,29 +366,55 @@ class EventsPageTests(TestCase):
 
         self.assertTrue(client.login(username='adminuser', password='StrongPass123!'))
 
+        from PIL import Image
+
+        image_buffer = BytesIO()
+        Image.new('RGB', (1, 1), color='blue').save(image_buffer, format='PNG')
         image = SimpleUploadedFile(
             'event-cover.png',
-            b'fake-image-bytes',
+            image_buffer.getvalue(),
             content_type='image/png',
         )
+
+        with tempfile.TemporaryDirectory() as media_root:
+            with override_settings(MEDIA_ROOT=media_root):
+                response = client.post(
+                    reverse('event_create'),
+                    {
+                        'title': 'Spring Community Workshop',
+                        'slug': 'spring-community-workshop',
+                        'description': 'A community workshop for youth leaders.',
+                        'date': (timezone.now() + timedelta(days=3)).strftime('%Y-%m-%dT%H:%M'),
+                        'location': 'Nairobi',
+                        'is_featured': 'on',
+                        'is_published': 'on',
+                        'image': image,
+                    },
+                    follow=False,
+                )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Event.objects.filter(title='Spring Community Workshop').exists())
+
+    def test_event_create_rejects_malformed_image(self):
+        self._create_staff_user()
+        client = Client()
+        self.assertTrue(client.login(username='adminuser', password='StrongPass123!'))
 
         response = client.post(
             reverse('event_create'),
             {
-                'title': 'Spring Community Workshop',
-                'slug': 'spring-community-workshop',
-                'description': 'A community workshop for youth leaders.',
+                'title': 'Invalid Image Event',
+                'description': 'Test event',
                 'date': (timezone.now() + timedelta(days=3)).strftime('%Y-%m-%dT%H:%M'),
                 'location': 'Nairobi',
-                'is_featured': 'on',
-                'is_published': 'on',
-                'image': image,
+                'image': SimpleUploadedFile('fake.png', b'not an image'),
             },
             follow=False,
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Event.objects.filter(title='Spring Community Workshop').exists())
+        self.assertFalse(Event.objects.filter(title='Invalid Image Event').exists())
 
     def _create_staff_user(self):
         from django.contrib.auth import get_user_model
@@ -284,6 +427,241 @@ class EventsPageTests(TestCase):
         user.is_staff = True
         user.save()
         return user
+
+
+class AdminActionSecurityTests(TestCase):
+    def setUp(self):
+        self.staff = get_user_model().objects.create_user(
+            username='securityadmin',
+            password='StrongPass123!',
+            is_staff=True,
+        )
+        self.mentor = Mentor.objects.create(
+            name='Test Mentor',
+            email='mentor@example.com',
+            phone='254700000000',
+            organization='Example Organization',
+            years=2,
+            subject='Mentorship',
+            message='Test application',
+            status='pending_review',
+        )
+        self.learner = SupportApplication.objects.create(
+            learner_name='Test Learner',
+            dob='2010-01-01',
+            grade='Grade 8',
+            school='Test School',
+            support_type='Mentorship',
+            situation_description='Test application',
+            guardian_name='Test Guardian',
+            relationship='Parent',
+            guardian_contact='254700000001',
+            address='Nairobi',
+            informant_name='Test Informant',
+            informant_phone='254700000002',
+            informant_relationship='Teacher',
+        )
+        self.partner = PartnershipRequest.objects.create(
+            org_name='Test Partner',
+            partner_type='Community',
+            email='partner@example.com',
+            phone='254700000003',
+            partnership_area='Mentorship',
+            proposal_description='Test proposal',
+            reason='Test reason',
+        )
+        self.message = Message.objects.create(
+            name='Test Contact',
+            email='contact@example.com',
+            subject='Question',
+            message='Test message',
+        )
+        self.event = Event.objects.create(
+            title='Test Event',
+            slug='test-event-security',
+            description='Test event',
+            location='Nairobi',
+            date=timezone.now() + timedelta(days=1),
+        )
+
+    def _action_urls(self):
+        return [
+            reverse('approve_mentor', args=[self.mentor.pk]),
+            reverse('reject_mentor', args=[self.mentor.pk]),
+            reverse('delete_mentor', args=[self.mentor.pk]),
+            reverse('approve_learner', args=[self.learner.pk]),
+            reverse('delete_learner', args=[self.learner.pk]),
+            reverse('approve_partner', args=[self.partner.pk]),
+            reverse('delete_partner', args=[self.partner.pk]),
+            reverse('delete_message', args=[self.message.pk]),
+            reverse('event_delete', args=[self.event.pk]),
+        ]
+
+    def _assert_records_unchanged(self):
+        self.mentor.refresh_from_db()
+        self.learner.refresh_from_db()
+        self.partner.refresh_from_db()
+        self.assertEqual(self.mentor.status, 'pending_review')
+        self.assertFalse(self.mentor.approved)
+        self.assertFalse(self.learner.approved)
+        self.assertFalse(self.partner.approved)
+        self.assertTrue(Message.objects.filter(pk=self.message.pk).exists())
+        self.assertTrue(Event.objects.filter(pk=self.event.pk).exists())
+
+    def test_anonymous_requests_cannot_run_admin_actions(self):
+        for action_url in self._action_urls():
+            with self.subTest(action_url=action_url):
+                self.assertEqual(self.client.get(action_url).status_code, 302)
+                self.assertEqual(self.client.post(action_url).status_code, 302)
+
+        self._assert_records_unchanged()
+
+    def test_staff_get_requests_cannot_run_admin_actions(self):
+        self.client.force_login(self.staff)
+
+        for action_url in self._action_urls():
+            with self.subTest(action_url=action_url):
+                self.assertEqual(self.client.get(action_url).status_code, 405)
+
+        self._assert_records_unchanged()
+
+    def test_non_staff_post_requests_cannot_run_admin_actions(self):
+        non_staff = get_user_model().objects.create_user(
+            username='securityuser',
+            password='StrongPass123!',
+        )
+        self.client.force_login(non_staff)
+
+        for action_url in self._action_urls():
+            with self.subTest(action_url=action_url):
+                self.assertEqual(self.client.post(action_url).status_code, 302)
+
+        self._assert_records_unchanged()
+
+    def test_staff_can_run_admin_actions_with_post(self):
+        self.client.force_login(self.staff)
+
+        response = self.client.post(reverse('approve_mentor', args=[self.mentor.pk]))
+        self.assertEqual(response.status_code, 302)
+        self.mentor.refresh_from_db()
+        self.assertEqual(self.mentor.status, 'approved')
+        self.assertTrue(self.mentor.approved)
+
+        response = self.client.post(reverse('delete_message', args=[self.message.pk]))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Message.objects.filter(pk=self.message.pk).exists())
+
+        response = self.client.post(reverse('event_delete', args=[self.event.pk]))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Event.objects.filter(pk=self.event.pk).exists())
+
+    def test_staff_post_actions_require_a_csrf_token(self):
+        client = Client(enforce_csrf_checks=True)
+        client.force_login(self.staff)
+
+        response = client.post(reverse('delete_message', args=[self.message.pk]))
+
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Message.objects.filter(pk=self.message.pk).exists())
+
+    def test_dashboard_admin_actions_render_as_csrf_post_forms(self):
+        self.client.force_login(self.staff)
+        response = self.client.get(reverse('admin_view'))
+
+        rendered_action_urls = [
+            reverse('approve_mentor', args=[self.mentor.pk]),
+            reverse('delete_mentor', args=[self.mentor.pk]),
+            reverse('approve_learner', args=[self.learner.pk]),
+            reverse('delete_learner', args=[self.learner.pk]),
+            reverse('approve_partner', args=[self.partner.pk]),
+            reverse('delete_partner', args=[self.partner.pk]),
+            reverse('delete_message', args=[self.message.pk]),
+            reverse('event_delete', args=[self.event.pk]),
+        ]
+        for action_url in rendered_action_urls:
+            with self.subTest(action_url=action_url):
+                self.assertContains(response, f'action="{action_url}"')
+        self.assertContains(response, 'method="post"')
+        self.assertContains(response, 'name="csrfmiddlewaretoken"')
+
+
+class EventUploadValidationTests(SimpleTestCase):
+    def test_rejects_malformed_reports_and_images(self):
+        invalid_reports = [
+            SimpleUploadedFile('fake.pdf', b'not a PDF'),
+            SimpleUploadedFile('broken.pdf', b'%PDF-1.4\n%%EOF\n'),
+            SimpleUploadedFile('fake.doc', b'not a DOC'),
+            SimpleUploadedFile('fake.docx', b'not a DOCX'),
+        ]
+
+        for report in invalid_reports:
+            with self.subTest(name=report.name):
+                form = EventRecapUploadForm(files={'report': report})
+                self.assertFalse(form.is_valid())
+
+        image_form = EventImageForm(files={
+            'image': SimpleUploadedFile('fake.png', b'not an image'),
+        })
+        self.assertFalse(image_form.is_valid())
+
+    def test_accepts_basic_valid_report_signatures(self):
+        pdf = SimpleUploadedFile('report.pdf', minimal_valid_pdf())
+        pdf_form = EventRecapUploadForm(files={'report': pdf})
+        self.assertTrue(pdf_form.is_valid(), pdf_form.errors)
+
+        docx_content = BytesIO()
+        with zipfile.ZipFile(docx_content, 'w', zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr(
+                '[Content_Types].xml',
+                '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>',
+            )
+            archive.writestr(
+                'word/document.xml',
+                '<document xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>',
+            )
+        docx = SimpleUploadedFile('report.docx', docx_content.getvalue())
+        docx_form = EventRecapUploadForm(files={'report': docx})
+        self.assertTrue(docx_form.is_valid(), docx_form.errors)
+
+    def test_event_uploads_cannot_exceed_five_megabytes(self):
+        oversized = SimpleUploadedFile(
+            'large.pdf',
+            b'x' * (MAX_EVENT_UPLOAD_SIZE + 1),
+        )
+        report_form = EventRecapUploadForm(files={'report': oversized})
+        self.assertFalse(report_form.is_valid())
+
+        oversized_image = SimpleUploadedFile(
+            'large.png',
+            b'x' * (MAX_EVENT_UPLOAD_SIZE + 1),
+        )
+        image_form = EventImageForm(files={'image': oversized_image})
+        self.assertFalse(image_form.is_valid())
+
+        oversized_photo = SimpleUploadedFile(
+            'large.png',
+            b'x' * (MAX_EVENT_UPLOAD_SIZE + 1),
+        )
+        photo_form = EventRecapUploadForm(files={'photos': [oversized_photo]})
+        self.assertFalse(photo_form.is_valid())
+
+    def test_docx_with_excessive_uncompressed_xml_is_rejected(self):
+        docx_content = BytesIO()
+        with zipfile.ZipFile(docx_content, 'w', zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr(
+                '[Content_Types].xml',
+                '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>',
+            )
+            archive.writestr(
+                'word/document.xml',
+                b'x' * (5 * 1024 * 1024 + 1),
+            )
+
+        form = EventRecapUploadForm(files={
+            'report': SimpleUploadedFile('oversized.docx', docx_content.getvalue()),
+        })
+
+        self.assertFalse(form.is_valid())
 
 
 class MpesaApiTests(SimpleTestCase):

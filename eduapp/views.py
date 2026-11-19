@@ -4,6 +4,7 @@ from decimal import Decimal
 from django import forms
 from django.contrib.sitemaps.views import sitemap
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -12,9 +13,10 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.db import OperationalError, connection
+from django.db import OperationalError, connection, models
 from django.utils import timezone
 from django.utils.text import slugify
 from django.conf import settings
@@ -23,14 +25,30 @@ from .models import (
     SupportApplication, PartnershipRequest,
     MentorshipBooking, Donation
 )
-from .forms import EventRecapUploadForm
+from .forms import EventImageForm, EventRecapUploadForm
 from .mpesa import initiate_stk_push
 from .sitemaps import EventSitemap, StaticPageSitemap
 
 
 TERMS_VERSION = '2026-09-16'
 TERMS_SESSION_KEY = 'edulink_terms_accepted'
+ADMIN_PAGE_SIZE = 20
 logger = logging.getLogger(__name__)
+
+
+class KnownCountPaginator(Paginator):
+    def __init__(self, object_list, per_page, total_count, **kwargs):
+        self.total_count = total_count
+        super().__init__(object_list, per_page, **kwargs)
+
+    @property
+    def count(self):
+        return self.total_count
+
+
+def paginate_queryset(queryset, request, page_key, total_count, per_page=ADMIN_PAGE_SIZE):
+    paginator = KnownCountPaginator(queryset, per_page, total_count)
+    return paginator.get_page(request.GET.get(page_key))
 
 
 def terms_accepted(request):
@@ -92,43 +110,48 @@ def sitemap_view(request):
 
 def index(request):
     now = timezone.now()
-    featured_events = Event.objects.filter(
-        is_featured=True,
-        is_published=True,
-        date__gte=now,
-    )[:3]
     upcoming_events = Event.objects.filter(
         is_published=True,
         date__gte=now,
     ).order_by('date')[:6]
     return render(request, 'index.html', {
-        'featured_events': featured_events,
         'upcoming_events': upcoming_events,
     })
 
 
 def events_list(request):
     now = timezone.now()
-    upcoming_events = Event.objects.filter(is_published=True, date__gte=now).order_by('date')
-    past_events = Event.objects.filter(is_published=True, date__lt=now).order_by('-date')
+    upcoming_queryset = Event.objects.filter(
+        is_published=True,
+        date__gte=now,
+    ).order_by('date')
+    past_queryset = Event.objects.filter(
+        is_published=True,
+        date__lt=now,
+    ).order_by('-date')
     featured_event = Event.objects.filter(
         is_published=True,
         is_featured=True,
         date__gte=now,
     ).order_by('date').first()
     return render(request, 'events.html', {
-        'upcoming_events': upcoming_events,
-        'past_events': past_events,
+        'upcoming_events': Paginator(upcoming_queryset, 6).get_page(
+            request.GET.get('upcoming_page')
+        ),
+        'past_events': Paginator(past_queryset, 6).get_page(
+            request.GET.get('past_page')
+        ),
         'featured_event': featured_event,
-        'events': upcoming_events | past_events,
     })
 
 
 def event_detail(request, slug):
     event = get_object_or_404(Event, slug=slug, is_published=True)
+    is_past_event = event.date < timezone.now()
     return render(request, 'event_detail.html', {
         'event': event,
-        'is_past_event': event.date < timezone.now(),
+        'is_past_event': is_past_event,
+        'event_photos': list(event.photos.all()) if is_past_event else [],
     })
 
 
@@ -432,29 +455,104 @@ def admin_view(request):
         messages.error(request, 'Only authenticated staff users can access the admin dashboard.')
         return redirect('login')
 
-    mentors = Mentor.objects.all().order_by('-created_at')
-    applications = SupportApplication.objects.all().order_by('-submitted_at')
-    partnerships = PartnershipRequest.objects.all().order_by('-submitted_at')
-    all_messages = Message.objects.all().order_by('-created_at')
-    events = Event.objects.prefetch_related('photos').order_by('-created_at')
-    upcoming_events = events.filter(date__gte=timezone.now()).order_by('-created_at')
-    past_events = events.filter(date__lt=timezone.now()).order_by('-date')
-    bookings = MentorshipBooking.objects.all().order_by('-submitted_at')
-    donations = Donation.objects.all().order_by('-submitted_at')
-    transactions = MpesaTransaction.objects.select_related('mentor').order_by('-initiated_at')
+    now = timezone.now()
+    mentor_stats = Mentor.objects.aggregate(
+        total=models.Count('id'),
+        approved=models.Count('id', filter=models.Q(status='approved')),
+        pending=models.Count('id', filter=models.Q(status='pending_review')),
+    )
+    application_stats = SupportApplication.objects.aggregate(
+        total=models.Count('id'),
+        approved=models.Count('id', filter=models.Q(approved=True)),
+    )
+    partnership_stats = PartnershipRequest.objects.aggregate(
+        total=models.Count('id'),
+        approved=models.Count('id', filter=models.Q(approved=True)),
+    )
+    message_count = Message.objects.count()
+    event_stats = Event.objects.aggregate(
+        total=models.Count('id'),
+        upcoming=models.Count('id', filter=models.Q(date__gte=now)),
+        past=models.Count('id', filter=models.Q(date__lt=now)),
+    )
+    transaction_stats = MpesaTransaction.objects.aggregate(
+        total=models.Count('id'),
+        successful=models.Count('id', filter=models.Q(status='success')),
+    )
+    booking_count = MentorshipBooking.objects.count()
+    donation_count = Donation.objects.count()
+
+    mentors = paginate_queryset(
+        Mentor.objects.order_by('-created_at'),
+        request,
+        'mentors_page',
+        mentor_stats['total'],
+    )
+    applications = paginate_queryset(
+        SupportApplication.objects.order_by('-submitted_at'),
+        request,
+        'applications_page',
+        application_stats['total'],
+    )
+    partnerships = paginate_queryset(
+        PartnershipRequest.objects.order_by('-submitted_at'),
+        request,
+        'partnerships_page',
+        partnership_stats['total'],
+    )
+    all_messages = paginate_queryset(
+        Message.objects.order_by('-created_at'),
+        request,
+        'messages_page',
+        message_count,
+    )
+    upcoming_events = paginate_queryset(
+        Event.objects.filter(date__gte=now)
+        .annotate(photo_count=models.Count('photos'))
+        .order_by('-created_at'),
+        request,
+        'upcoming_events_page',
+        event_stats['upcoming'],
+    )
+    past_events = paginate_queryset(
+        Event.objects.filter(date__lt=now)
+        .annotate(photo_count=models.Count('photos'))
+        .order_by('-date'),
+        request,
+        'past_events_page',
+        event_stats['past'],
+    )
+    bookings = paginate_queryset(
+        MentorshipBooking.objects.order_by('-submitted_at'),
+        request,
+        'bookings_page',
+        booking_count,
+    )
+    donations = paginate_queryset(
+        Donation.objects.select_related('event').order_by('-submitted_at'),
+        request,
+        'donations_page',
+        donation_count,
+    )
+    transactions = paginate_queryset(
+        MpesaTransaction.objects.select_related('mentor').order_by('-initiated_at'),
+        request,
+        'transactions_page',
+        transaction_stats['total'],
+    )
 
     stats = {
-        'total_mentors': mentors.count(),
-        'approved_mentors': mentors.filter(status='approved').count(),
-        'pending_mentors': mentors.filter(status='pending_review').count(),
-        'total_applications': applications.count(),
-        'total_events': events.count(),
-        'successful_payments': MpesaTransaction.objects.filter(status='success').count(),
-        'approved_learners': applications.filter(approved=True).count(),
-        'approved_partners': partnerships.filter(approved=True).count(),
-        'total_messages': all_messages.count(),
-        'total_bookings': bookings.count(),
-        'total_donations': donations.count(),
+        'total_mentors': mentor_stats['total'],
+        'approved_mentors': mentor_stats['approved'],
+        'pending_mentors': mentor_stats['pending'],
+        'total_applications': application_stats['total'],
+        'total_events': event_stats['total'],
+        'successful_payments': transaction_stats['successful'],
+        'approved_learners': application_stats['approved'],
+        'approved_partners': partnership_stats['approved'],
+        'total_messages': message_count,
+        'total_bookings': booking_count,
+        'total_donations': donation_count,
     }
 
     return render(request, 'admin_view.html', {
@@ -464,13 +562,11 @@ def admin_view(request):
         'all_partners': partnerships,
         'messages_list': all_messages,
         'all_messages': all_messages,
-        'events': events,
         'upcoming_events': upcoming_events,
         'past_events': past_events,
         'bookings': bookings,
         'donations': donations,
         'transactions': transactions,
-        'recent_transactions': transactions[:20],
         'stats': stats,
         'approved_learners': stats['approved_learners'],
         'approved_mentors': stats['approved_mentors'],
@@ -481,6 +577,8 @@ def admin_view(request):
     })
 
 
+@staff_member_required(login_url='login')
+@require_POST
 def approve_mentor(request, id):
     mentor_obj = get_object_or_404(Mentor, id=id)
     mentor_obj.status = 'approved'
@@ -490,6 +588,8 @@ def approve_mentor(request, id):
     return redirect('admin_view')
 
 
+@staff_member_required(login_url='login')
+@require_POST
 def reject_mentor(request, id):
     mentor_obj = get_object_or_404(Mentor, id=id)
     mentor_obj.status = 'rejected'
@@ -499,6 +599,8 @@ def reject_mentor(request, id):
     return redirect('admin_view')
 
 
+@staff_member_required(login_url='login')
+@require_POST
 def delete_mentor(request, id):
     mentor_obj = get_object_or_404(Mentor, id=id)
     mentor_obj.delete()
@@ -506,6 +608,8 @@ def delete_mentor(request, id):
     return redirect('admin_view')
 
 
+@staff_member_required(login_url='login')
+@require_POST
 def approve_learner(request, id):
     app = get_object_or_404(SupportApplication, id=id)
     app.approved = True
@@ -514,11 +618,15 @@ def approve_learner(request, id):
     return redirect('admin_view')
 
 
+@staff_member_required(login_url='login')
+@require_POST
 def delete_learner(request, id):
     get_object_or_404(SupportApplication, id=id).delete()
     return redirect('admin_view')
 
 
+@staff_member_required(login_url='login')
+@require_POST
 def approve_partner(request, id):
     partner = get_object_or_404(PartnershipRequest, id=id)
     partner.approved = True
@@ -527,11 +635,15 @@ def approve_partner(request, id):
     return redirect('admin_view')
 
 
+@staff_member_required(login_url='login')
+@require_POST
 def delete_partner(request, id):
     get_object_or_404(PartnershipRequest, id=id).delete()
     return redirect('admin_view')
 
 
+@staff_member_required(login_url='login')
+@require_POST
 def delete_message(request, id):
     get_object_or_404(Message, id=id).delete()
     return redirect('admin_view')
@@ -564,6 +676,11 @@ def event_create(request):
             messages.error(request, 'Event location is required.')
             return redirect('admin_view')
 
+        image_form = EventImageForm(request.POST, request.FILES)
+        if not image_form.is_valid():
+            messages.error(request, 'Please choose a valid image no larger than 5 MB.')
+            return redirect('admin_view')
+
         slug_value = slugify(request.POST.get('slug') or title) or slugify(title)
         original_slug = slug_value
         slug_counter = 2
@@ -577,7 +694,7 @@ def event_create(request):
             description=description,
             date=event_date,
             location=location,
-            image=request.FILES.get('image'),
+            image=image_form.cleaned_data['image'],
             is_featured=request.POST.get('is_featured') == 'on',
             is_published=request.POST.get('is_published') == 'on',
         )
@@ -612,6 +729,11 @@ def event_edit(request, id):
             messages.error(request, 'Event location is required.')
             return redirect('admin_view')
 
+        image_form = EventImageForm(request.POST, request.FILES)
+        if not image_form.is_valid():
+            messages.error(request, 'Please choose a valid image no larger than 5 MB.')
+            return redirect('admin_view')
+
         event.title = title
         event.description = description
         event.date = event_date
@@ -632,18 +754,17 @@ def event_edit(request, id):
             slug_counter += 1
         event.slug = candidate
 
-        if request.FILES.get('image'):
-            event.image = request.FILES.get('image')
+        if image_form.cleaned_data['image']:
+            event.image = image_form.cleaned_data['image']
         event.save()
         messages.success(request, 'Event updated.')
         return redirect('admin_view')
     return render(request, 'event_form.html', {'event': event})
 
 
-@login_required
+@staff_member_required(login_url='login')
+@require_POST
 def event_delete(request, id):
-    if not request.user.is_staff:
-        return redirect('/')
     get_object_or_404(Event, id=id).delete()
     messages.success(request, 'Event deleted.')
     return redirect('admin_view')
@@ -663,7 +784,11 @@ def event_recap_upload(request, id):
 
     form = EventRecapUploadForm(request.POST, request.FILES)
     if not form.is_valid():
-        messages.error(request, 'Please choose at least one valid photo or report (PDF, DOC, or DOCX).')
+        messages.error(
+            request,
+            'Choose at least one valid photo or report (PDF, DOC, or DOCX). '
+            'Each file must be 5 MB or smaller.',
+        )
         return redirect('admin_view')
 
     report = form.cleaned_data['report']
@@ -671,12 +796,8 @@ def event_recap_upload(request, id):
         event.report = report
         event.save(update_fields=['report', 'updated_at'])
 
-    photos = [
-        EventPhoto(event=event, image=image)
-        for image in form.cleaned_data['photos']
-    ]
-    if photos:
-        EventPhoto.objects.bulk_create(photos)
+    for image in form.cleaned_data['photos']:
+        EventPhoto.objects.create(event=event, image=image)
 
     messages.success(request, f'Past event recap updated for "{event.title}".')
     return redirect('admin_view')
