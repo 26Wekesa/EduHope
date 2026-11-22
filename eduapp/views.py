@@ -1,7 +1,6 @@
 import json
 import hmac
 import logging
-from django.views.decorators.http import require_POST
 from django.core.cache import cache
 from  google import genai
 from google.genai import types as genai_types
