@@ -22,21 +22,23 @@
 
         <form method="post">
             {% csrf_token %}
+            {% include 'partials/form_errors.html' %}
+            {{ form.honeypot }}
 
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
                 <div>
                     <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Organization / Full Name</label>
-                    <input type="text" name="org_name" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                    <input type="text" name="org_name" value="{{ form.org_name.value|default_if_none:'' }}" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                 </div>
                 <div>
                     <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Type of Partner</label>
                     <select name="partner_type" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                         <option value="">-- Select --</option>
-                        <option value="ngo">NGO / Non-profit</option>
-                        <option value="government">Government Institution</option>
-                        <option value="company">Company / Corporate</option>
-                        <option value="school">School / Training Centre</option>
-                        <option value="individual">Individual</option>
+                        <option value="ngo" {% if form.partner_type.value == 'ngo' %}selected{% endif %}>NGO / Non-profit</option>
+                        <option value="government" {% if form.partner_type.value == 'government' %}selected{% endif %}>Government Institution</option>
+                        <option value="company" {% if form.partner_type.value == 'company' %}selected{% endif %}>Company / Corporate</option>
+                        <option value="school" {% if form.partner_type.value == 'school' %}selected{% endif %}>School / Training Centre</option>
+                        <option value="individual" {% if form.partner_type.value == 'individual' %}selected{% endif %}>Individual</option>
                     </select>
                 </div>
             </div>
@@ -44,41 +46,41 @@
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
                 <div>
                     <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Official Email</label>
-                    <input type="email" name="email" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                    <input type="email" name="email" value="{{ form.email.value|default_if_none:'' }}" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                 </div>
                 <div>
                     <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Phone Number</label>
-                    <input type="text" name="phone" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                    <input type="tel" name="phone" value="{{ form.phone.value|default_if_none:'' }}" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                 </div>
             </div>
 
             <div style="margin-bottom:12px;">
                 <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Website (Optional)</label>
-                <input type="text" name="website" placeholder="https://" style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                <input type="url" name="website" placeholder="https://" value="{{ form.website.value|default_if_none:'' }}" style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
             </div>
 
             <div style="margin-bottom:12px;">
                 <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Area of Partnership</label>
                 <select name="partnership_area" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                     <option value="">-- Select Area of Interest --</option>
-                    <option value="sponsorship">Student Sponsorship</option>
-                    <option value="donations">Donations (Clothes, Food, Materials)</option>
-                    <option value="projects">Joint Projects / Programs</option>
-                    <option value="training">Training & Capacity Building</option>
-                    <option value="volunteer">Volunteer Support</option>
-                    <option value="infrastructure">Infrastructure & Facilities Support</option>
-                    <option value="other">Other (Explain Below)</option>
+                    <option value="sponsorship" {% if form.partnership_area.value == 'sponsorship' %}selected{% endif %}>Student Sponsorship</option>
+                    <option value="donations" {% if form.partnership_area.value == 'donations' %}selected{% endif %}>Donations (Clothes, Food, Materials)</option>
+                    <option value="projects" {% if form.partnership_area.value == 'projects' %}selected{% endif %}>Joint Projects / Programs</option>
+                    <option value="training" {% if form.partnership_area.value == 'training' %}selected{% endif %}>Training & Capacity Building</option>
+                    <option value="volunteer" {% if form.partnership_area.value == 'volunteer' %}selected{% endif %}>Volunteer Support</option>
+                    <option value="infrastructure" {% if form.partnership_area.value == 'infrastructure' %}selected{% endif %}>Infrastructure & Facilities Support</option>
+                    <option value="other" {% if form.partnership_area.value == 'other' %}selected{% endif %}>Other (Explain Below)</option>
                 </select>
             </div>
 
             <div style="margin-bottom:12px;">
                 <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Describe Your Proposal</label>
-                <textarea name="proposal_description" rows="5" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;"></textarea>
+                <textarea name="proposal_description" rows="5" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">{{ form.proposal_description.value|default_if_none:'' }}</textarea>
             </div>
 
             <div style="margin-bottom:16px;">
                 <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Reason for Partnership</label>
-                <textarea name="reason" rows="4" placeholder="Why do you want to partner with us?" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;"></textarea>
+                <textarea name="reason" rows="4" placeholder="Why do you want to partner with us?" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">{{ form.reason.value|default_if_none:'' }}</textarea>
             </div>
 
             <button type="submit" name="partnership" class="page-btn-primary">Submit Request</button>

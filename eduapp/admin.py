@@ -48,6 +48,7 @@ class EventPhotoAdmin(admin.ModelAdmin):
 class SupportApplicationAdmin(admin.ModelAdmin):
     list_display = ('learner_name', 'school', 'support_type', 'approved', 'submitted_at')
     list_filter = ('approved', 'support_type')
+    readonly_fields = ('legacy_dob',)
 
 
 @admin.register(PartnershipRequest)

@@ -22,6 +22,7 @@
 
         <form method="post" class="login-form">
             {% csrf_token %}
+            {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
 
             <div style="margin-bottom:12px;">
                 <i class="bi bi-person-fill" style="color:#0a1f44; margin-right:8px;"></i>

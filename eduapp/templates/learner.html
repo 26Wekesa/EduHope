@@ -30,6 +30,8 @@
         <form method="post">
 
             {% csrf_token %}
+            {% include 'partials/form_errors.html' %}
+            {{ form.honeypot }}
 
             <!-- Learner Details -->
             <div style="margin-bottom: 20px;">
@@ -39,13 +41,13 @@
             <div style="display: flex; gap: 15px; margin-bottom: 15px;">
                 <div style="flex: 1;">
                     <label style="font-weight: bold; color: #0a1f44;">Learner's Full Name</label>
-                    <input type="text" name="learner_name" required
+                    <input type="text" name="learner_name" value="{{ form.learner_name.value|default_if_none:'' }}" required
                         style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                                border-radius: 5px;">
                 </div>
                 <div style="flex: 1;">
-                    <label style="font-weight: bold; color: #0a1f44;">Age / Date of Birth</label>
-                    <input type="text" name="dob" required
+                    <label style="font-weight: bold; color: #0a1f44;">Date of Birth</label>
+                    <input type="date" name="dob" value="{{ form.dob.value|date:'Y-m-d'|default_if_none:'' }}" required
                         style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                                border-radius: 5px;">
                 </div>
@@ -54,13 +56,13 @@
             <div style="display: flex; gap: 15px; margin-bottom: 15px;">
                 <div style="flex: 1;">
                     <label style="font-weight: bold; color: #0a1f44;">Class / Grade</label>
-                    <input type="text" name="grade" required
+                    <input type="text" name="grade" value="{{ form.grade.value|default_if_none:'' }}" required
                         style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                                border-radius: 5px;">
                 </div>
                 <div style="flex: 1;">
                     <label style="font-weight: bold; color: #0a1f44;">School Name</label>
-                    <input type="text" name="school" required
+                    <input type="text" name="school" value="{{ form.school.value|default_if_none:'' }}" required
                         style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                                border-radius: 5px;">
                 </div>
@@ -77,18 +79,18 @@
                     style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                            border-radius: 5px;">
                     <option value="">-- Select --</option>
-                    <option value="school_fees">School Fees</option>
-                    <option value="uniform_clothing">Uniform / Clothing</option>
-                    <option value="learning_materials">Learning Materials</option>
-                    <option value="food_assistance">Food Assistance</option>
-                    <option value="shelter">Shelter Support</option>
-                    <option value="other">Other (Explain Below)</option>
+                    <option value="school_fees" {% if form.support_type.value == 'school_fees' %}selected{% endif %}>School Fees</option>
+                    <option value="uniform_clothing" {% if form.support_type.value == 'uniform_clothing' %}selected{% endif %}>Uniform / Clothing</option>
+                    <option value="learning_materials" {% if form.support_type.value == 'learning_materials' %}selected{% endif %}>Learning Materials</option>
+                    <option value="food_assistance" {% if form.support_type.value == 'food_assistance' %}selected{% endif %}>Food Assistance</option>
+                    <option value="shelter" {% if form.support_type.value == 'shelter' %}selected{% endif %}>Shelter Support</option>
+                    <option value="other" {% if form.support_type.value == 'other' %}selected{% endif %}>Other (Explain Below)</option>
                 </select>
             </div>
 
             <div style="margin-bottom: 15px;">
                 <label style="font-weight: bold; color: #0a1f44;">Briefly describe the learner's situation</label>
-                <textarea name="situation_description" rows="4" placeholder="Explain why the learner needs support..." required
+                <textarea name="situation_description" rows="4" placeholder="Explain why the learner needs support..." required>{{ form.situation_description.value|default_if_none:'' }}
                     style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                            border-radius: 5px;"></textarea>
             </div>
@@ -101,13 +103,13 @@
             <div style="display: flex; gap: 15px; margin-bottom: 15px;">
                 <div style="flex: 1;">
                     <label style="font-weight: bold; color: #0a1f44;">Parent/Guardian Name</label>
-                    <input type="text" name="guardian_name" required
+                    <input type="text" name="guardian_name" value="{{ form.guardian_name.value|default_if_none:'' }}" required
                         style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                                border-radius: 5px;">
                 </div>
                 <div style="flex: 1;">
                     <label style="font-weight: bold; color: #0a1f44;">Relationship to Learner</label>
-                    <input type="text" name="relationship" required
+                    <input type="text" name="relationship" value="{{ form.relationship.value|default_if_none:'' }}" required
                         style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                                border-radius: 5px;">
                 </div>
@@ -116,13 +118,13 @@
             <div style="display: flex; gap: 15px; margin-bottom: 15px;">
                 <div style="flex: 1;">
                     <label style="font-weight: bold; color: #0a1f44;">Contact Number</label>
-                    <input type="text" name="guardian_contact" required
+                    <input type="tel" name="guardian_contact" value="{{ form.guardian_contact.value|default_if_none:'' }}" required
                         style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                                border-radius: 5px;">
                 </div>
                 <div style="flex: 1;">
                     <label style="font-weight: bold; color: #0a1f44;">Home Location / Address</label>
-                    <input type="text" name="address" required
+                    <input type="text" name="address" value="{{ form.address.value|default_if_none:'' }}" required
                         style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                                border-radius: 5px;">
                 </div>
@@ -137,13 +139,13 @@
             <div style="display: flex; gap: 15px; margin-bottom: 15px;">
                 <div style="flex: 1;">
                     <label style="font-weight: bold; color: #0a1f44;">Your Full Name</label>
-                    <input type="text" name="informant_name" required
+                    <input type="text" name="informant_name" value="{{ form.informant_name.value|default_if_none:'' }}" required
                         style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                                border-radius: 5px;">
                 </div>
                 <div style="flex: 1;">
                     <label style="font-weight: bold; color: #0a1f44;">Your Phone Number</label>
-                    <input type="text" name="informant_phone" required
+                    <input type="tel" name="informant_phone" value="{{ form.informant_phone.value|default_if_none:'' }}" required
                         style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                                border-radius: 5px;">
                 </div>
@@ -151,14 +153,14 @@
 
             <div style="margin-bottom: 15px;">
                 <label style="font-weight: bold; color: #0a1f44;">Your Relationship to the Learner</label>
-                <input type="text" name="informant_relationship" required
+                <input type="text" name="informant_relationship" value="{{ form.informant_relationship.value|default_if_none:'' }}" required
                     style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                            border-radius: 5px;" placeholder="e.g., Teacher, Neighbor, Social Worker">
             </div>
 
             <div style="margin-bottom: 15px;">
                 <label style="font-weight: bold; color: #0a1f44;">Any additional remarks</label>
-                <textarea name="informant_remarks" rows="4" placeholder="Optional"
+                <textarea name="informant_remarks" rows="4" placeholder="Optional">{{ form.informant_remarks.value|default_if_none:'' }}
                     style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
                            border-radius: 5px;"></textarea>
             </div>

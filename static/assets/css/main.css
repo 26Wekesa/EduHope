@@ -3961,6 +3961,14 @@ time,
   transform: translateY(1px);
 }
 
+.form-honeypot {
+  position: absolute !important;
+  left: -10000px !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
+
 .home-hero {
   display: flex;
   min-height: min(840px, 100svh);
@@ -4953,9 +4961,13 @@ a[class*="btn"]:active,
 }
 
 .navbar-bold .navbar-brand img {
+  display: block;
   width: 40px;
   height: 40px;
   margin-right: 8px;
+  padding: 3px;
+  border-radius: 8px;
+  background: #fff;
   object-fit: contain;
 }
 
@@ -4965,9 +4977,23 @@ a[class*="btn"]:active,
   transition: color 160ms ease, background-color 160ms ease;
 }
 
+.navbar-bold .nav-link i {
+  margin-right: 0.3rem;
+  color: var(--icon-accent, #00c2e0);
+}
+
+.navbar-bold .btn-apply i {
+  color: inherit;
+}
+
 .navbar-bold .nav-link:hover,
 .navbar-bold .nav-link:focus-visible {
   color: #f3f4f6;
+}
+
+.navbar-bold .nav-link:hover i,
+.navbar-bold .nav-link:focus-visible i {
+  color: inherit;
 }
 
 .navbar-bold .btn-apply {

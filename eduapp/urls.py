@@ -20,6 +20,7 @@ urlpatterns = [
     path('sponser/', views.sponser, name='sponser'),
     path('partner/', views.patner, name='partner'),
     path('message/', views.message, name='message'),
+    path('chatbot/', views.chatbot, name='chatbot'),
 
     # Mentor application flow
     path('mentor/', views.mentor, name='mentor'),

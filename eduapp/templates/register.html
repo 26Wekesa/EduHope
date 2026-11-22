@@ -1,7 +1,7 @@
 {% extends 'starter-page.html' %}
 {% load static %}
 
-{% block title %}Create Admin Account{% endblock %}
+{% block title %}Create Account{% endblock %}
 
 {% block content %}
 
@@ -18,24 +18,31 @@
             <div class="alert alert-success" style="padding:10px 12px; border-radius:8px;">{{ message }}</div>
             {% endfor %}
 
-            <h3 style="text-align:center; color:#0d1b4b; font-weight:700; margin-bottom:12px;">Create an Admin Account</h3>
+            <h3 style="text-align:center; color:#0d1b4b; font-weight:700; margin-bottom:12px;">Create an Account</h3>
 
             <form method="post" class="signup-form">
                 {% csrf_token %}
+                {% include 'partials/form_errors.html' %}
+                {{ form.honeypot }}
 
                 <div style="margin-bottom:12px;">
                     <i class="bi bi-person-fill" style="color:#0a1f44; margin-right:8px;"></i>
-                    <input type="text" name="username" placeholder="Username" required>
+                    <input type="text" name="username" placeholder="Username" value="{{ form.username.value|default_if_none:'' }}" required>
+                </div>
+
+                <div style="margin-bottom:12px;">
+                    <i class="bi bi-envelope-fill" style="color:#0a1f44; margin-right:8px;"></i>
+                    <input name="email" type="email" placeholder="Email address" value="{{ form.email.value|default_if_none:'' }}" required>
                 </div>
 
                 <div style="margin-bottom:12px;">
                     <i class="bi bi-lock-fill" style="color:#0a1f44; margin-right:8px;"></i>
-                    <input name="password" type="password" placeholder="Password" required>
+                    <input name="password1" type="password" placeholder="Password" required>
                 </div>
 
                 <div style="margin-bottom:18px;">
                     <i class="bi bi-lock-check" style="color:#0a1f44; margin-right:8px;"></i>
-                    <input name="confirm_password" type="password" placeholder="Confirm Password" required>
+                    <input name="password2" type="password" placeholder="Confirm Password" required>
                 </div>
 
                 <button type="submit" class="signup-btn">Sign Up</button>

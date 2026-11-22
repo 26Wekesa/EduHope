@@ -31,28 +31,30 @@
 
             <form method="post">
                 {% csrf_token %}
+                {% include 'partials/form_errors.html' %}
+                {{ form.honeypot }}
 
                 <h5 style="color:#0a1f44; font-weight:700; margin-bottom:8px;">School Information</h5>
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
                     <div>
                         <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">School Name</label>
-                        <input type="text" name="school_name" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                        <input type="text" name="school_name" value="{{ form.school_name.value|default_if_none:'' }}" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                     </div>
                     <div>
                         <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Contact Person</label>
-                        <input type="text" name="contact_person" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                        <input type="text" name="contact_person" value="{{ form.contact_person.value|default_if_none:'' }}" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                     </div>
                 </div>
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
                     <div>
                         <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Phone Number</label>
-                        <input type="text" name="phone" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                        <input type="tel" name="phone" value="{{ form.phone.value|default_if_none:'' }}" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                     </div>
                     <div>
                         <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Email Address</label>
-                        <input type="email" name="email" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                        <input type="email" name="email" value="{{ form.email.value|default_if_none:'' }}" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                     </div>
                 </div>
 
@@ -61,33 +63,33 @@
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
                     <div>
                         <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Number of Learners</label>
-                        <input type="number" name="number_of_learners" min="1" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                        <input type="number" name="number_of_learners" min="1" max="5000" value="{{ form.number_of_learners.value|default_if_none:'' }}" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                     </div>
                     <div>
                         <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Duration (Hours)</label>
-                        <input type="number" name="duration_hours" min="1" max="8" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                        <input type="number" name="duration_hours" min="1" max="8" value="{{ form.duration_hours.value|default_if_none:'' }}" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                     </div>
                 </div>
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
                     <div>
                         <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Preferred Date</label>
-                        <input type="date" name="preferred_date" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                        <input type="date" name="preferred_date" value="{{ form.preferred_date.value|default_if_none:'' }}" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                     </div>
                     <div>
                         <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Preferred Time</label>
-                        <input type="time" name="preferred_time" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
+                        <input type="time" name="preferred_time" value="{{ form.preferred_time.value|default_if_none:'' }}" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">
                     </div>
                 </div>
 
                 <div style="margin-bottom:12px;">
                     <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Topics to Cover</label>
-                    <textarea name="topics" rows="3" placeholder="e.g., Career guidance" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;"></textarea>
+                    <textarea name="topics" rows="3" placeholder="e.g., Career guidance" required style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">{{ form.topics.value|default_if_none:'' }}</textarea>
                 </div>
 
                 <div style="margin-bottom:16px;">
                     <label style="font-weight:600; color:#0a1f44; display:block; margin-bottom:6px;">Additional Notes (Optional)</label>
-                    <textarea name="additional_notes" rows="3" placeholder="Any special requirements" style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;"></textarea>
+                    <textarea name="additional_notes" rows="3" placeholder="Any special requirements" style="width:100%; padding:12px; border:2px solid #e6edf7; border-radius:8px;">{{ form.additional_notes.value|default_if_none:'' }}</textarea>
                 </div>
 
                 <button type="submit" class="page-btn-primary">Book Session</button>

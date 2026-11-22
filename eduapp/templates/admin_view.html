@@ -41,7 +41,10 @@
       </ul>
       <div class="admin-sidebar__footer">
         <a href="{% url 'index' %}"><i class="bi bi-box-arrow-up-right"></i> View website</a>
-        <a href="{% url 'logout' %}"><i class="bi bi-box-arrow-left"></i> Sign out</a>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="admin-sidebar__logout"><i class="bi bi-box-arrow-left"></i> Sign out</button>
+        </form>
       </div>
     </aside>
 
@@ -807,6 +810,18 @@
     color: #aeb8c1;
     font-size: 11px;
     text-decoration: none;
+  }
+
+  .admin-sidebar__logout {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
   }
 
   .admin-sidebar__footer a:hover {

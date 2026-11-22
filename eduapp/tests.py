@@ -1,25 +1,38 @@
+import base64
 import json
 import re
 import tempfile
 import zipfile
-from datetime import timedelta
+from datetime import date, timedelta
 from io import BytesIO
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import OperationalError
 from django.test import Client, RequestFactory, SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
+from requests.exceptions import Timeout
 from unittest.mock import patch
 
-from .forms import EventImageForm, EventRecapUploadForm, MAX_EVENT_UPLOAD_SIZE
+from .forms import (
+    ContactMessageForm,
+    EventImageForm,
+    EventRecapUploadForm,
+    EventSupportDonationForm,
+    MentorApplicationForm,
+    MentorshipBookingForm,
+    PartnershipRequestForm,
+    RegistrationForm,
+    SupportApplicationForm,
+    MAX_EVENT_UPLOAD_SIZE,
+)
 from .models import (
     Donation, Event, EventPhoto, Mentor, Message, MpesaTransaction,
     PartnershipRequest, SupportApplication,
 )
 from .mpesa import initiate_stk_push, query_stk_status
-from .views import events_list
 
 
 def minimal_valid_pdf():
@@ -64,6 +77,251 @@ class HealthCheckTests(SimpleTestCase):
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response.json(), {'status': 'unhealthy'})
         log_exception.assert_called_once()
+
+
+class PublicApplicationFormTests(TestCase):
+    def test_phone_numbers_are_validated_and_normalized_to_254(self):
+        form = MentorApplicationForm(data={
+            'name': 'Amina Otieno',
+            'email': 'amina@example.com',
+            'phone': '+254 712 345 678',
+            'organization': '',
+            'years': '60',
+            'subject': 'Mentoring',
+            'message': 'I would like to mentor learners.',
+            'honeypot': '',
+        })
+
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data['phone'], '254712345678')
+
+    def test_invalid_phone_and_out_of_range_experience_are_rejected(self):
+        form = MentorApplicationForm(data={
+            'name': 'Amina Otieno',
+            'email': 'amina@example.com',
+            'phone': '12345',
+            'organization': '',
+            'years': '61',
+            'subject': 'Mentoring',
+            'message': 'I would like to mentor learners.',
+            'honeypot': '',
+        })
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('phone', form.errors)
+        self.assertIn('years', form.errors)
+
+    def test_honeypot_rejects_automated_public_form_submissions(self):
+        form = ContactMessageForm(data={
+            'name': 'Automated sender',
+            'email': 'bot@example.com',
+            'subject': 'Spam',
+            'message': 'Spam content',
+            'honeypot': 'filled by a bot',
+        })
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('honeypot', form.errors)
+
+    def test_support_application_requires_a_valid_non_future_date(self):
+        data = {
+            'learner_name': 'Learner Name',
+            'dob': (date.today() + timedelta(days=1)).isoformat(),
+            'grade': 'Grade 5',
+            'school': 'Example School',
+            'support_type': 'school_fees',
+            'situation_description': 'Needs support.',
+            'guardian_name': 'Guardian Name',
+            'relationship': 'Parent',
+            'guardian_contact': '0712345678',
+            'address': 'Nairobi',
+            'informant_name': 'Informant Name',
+            'informant_phone': '254712345678',
+            'informant_relationship': 'Teacher',
+            'informant_remarks': '',
+            'honeypot': '',
+        }
+        form = SupportApplicationForm(data=data)
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('dob', form.errors)
+
+    def test_donation_amount_must_be_positive_and_phone_valid(self):
+        form = EventSupportDonationForm(data={
+            'donor_name': 'Amina Otieno',
+            'email': 'amina@example.com',
+            'phone': '0112345678',
+            'amount': '0',
+            'donation_type': 'one_time',
+            'message': '',
+            'honeypot': '',
+        })
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('amount', form.errors)
+
+    def test_partnership_form_validates_email_and_normalizes_phone(self):
+        form = PartnershipRequestForm(data={
+            'org_name': 'Community Group',
+            'partner_type': 'ngo',
+            'email': 'team@example.org',
+            'phone': '0712345678',
+            'website': 'https://example.org',
+            'partnership_area': 'projects',
+            'proposal_description': 'A joint learner program.',
+            'reason': 'We share the same goals.',
+            'honeypot': '',
+        })
+
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data['phone'], '254712345678')
+
+    def test_booking_rejects_out_of_range_learner_and_session_counts(self):
+        form = MentorshipBookingForm(data={
+            'school_name': 'Example School',
+            'contact_person': 'Amina Otieno',
+            'email': 'amina@example.com',
+            'phone': '0712345678',
+            'number_of_learners': '0',
+            'preferred_date': date.today().isoformat(),
+            'preferred_time': '09:00',
+            'duration_hours': '9',
+            'topics': 'Leadership',
+            'additional_notes': '',
+            'honeypot': '',
+        })
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('number_of_learners', form.errors)
+        self.assertIn('duration_hours', form.errors)
+
+    def test_registration_applies_password_validators_and_email_validation(self):
+        form = RegistrationForm(data={
+            'username': 'new-user',
+            'email': 'invalid',
+            'password1': 'password',
+            'password2': 'password',
+            'honeypot': '',
+        })
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('email', form.errors)
+        self.assertIn('password2', form.errors)
+
+
+class LoginRedirectTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='login-user',
+            password='StrongPass123!',
+        )
+
+    def test_login_redirects_to_safe_next_parameter(self):
+        response = self.client.post(reverse('login'), {
+            'username': 'login-user',
+            'password': 'StrongPass123!',
+            'next': reverse('events'),
+        })
+
+        self.assertRedirects(response, reverse('events'))
+
+    def test_login_ignores_external_next_parameter(self):
+        response = self.client.post(reverse('login'), {
+            'username': 'login-user',
+            'password': 'StrongPass123!',
+            'next': 'https://malicious.example/',
+        })
+
+        self.assertRedirects(response, reverse('mentor_dashboard'))
+
+
+class PublicApplicationFlowTests(TestCase):
+    def setUp(self):
+        self.client.post(reverse('terms'), {'accept_terms': 'on'})
+        self.mentor_data = {
+            'name': 'Amina Otieno',
+            'email': 'amina@example.com',
+            'phone': '0712345678',
+            'organization': 'Community Center',
+            'years': '5',
+            'subject': 'Mentoring',
+            'message': 'I would like to mentor learners.',
+            'honeypot': '',
+        }
+
+    def test_valid_mentor_application_is_saved_and_advances_to_payment(self):
+        response = self.client.post(reverse('mentor'), self.mentor_data)
+
+        mentor = Mentor.objects.get(email='amina@example.com')
+        self.assertRedirects(
+            response,
+            reverse('payment_initiate', args=[mentor.pk]),
+        )
+        self.assertEqual(mentor.phone, '254712345678')
+        self.assertEqual(mentor.status, 'payment_pending')
+
+    @patch('eduapp.views.initiate_stk_push')
+    def test_payment_initiation_persists_only_daraja_accepted_checkout(self, initiate):
+        mentor = Mentor.objects.create(
+            name='Amina Otieno',
+            email='amina@example.com',
+            phone='254712345678',
+            organization='Community Center',
+            years=5,
+            subject='Mentoring',
+            message='I would like to mentor learners.',
+        )
+        initiate.return_value = {
+            'ResponseCode': '0',
+            'CheckoutRequestID': 'checkout-confirmed',
+            'MerchantRequestID': 'merchant-confirmed',
+        }
+
+        response = self.client.post(
+            reverse('payment_initiate', args=[mentor.pk]),
+            {'phone': '+254 712 345 678', 'amount': '100'},
+        )
+
+        transaction = MpesaTransaction.objects.get(mentor=mentor)
+        self.assertRedirects(response, reverse('payment_status'))
+        self.assertEqual(transaction.phone_number, '254712345678')
+        initiate.assert_called_once_with(
+            phone_number='254712345678',
+            amount=100,
+            account_ref='Amina Otieno',
+            description='Mentor Application',
+        )
+
+    @patch('eduapp.views.initiate_stk_push')
+    def test_payment_initiation_rejects_invalid_phone_before_daraja(self, initiate):
+        mentor = Mentor.objects.create(
+            name='Amina Otieno',
+            email='amina@example.com',
+            phone='254712345678',
+            organization='Community Center',
+            years=5,
+            subject='Mentoring',
+            message='I would like to mentor learners.',
+        )
+
+        response = self.client.post(
+            reverse('payment_initiate', args=[mentor.pk]),
+            {'phone': 'not-a-phone', 'amount': '100'},
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertContains(response, 'valid Kenyan mobile number', status_code=400)
+        initiate.assert_not_called()
+        self.assertFalse(MpesaTransaction.objects.exists())
+
+    def test_invalid_mentor_application_returns_errors_without_saving(self):
+        invalid_data = {**self.mentor_data, 'phone': 'invalid', 'years': '100'}
+
+        response = self.client.post(reverse('mentor'), invalid_data)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertContains(response, 'valid Kenyan mobile number', status_code=400)
+        self.assertFalse(Mentor.objects.exists())
 
 
 class EventsPageTests(TestCase):
@@ -162,6 +420,23 @@ class EventsPageTests(TestCase):
                 self.assertContains(response, 'page-feedback.')
                 self.assertNotContains(response, 'fonts.googleapis.com')
                 self.assertNotContains(response, 'assets/vendor/swiper/swiper-bundle.min.js')
+
+    def test_primary_navigation_uses_accessible_brand_colored_icons(self):
+        response = self.client.get(reverse('index'))
+
+        for icon in (
+            'bi-house-door',
+            'bi-calendar-event',
+            'bi-people',
+            'bi-heart',
+            'bi-diagram-3',
+            'bi-person-plus',
+        ):
+            with self.subTest(icon=icon):
+                self.assertContains(response, f'class="bi {icon}"')
+                self.assertContains(response, 'aria-hidden="true"')
+        self.assertContains(response, 'navbar-brand__logo')
+        self.assertContains(response, '--icon-accent: #00c2e0')
 
     def test_standalone_pages_include_navigation_progress(self):
         for path in (reverse('terms'), reverse('privacy')):
@@ -337,7 +612,9 @@ class EventsPageTests(TestCase):
         )
 
         self.assertRedirects(response, reverse('event_detail', args=[event.slug]))
-        self.assertEqual(Donation.objects.get().event, event)
+        donation = Donation.objects.get()
+        self.assertEqual(donation.event, event)
+        self.assertEqual(donation.message, 'Keep going.')
 
     def test_service_requires_terms_acceptance(self):
         response = self.client.get(reverse('learner'))
@@ -415,6 +692,42 @@ class EventsPageTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Event.objects.filter(title='Invalid Image Event').exists())
+
+    def test_event_create_assigns_unique_slug_when_title_is_repeated(self):
+        self._create_staff_user()
+        client = Client()
+        self.assertTrue(client.login(username='adminuser', password='StrongPass123!'))
+        Event.objects.create(
+            title='Repeated Community Event',
+            description='First event.',
+            date=timezone.now() + timedelta(days=2),
+            location='Nairobi',
+        )
+
+        response = client.post(reverse('event_create'), {
+            'title': 'Repeated Community Event',
+            'description': 'Another event.',
+            'date': (timezone.now() + timedelta(days=4)).strftime('%Y-%m-%dT%H:%M'),
+            'location': 'Nairobi',
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Event.objects.filter(slug='repeated-community-event-2').exists())
+
+    def test_event_create_rejects_invalid_date(self):
+        self._create_staff_user()
+        client = Client()
+        self.assertTrue(client.login(username='adminuser', password='StrongPass123!'))
+
+        response = client.post(reverse('event_create'), {
+            'title': 'Invalid Date Event',
+            'description': 'Should not be created.',
+            'date': 'not-a-date',
+            'location': 'Nairobi',
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Event.objects.filter(title='Invalid Date Event').exists())
 
     def _create_staff_user(self):
         from django.contrib.auth import get_user_model
@@ -514,6 +827,15 @@ class AdminActionSecurityTests(TestCase):
                 self.assertEqual(self.client.get(action_url).status_code, 302)
                 self.assertEqual(self.client.post(action_url).status_code, 302)
 
+        for view_url in (
+            reverse('admin_view'),
+            reverse('event_create'),
+            reverse('event_edit', args=[self.event.pk]),
+        ):
+            with self.subTest(view_url=view_url):
+                self.assertEqual(self.client.get(view_url).status_code, 302)
+                self.assertEqual(self.client.post(view_url).status_code, 302)
+
         self._assert_records_unchanged()
 
     def test_staff_get_requests_cannot_run_admin_actions(self):
@@ -535,6 +857,14 @@ class AdminActionSecurityTests(TestCase):
         for action_url in self._action_urls():
             with self.subTest(action_url=action_url):
                 self.assertEqual(self.client.post(action_url).status_code, 302)
+
+        for view_url in (
+            reverse('admin_view'),
+            reverse('event_create'),
+            reverse('event_edit', args=[self.event.pk]),
+        ):
+            with self.subTest(view_url=view_url):
+                self.assertEqual(self.client.get(view_url).status_code, 302)
 
         self._assert_records_unchanged()
 
@@ -583,6 +913,26 @@ class AdminActionSecurityTests(TestCase):
                 self.assertContains(response, f'action="{action_url}"')
         self.assertContains(response, 'method="post"')
         self.assertContains(response, 'name="csrfmiddlewaretoken"')
+
+    def test_staff_can_open_event_editor_but_changes_are_post_only(self):
+        self.client.force_login(self.staff)
+
+        self.assertEqual(self.client.get(reverse('event_create')).status_code, 200)
+        self.assertEqual(
+            self.client.get(reverse('event_edit', args=[self.event.pk])).status_code,
+            200,
+        )
+        self.assertEqual(self.client.get(reverse('event_delete', args=[self.event.pk])).status_code, 405)
+
+    def test_logout_is_post_only_and_uses_csrf_protected_forms(self):
+        self.client.force_login(self.staff)
+        self.assertEqual(self.client.get(reverse('logout')).status_code, 405)
+        response = self.client.get(reverse('admin_view'))
+        self.assertContains(response, f'action="{reverse("logout")}"')
+        self.assertContains(response, 'name="csrfmiddlewaretoken"')
+
+        self.assertEqual(self.client.post(reverse('logout')).status_code, 302)
+        self.assertNotIn('_auth_user_id', self.client.session)
 
 
 class EventUploadValidationTests(SimpleTestCase):
@@ -665,6 +1015,9 @@ class EventUploadValidationTests(SimpleTestCase):
 
 
 class MpesaApiTests(SimpleTestCase):
+    def setUp(self):
+        cache.clear()
+
     @override_settings(
         MPESA_ENVIRONMENT='sandbox',
         MPESA_CONSUMER_KEY='test-key',
@@ -673,11 +1026,15 @@ class MpesaApiTests(SimpleTestCase):
         MPESA_PASSKEY='test-passkey',
         MPESA_TRANSACTION_TYPE='CustomerPayBillOnline',
         MPESA_CALLBACK_URL='https://staging.eduhope.org/mpesa/callback/',
+        MPESA_CALLBACK_SECRET='test-callback-secret',
     )
     @patch('eduapp.mpesa.requests.post')
     @patch('eduapp.mpesa.requests.get')
     def test_stk_push_fetches_oauth_token_and_uses_sandbox(self, mock_get, mock_post):
-        mock_get.return_value.json.return_value = {'access_token': 'test-token'}
+        mock_get.return_value.json.return_value = {
+            'access_token': 'test-token',
+            'expires_in': '3599',
+        }
         mock_post.return_value.json.return_value = {'ResponseCode': '0'}
 
         result = initiate_stk_push('254708374149', 100, 'MentorRef')
@@ -687,8 +1044,13 @@ class MpesaApiTests(SimpleTestCase):
         self.assertIn('sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', mock_post.call_args.args[0])
         self.assertEqual(mock_get.call_count, 1)
         self.assertEqual(mock_get.call_args.kwargs['auth'], ('test-key', 'test-secret'))
+        self.assertEqual(mock_get.call_args.kwargs['timeout'], 15)
         self.assertEqual(mock_post.call_args.kwargs['headers']['Authorization'], 'Bearer test-token')
-        self.assertEqual(mock_post.call_args.kwargs['json']['CallBackURL'], 'https://staging.eduhope.org/mpesa/callback/')
+        self.assertEqual(mock_post.call_args.kwargs['timeout'], 15)
+        self.assertEqual(
+            mock_post.call_args.kwargs['json']['CallBackURL'],
+            'https://staging.eduhope.org/mpesa/callback/?token=test-callback-secret',
+        )
         self.assertEqual(mock_post.call_args.kwargs['json']['TransactionType'], 'CustomerPayBillOnline')
 
     @override_settings(
@@ -701,8 +1063,16 @@ class MpesaApiTests(SimpleTestCase):
     @patch('eduapp.mpesa.requests.post')
     @patch('eduapp.mpesa.requests.get')
     def test_status_query_fetches_oauth_token(self, mock_get, mock_post):
-        mock_get.return_value.json.return_value = {'access_token': 'test-token'}
-        mock_post.return_value.json.return_value = {'ResponseCode': '0'}
+        mock_get.return_value.json.return_value = {
+            'access_token': 'test-token',
+            'expires_in': '3599',
+        }
+        mock_post.return_value.json.return_value = {
+            'ResponseCode': '0',
+            'CheckoutRequestID': 'checkout-id',
+            'ResultCode': '0',
+            'ResultDesc': 'Confirmed',
+        }
 
         result = query_stk_status('checkout-id')
 
@@ -712,6 +1082,54 @@ class MpesaApiTests(SimpleTestCase):
         self.assertEqual(mock_get.call_count, 1)
         self.assertEqual(mock_post.call_args.kwargs['headers']['Authorization'], 'Bearer test-token')
         self.assertEqual(mock_post.call_args.kwargs['json']['CheckoutRequestID'], 'checkout-id')
+        query_payload = mock_post.call_args.kwargs['json']
+        self.assertEqual(query_payload['BusinessShortCode'], '174379')
+        self.assertTrue(query_payload['Timestamp'].isdecimal())
+        self.assertEqual(
+            query_payload['Password'],
+            base64.b64encode(
+                f"174379test-passkey{query_payload['Timestamp']}".encode()
+            ).decode(),
+        )
+        self.assertEqual(mock_post.call_args.kwargs['timeout'], 15)
+
+    @override_settings(
+        MPESA_ENVIRONMENT='sandbox',
+        MPESA_CONSUMER_KEY='test-key',
+        MPESA_CONSUMER_SECRET='test-secret',
+        MPESA_SHORTCODE='174379',
+        MPESA_PASSKEY='test-passkey',
+    )
+    @patch('eduapp.mpesa.requests.post')
+    @patch('eduapp.mpesa.requests.get')
+    def test_oauth_token_is_reused_until_expiry(self, mock_get, mock_post):
+        mock_get.return_value.json.return_value = {
+            'access_token': 'test-token',
+            'expires_in': '3599',
+        }
+        mock_post.return_value.json.return_value = {'ResponseCode': '0'}
+
+        query_stk_status('checkout-one')
+        query_stk_status('checkout-two')
+
+        self.assertEqual(mock_get.call_count, 1)
+        self.assertEqual(mock_post.call_count, 2)
+
+    @override_settings(
+        MPESA_ENVIRONMENT='sandbox',
+        MPESA_CONSUMER_KEY='test-key',
+        MPESA_CONSUMER_SECRET='test-secret',
+        MPESA_SHORTCODE='174379',
+        MPESA_PASSKEY='test-passkey',
+    )
+    @patch('eduapp.mpesa.requests.post')
+    @patch('eduapp.mpesa.requests.get')
+    def test_oauth_http_errors_abort_stk_queries(self, mock_get, mock_post):
+        mock_get.return_value.raise_for_status.side_effect = Timeout('OAuth timed out')
+
+        with self.assertRaises(Timeout):
+            query_stk_status('checkout-id')
+        mock_post.assert_not_called()
 
 
     @override_settings(
@@ -732,6 +1150,7 @@ class MpesaApiTests(SimpleTestCase):
         mock_post.assert_not_called()
 
 
+@override_settings(MPESA_CALLBACK_SECRET='test-callback-secret')
 class MpesaCallbackTests(TestCase):
     def setUp(self):
         self.mentor = Mentor.objects.create(
@@ -751,9 +1170,12 @@ class MpesaCallbackTests(TestCase):
             merchant_request_id='test_merchant_request',
         )
 
-    def _callback(self, result_code, items=None):
+    def _callback(self, result_code, items=None, token='test-callback-secret'):
+        callback_url = reverse('mpesa_callback')
+        if token is not None:
+            callback_url = f'{callback_url}?token={token}'
         return self.client.post(
-            reverse('mpesa_callback'),
+            callback_url,
             data=json.dumps({
                 'Body': {
                     'stkCallback': {
@@ -786,13 +1208,105 @@ class MpesaCallbackTests(TestCase):
             {'Name': 'MpesaReceiptNumber', 'Value': 'QAB123XYZ'},
         ])
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         self.transaction.refresh_from_db()
         self.mentor.refresh_from_db()
         self.assertEqual(self.transaction.status, 'pending')
         self.assertEqual(self.mentor.status, 'payment_pending')
 
-    def test_payment_polling_does_not_mark_pending_transaction_successful(self):
+    def test_callback_failure_is_recorded_without_approving_mentor(self):
+        response = self._callback(1032)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['ResultCode'], 0)
+        self.transaction.refresh_from_db()
+        self.mentor.refresh_from_db()
+        self.assertEqual(self.transaction.status, 'failed')
+        self.assertEqual(self.transaction.result_code, 1032)
+        self.assertEqual(self.mentor.status, 'payment_pending')
+
+    def test_repeated_success_callback_is_idempotent(self):
+        items = [
+            {'Name': 'Amount', 'Value': 100},
+            {'Name': 'MpesaReceiptNumber', 'Value': 'QAB123XYZ'},
+        ]
+        self._callback(0, items)
+
+        with patch.object(Mentor, 'save', autospec=True) as mentor_save:
+            response = self._callback(0, items)
+
+        self.assertEqual(response.status_code, 200)
+        mentor_save.assert_not_called()
+        self.transaction.refresh_from_db()
+        self.assertEqual(self.transaction.status, 'success')
+
+    def test_callback_requires_secret_token(self):
+        response = self._callback(0, token=None)
+
+        self.assertEqual(response.status_code, 403)
+        self.transaction.refresh_from_db()
+        self.assertEqual(self.transaction.status, 'pending')
+
+    def test_malformed_callback_is_logged_and_acknowledged(self):
+        with self.assertLogs('eduapp.views', level='WARNING'):
+            response = self.client.post(
+                f"{reverse('mpesa_callback')}?token=test-callback-secret",
+                data='{}',
+                content_type='application/json',
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['ResultCode'], 0)
+
+    @patch('eduapp.views.query_stk_status')
+    def test_payment_polling_does_not_mark_unconfirmed_transaction_successful(self, query_status):
+        query_status.return_value = {
+            'ResponseCode': '0',
+            'ResultCode': '1032',
+            'CheckoutRequestID': self.transaction.checkout_request_id,
+            'ResultDesc': 'Request cancelled by user.',
+        }
+        session = self.client.session
+        session['checkout_request_id'] = self.transaction.checkout_request_id
+        session.save()
+
+        response = self.client.get(reverse('check_payment_status'))
+
+        self.assertEqual(response.json()['status'], 'pending')
+        query_status.assert_called_once_with(self.transaction.checkout_request_id)
+        self.transaction.refresh_from_db()
+        self.assertEqual(self.transaction.status, 'pending')
+        self.mentor.refresh_from_db()
+        self.assertEqual(self.mentor.status, 'payment_pending')
+
+    @patch('eduapp.views.query_stk_status')
+    def test_payment_polling_marks_only_matching_daraja_success(self, query_status):
+        query_status.return_value = {
+            'ResponseCode': '0',
+            'ResultCode': '0',
+            'CheckoutRequestID': self.transaction.checkout_request_id,
+            'ResultDesc': 'The service request is processed successfully.',
+        }
+        session = self.client.session
+        session['checkout_request_id'] = self.transaction.checkout_request_id
+        session.save()
+
+        response = self.client.get(reverse('check_payment_status'))
+
+        self.assertEqual(response.json()['status'], 'success')
+        self.transaction.refresh_from_db()
+        self.mentor.refresh_from_db()
+        self.assertEqual(self.transaction.status, 'success')
+        self.assertEqual(self.transaction.result_code, 0)
+        self.assertEqual(self.mentor.status, 'pending_review')
+
+    @patch('eduapp.views.query_stk_status')
+    def test_payment_polling_rejects_success_for_another_checkout(self, query_status):
+        query_status.return_value = {
+            'ResponseCode': '0',
+            'ResultCode': '0',
+            'CheckoutRequestID': 'different-checkout',
+        }
         session = self.client.session
         session['checkout_request_id'] = self.transaction.checkout_request_id
         session.save()
@@ -801,4 +1315,21 @@ class MpesaCallbackTests(TestCase):
 
         self.assertEqual(response.json()['status'], 'pending')
         self.transaction.refresh_from_db()
+        self.mentor.refresh_from_db()
         self.assertEqual(self.transaction.status, 'pending')
+        self.assertEqual(self.mentor.status, 'payment_pending')
+
+    @patch('eduapp.views.query_stk_status', side_effect=Timeout('Daraja timed out'))
+    def test_payment_polling_keeps_pending_when_daraja_is_unavailable(self, query_status):
+        session = self.client.session
+        session['checkout_request_id'] = self.transaction.checkout_request_id
+        session.save()
+
+        response = self.client.get(reverse('check_payment_status'))
+
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(response.json()['status'], 'pending')
+        self.transaction.refresh_from_db()
+        self.mentor.refresh_from_db()
+        self.assertEqual(self.transaction.status, 'pending')
+        self.assertEqual(self.mentor.status, 'payment_pending')

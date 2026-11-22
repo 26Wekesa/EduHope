@@ -91,33 +91,35 @@
           </div>
           <form method="post" action="{% url 'event_support' event.slug %}">
             {% csrf_token %}
+            {% include 'partials/form_errors.html' %}
+            {{ form.honeypot }}
             <div class="mb-3">
               <label class="form-label">Full name</label>
-              <input type="text" name="donor_name" class="form-control" required>
+              <input type="text" name="donor_name" class="form-control" value="{{ form.donor_name.value|default_if_none:'' }}" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Email</label>
-              <input type="email" name="email" class="form-control" required>
+              <input type="email" name="email" class="form-control" value="{{ form.email.value|default_if_none:'' }}" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Phone</label>
-              <input type="tel" name="phone" class="form-control" required>
+              <input type="tel" name="phone" class="form-control" value="{{ form.phone.value|default_if_none:'' }}" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Amount (KES)</label>
-              <input type="number" min="1" name="amount" class="form-control" required>
+              <input type="number" min="1" step="0.01" name="amount" class="form-control" value="{{ form.amount.value|default_if_none:'' }}" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Donation type</label>
-              <select class="form-select" name="donation_type">
-                <option value="one_time">One-time</option>
-                <option value="monthly">Monthly</option>
-                <option value="annual">Annual</option>
+              <select class="form-select" name="donation_type" required>
+                <option value="one_time" {% if form.donation_type.value == 'one_time' %}selected{% endif %}>One-time</option>
+                <option value="monthly" {% if form.donation_type.value == 'monthly' %}selected{% endif %}>Monthly</option>
+                <option value="annual" {% if form.donation_type.value == 'annual' %}selected{% endif %}>Annual</option>
               </select>
             </div>
             <div class="mb-3">
               <label class="form-label">Message</label>
-              <textarea class="form-control" name="message" rows="3"></textarea>
+              <textarea class="form-control" name="message" rows="3">{{ form.message.value|default_if_none:'' }}</textarea>
             </div>
             <button type="submit" class="btn w-100 fw-bold text-white">Support Event</button>
           </form>

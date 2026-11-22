@@ -30,6 +30,8 @@
 
         <form id="mentorForm" method="post" action="/mentor/">
           {% csrf_token %}
+          {% include 'partials/form_errors.html' %}
+          {{ form.honeypot }}
 
           <!-- Personal Information -->
           <div class="form-section">
@@ -38,8 +40,8 @@
               <h5>Personal Information</h5>
             </div>
             <div class="form-group">
-              <input type="text" name="name" id="name" placeholder="Full Name" required>
-              <input type="email" name="email" id="email" placeholder="Email Address" required>
+              <input type="text" name="name" id="name" placeholder="Full Name" value="{{ form.name.value|default_if_none:'' }}" required>
+              <input type="email" name="email" id="email" placeholder="Email Address" value="{{ form.email.value|default_if_none:'' }}" required>
             </div>
           </div>
 
@@ -50,11 +52,11 @@
               <h5>Contact Details</h5>
             </div>
             <div class="form-group">
-              <input type="tel" name="phone" id="phone" placeholder="Phone Number">
-              <input type="text" name="organization" id="organization" placeholder="Organization (Optional)">
+              <input type="tel" name="phone" id="phone" placeholder="Phone Number" value="{{ form.phone.value|default_if_none:'' }}" required>
+              <input type="text" name="organization" id="organization" placeholder="Organization (Optional)" value="{{ form.organization.value|default_if_none:'' }}">
             </div>
             <div class="form-group full">
-              <input type="number" name="years" id="years" min="0" placeholder="Years of Experience">
+              <input type="number" name="years" id="years" min="0" max="60" placeholder="Years of Experience" value="{{ form.years.value|default_if_none:'' }}" required>
             </div>
           </div>
 
@@ -65,11 +67,11 @@
               <h5>Mentoring Approach</h5>
             </div>
             <div class="form-group full">
-              <textarea name="message" id="bio" rows="5" placeholder="Tell us about your mentoring experience, specialization, and availability..."></textarea>
+              <textarea name="message" id="bio" rows="5" placeholder="Tell us about your mentoring experience, specialization, and availability..." required>{{ form.message.value|default_if_none:'' }}</textarea>
             </div>
           </div>
 
-          <input type="hidden" name="subject" id="subject" value="Mentor Registration">
+          <input type="hidden" name="subject" id="subject" value="{{ form.subject.value|default:'Mentor Registration' }}">
 
           <div class="form-actions">
             <button type="button" class="btn-back" onclick="history.back();">Back to Previous</button>

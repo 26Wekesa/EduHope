@@ -257,27 +257,32 @@
   <nav class="navbar navbar-bold navbar-expand-lg fixed-top" id="mainNav">
     <div class="container">
       <a class="navbar-brand fw-bold text-white fs-4" href="/">
-        <img src="{% static 'assets/img/logo.webp' %}" height="40" alt="Bold Foundation"> Bold Foundation
+        <img class="navbar-brand__logo" src="{% static 'assets/img/logo.webp' %}" height="40" alt=""> Bold Foundation
       </a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav ms-auto align-items-center gap-2">
-          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="/events/">Events</a></li>
-          <li class="nav-item"><a class="nav-link" href="/services/">Mentorship</a></li>
-          <li class="nav-item"><a class="nav-link" href="/learner/">Support</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'partner' %}">Partner</a></li>
+          <li class="nav-item"><a class="nav-link" href="/"><i class="bi bi-house-door" aria-hidden="true"></i> Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/events/"><i class="bi bi-calendar-event" aria-hidden="true"></i> Events</a></li>
+          <li class="nav-item"><a class="nav-link" href="/services/"><i class="bi bi-people" aria-hidden="true"></i> Mentorship</a></li>
+          <li class="nav-item"><a class="nav-link" href="/learner/"><i class="bi bi-heart" aria-hidden="true"></i> Support</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'partner' %}"><i class="bi bi-diagram-3" aria-hidden="true"></i> Partner</a></li>
           {% if user.is_authenticated %}
             {% if user.is_staff %}
-              <li class="nav-item"><a class="nav-link" href="/admin_view/"><i class="bi bi-speedometer2"></i> Admin</a></li>
+              <li class="nav-item"><a class="nav-link" href="/admin_view/"><i class="bi bi-speedometer2" aria-hidden="true"></i> Admin</a></li>
             {% else %}
-              <li class="nav-item"><a class="nav-link" href="/dashboard/"><i class="bi bi-person-circle"></i> My Portal</a></li>
+              <li class="nav-item"><a class="nav-link" href="/dashboard/"><i class="bi bi-person-circle" aria-hidden="true"></i> My Portal</a></li>
             {% endif %}
-            <li class="nav-item"><a class="nav-link" href="/logout/">Logout</a></li>
+            <li class="nav-item">
+              <form method="post" action="{% url 'logout' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="nav-link border-0 bg-transparent"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Logout</button>
+              </form>
+            </li>
           {% else %}
-            <li class="nav-item"><a class="nav-link btn-apply ms-2" href="/mentor/">Apply as Mentor</a></li>
+            <li class="nav-item"><a class="nav-link btn-apply ms-2" href="/mentor/"><i class="bi bi-person-plus" aria-hidden="true"></i> Apply as Mentor</a></li>
           {% endif %}
         </ul>
       </div>

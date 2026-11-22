@@ -54,14 +54,12 @@ if render_hostname:
     CSRF_TRUSTED_ORIGINS.append(f'https://{render_hostname}')
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=bool(render_hostname), cast=bool)
-SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=bool(render_hostname), cast=bool)
-CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=bool(render_hostname), cast=bool)
-SECURE_HSTS_SECONDS = config(
-    'SECURE_HSTS_SECONDS',
-    default=3600 if render_hostname else 0,
-    cast=int,
-)
+SECURE_SSL_REDIRECT = not DEBUG or config('SECURE_SSL_REDIRECT', default=False, cast=bool)
+SESSION_COOKIE_SECURE = not DEBUG or config('SESSION_COOKIE_SECURE', default=False, cast=bool)
+CSRF_COOKIE_SECURE = not DEBUG or config('CSRF_COOKIE_SECURE', default=False, cast=bool)
+SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=0, cast=int)
+if not DEBUG:
+    SECURE_HSTS_SECONDS = max(SECURE_HSTS_SECONDS, 31_536_000)
 
 
 # Application definition
@@ -75,7 +73,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
     'eduapp',
-    'payment'
 ]
 
 MIDDLEWARE = [
@@ -91,6 +88,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'Edulink.urls'
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 TEMPLATES = [
     {
@@ -196,6 +194,12 @@ MPESA_CALLBACK_URL = config(
     'MPESA_CALLBACK_URL',
     default=f'https://{render_hostname}/mpesa/callback/' if render_hostname else '',
 )
+MPESA_CALLBACK_SECRET = config('MPESA_CALLBACK_SECRET', default='')
 
 # Authentication
 LOGIN_URL = '/login/'
+
+# AI chatbot (Gemini)
+from decouple import config
+GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
+GEMINI_MODEL = config('GEMINI_MODEL', default='gemini-3.5-flash')

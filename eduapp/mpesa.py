@@ -1,10 +1,12 @@
 import base64
+import hashlib
 import logging
 from datetime import datetime
-from urllib.parse import urlparse
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from zoneinfo import ZoneInfo
 
 import requests
+from django.core.cache import cache
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -25,15 +27,31 @@ def _access_token():
     if not consumer_key or not consumer_secret:
         raise ValueError('M-Pesa consumer credentials are not configured')
 
+    cache_fingerprint = hashlib.sha256(
+        f'{settings.MPESA_ENVIRONMENT}:{consumer_key}:{consumer_secret}'.encode()
+    ).hexdigest()
+    cache_key = f'mpesa-access-token:{cache_fingerprint}'
+    cached_token = cache.get(cache_key)
+    if cached_token:
+        return cached_token
+
     response = requests.get(
         f'{_api_base_url()}/oauth/v1/generate?grant_type=client_credentials',
         auth=(consumer_key, consumer_secret),
         timeout=15,
     )
     response.raise_for_status()
-    token = response.json().get('access_token')
-    if not token:
+    token_data = response.json()
+    if not isinstance(token_data, dict):
+        raise ValueError('Daraja returned an invalid access token response')
+    token = token_data.get('access_token')
+    try:
+        expires_in = int(token_data['expires_in'])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError('Daraja returned an invalid access token expiry') from exc
+    if not token or expires_in <= 0:
         raise ValueError('Daraja did not return an access token')
+    cache.set(cache_key, token, timeout=max(1, expires_in - 60))
     return token
 
 
@@ -49,14 +67,30 @@ def _password(timestamp):
     return base64.b64encode(f'{shortcode}{passkey}{timestamp}'.encode()).decode()
 
 
-def mpesa_stk_push(phone, amount, reference, description='Donation'):
-    timestamp = _timestamp()
-    shortcode = settings.MPESA_SHORTCODE
+def _callback_url():
     callback_url = urlparse(settings.MPESA_CALLBACK_URL)
     if callback_url.scheme != 'https' or not callback_url.hostname:
         raise ValueError('M-Pesa callback URL must be a public HTTPS URL')
     if callback_url.hostname.endswith(('.example', '.invalid', '.localhost', '.test')):
         raise ValueError('Replace the example M-Pesa callback URL with a public HTTPS URL')
+
+    callback_secret = settings.MPESA_CALLBACK_SECRET
+    if not callback_secret:
+        raise ValueError('MPESA_CALLBACK_SECRET is not configured')
+
+    query = [
+        (key, value)
+        for key, value in parse_qsl(callback_url.query, keep_blank_values=True)
+        if key != 'token'
+    ]
+    query.append(('token', callback_secret))
+    return urlunparse(callback_url._replace(query=urlencode(query)))
+
+
+def mpesa_stk_push(phone, amount, reference, description='Donation'):
+    timestamp = _timestamp()
+    shortcode = settings.MPESA_SHORTCODE
+    callback_url = _callback_url()
 
     payload = {
         "BusinessShortCode": shortcode,
@@ -67,7 +101,7 @@ def mpesa_stk_push(phone, amount, reference, description='Donation'):
         "PartyA": phone,
         "PartyB": shortcode,
         "PhoneNumber": phone,
-        "CallBackURL": settings.MPESA_CALLBACK_URL,
+        "CallBackURL": callback_url,
         "AccountReference": reference,
         "TransactionDesc": description,
     }
@@ -98,8 +132,11 @@ def initiate_stk_push(phone_number, amount, account_ref, description='Mentor App
 
 def query_stk_status(checkout_request_id):
     timestamp = _timestamp()
+    shortcode = settings.MPESA_SHORTCODE
+    if not shortcode:
+        raise ValueError('M-Pesa shortcode is not configured')
     payload = {
-        'BusinessShortCode': settings.MPESA_SHORTCODE,
+        'BusinessShortCode': shortcode,
         'Password': _password(timestamp),
         'Timestamp': timestamp,
         'CheckoutRequestID': checkout_request_id,
@@ -111,4 +148,7 @@ def query_stk_status(checkout_request_id):
         timeout=15,
     )
     response.raise_for_status()
-    return response.json()
+    result = response.json()
+    if not isinstance(result, dict):
+        raise ValueError('Daraja returned an invalid STK query response')
+    return result

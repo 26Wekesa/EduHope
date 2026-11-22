@@ -29,26 +29,28 @@
 
         <form method="post" class="msg-form">
             {% csrf_token %}
+            {% include 'partials/form_errors.html' %}
+            {{ form.honeypot }}
 
             <div class="form-group">
                 <div style="position: relative;">
                     <i class="bi bi-person-fill" style="position: absolute; left: 16px; top: 12px; color: #0a1f44;"></i>
-                    <input type="text" name="name" placeholder="Full Name" required>
+                    <input type="text" name="name" placeholder="Full Name" value="{{ form.name.value|default_if_none:'' }}" required>
                 </div>
                 <div style="position: relative;">
                     <i class="bi bi-envelope-fill" style="position: absolute; left: 16px; top: 12px; color: #0a1f44;"></i>
-                    <input type="email" name="email" placeholder="Email Address" required>
+                    <input type="email" name="email" placeholder="Email Address" value="{{ form.email.value|default_if_none:'' }}" required>
                 </div>
             </div>
 
             <div class="form-group full" style="position: relative;">
                 <i class="bi bi-chat-left-text-fill" style="position: absolute; left: 16px; top: 12px; color: #0a1f44;"></i>
-                <input type="text" name="subject" placeholder="Subject" required style="padding-left: 44px !important;">
+                <input type="text" name="subject" placeholder="Subject" value="{{ form.subject.value|default_if_none:'' }}" required style="padding-left: 44px !important;">
             </div>
 
             <div class="form-group full" style="position: relative;">
                 <i class="bi bi-pencil-square" style="position: absolute; left: 16px; top: 12px; color: #0a1f44;"></i>
-                <textarea name="message" rows="6" placeholder="Your message..." required style="padding-left: 44px !important;"></textarea>
+                <textarea name="message" rows="6" placeholder="Your message..." required style="padding-left: 44px !important;">{{ form.message.value|default_if_none:'' }}</textarea>
             </div>
 
             <button type="submit" class="send-btn">Send Message</button>

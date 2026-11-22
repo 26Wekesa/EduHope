@@ -40,6 +40,9 @@ class Mentor(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status'], name='mentor_status_idx'),
+        ]
 
     def __str__(self):
         return f"{self.name} — {self.get_status_display()}"
@@ -64,6 +67,11 @@ class MpesaTransaction(models.Model):
     result_description = models.TextField(blank=True, null=True)
     initiated_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['status'], name='mpesa_status_idx'),
+        ]
 
     def __str__(self):
         return f"Txn {self.checkout_request_id} — {self.status}"
@@ -114,7 +122,8 @@ class EventPhoto(models.Model):
 
 class SupportApplication(models.Model):
     learner_name = models.CharField(max_length=200)
-    dob = models.CharField(max_length=50)
+    dob = models.DateField(null=True, blank=True)
+    legacy_dob = models.CharField(max_length=50, blank=True)
     grade = models.CharField(max_length=50)
     school = models.CharField(max_length=200)
     support_type = models.CharField(max_length=50)
