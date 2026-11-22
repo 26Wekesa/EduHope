@@ -200,6 +200,5 @@ MPESA_CALLBACK_SECRET = config('MPESA_CALLBACK_SECRET', default='')
 LOGIN_URL = '/login/'
 
 # AI chatbot (Gemini)
-from decouple import config
 GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
 GEMINI_MODEL = config('GEMINI_MODEL', default='gemini-3.5-flash')
