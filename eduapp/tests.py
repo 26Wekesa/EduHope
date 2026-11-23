@@ -5,6 +5,7 @@ import tempfile
 import zipfile
 from datetime import date, timedelta
 from io import BytesIO
+from types import SimpleNamespace
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core.cache import cache
@@ -13,6 +14,7 @@ from django.db import OperationalError
 from django.test import Client, RequestFactory, SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
+import httpx2
 from requests.exceptions import Timeout
 from unittest.mock import patch
 
@@ -77,6 +79,86 @@ class HealthCheckTests(SimpleTestCase):
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response.json(), {'status': 'unhealthy'})
         log_exception.assert_called_once()
+
+
+class ChatbotTests(TestCase):
+    def setUp(self):
+        cache.clear()
+
+    def tearDown(self):
+        cache.clear()
+
+    def test_chatbot_requires_post(self):
+        response = self.client.get(reverse('chatbot'))
+
+        self.assertEqual(response.status_code, 405)
+
+    def test_chatbot_rejects_empty_message(self):
+        response = self.client.post(
+            reverse('chatbot'),
+            data=json.dumps({'message': '  '}),
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['reply'], 'Please type a question.')
+
+    def test_chatbot_rejects_non_object_json(self):
+        response = self.client.post(
+            reverse('chatbot'),
+            data=json.dumps(['not', 'an', 'object']),
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['reply'], 'Invalid request.')
+
+    @override_settings(GEMINI_API_KEY='')
+    @patch('eduapp.views._get_gemini_client', return_value=None)
+    def test_chatbot_reports_missing_configuration(self, get_client):
+        response = self.client.post(
+            reverse('chatbot'),
+            data=json.dumps({'message': 'What programmes do you offer?'}),
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 503)
+        self.assertIn('not set up', response.json()['reply'])
+        get_client.assert_called_once_with()
+
+    @patch('eduapp.views._get_gemini_client')
+    def test_chatbot_returns_gemini_reply(self, get_client):
+        client = get_client.return_value
+        client.models.generate_content.return_value = SimpleNamespace(text='We offer mentorship.')
+
+        response = self.client.post(
+            reverse('chatbot'),
+            data=json.dumps({
+                'message': 'What programmes do you offer?',
+                'history': [{'role': 'user', 'text': 'Hello'}],
+            }),
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['reply'], 'We offer mentorship.')
+        client.models.generate_content.assert_called_once()
+
+    @patch('eduapp.views._get_gemini_client')
+    def test_chatbot_reports_provider_timeout(self, get_client):
+        get_client.return_value.models.generate_content.side_effect = httpx2.TimeoutException(
+            'Timed out'
+        )
+
+        with self.assertLogs('eduapp.views', level='ERROR'):
+            response = self.client.post(
+                reverse('chatbot'),
+                data=json.dumps({'message': 'Tell me about mentorship'}),
+                content_type='application/json',
+            )
+
+        self.assertEqual(response.status_code, 502)
+        self.assertIn('try again shortly', response.json()['reply'])
 
 
 class PublicApplicationFormTests(TestCase):

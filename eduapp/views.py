@@ -2,8 +2,10 @@ import json
 import hmac
 import logging
 from django.core.cache import cache
-from  google import genai
+from google import genai
+from google.genai import errors as genai_errors
 from google.genai import types as genai_types
+import httpx2
 from decimal import Decimal
 from django import forms
 from django.contrib.sitemaps.views import sitemap
@@ -1063,6 +1065,8 @@ def chatbot(request):
         data = json.loads(request.body)
     except (json.JSONDecodeError, UnicodeDecodeError):
         return JsonResponse({'reply': 'Invalid request.'}, status=400)
+    if not isinstance(data, dict):
+        return JsonResponse({'reply': 'Invalid request.'}, status=400)
 
     question = str(data.get('message', '')).strip()[:500]
     if not question:
@@ -1070,7 +1074,10 @@ def chatbot(request):
 
     client = _get_gemini_client()
     if client is None:
-        return JsonResponse({'reply': 'The assistant is not set up yet. Please contact us by email.'})
+        return JsonResponse(
+            {'reply': 'The assistant is not set up yet. Please contact us by email.'},
+            status=503,
+        )
 
     # Rebuild the last few turns so follow-up questions make sense.
     contents = []
@@ -1095,8 +1102,12 @@ def chatbot(request):
             ),
         )
         reply = (response.text or '').strip()
-    except Exception:
-        reply = ''
+    except (genai_errors.APIError, httpx2.TransportError, TimeoutError, ConnectionError) as exc:
+        logger.exception('Gemini chatbot request failed: %s', exc)
+        return JsonResponse(
+            {'reply': 'Sorry, I could not answer that right now. Please try again shortly.'},
+            status=502,
+        )
 
     if not reply:
         reply = 'Sorry, I could not answer that right now. Please email boldfoundation59@gmail.com.'
