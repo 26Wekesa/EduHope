@@ -90,9 +90,10 @@
 
             <div style="margin-bottom: 15px;">
                 <label style="font-weight: bold; color: #0a1f44;">Briefly describe the learner's situation</label>
-                <textarea name="situation_description" rows="4" placeholder="Explain why the learner needs support..." required>{{ form.situation_description.value|default_if_none:'' }}
+                <textarea name="situation_description" rows="4"
+                    placeholder="Explain why the learner needs support..." required
                     style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
-                           border-radius: 5px;"></textarea>
+                           border-radius: 5px;">{{ form.situation_description.value|default_if_none:'' }}</textarea>
             </div>
 
             <!-- Parent/Guardian Details -->
@@ -160,9 +161,9 @@
 
             <div style="margin-bottom: 15px;">
                 <label style="font-weight: bold; color: #0a1f44;">Any additional remarks</label>
-                <textarea name="informant_remarks" rows="4" placeholder="Optional">{{ form.informant_remarks.value|default_if_none:'' }}
+                <textarea name="informant_remarks" rows="4" placeholder="Optional"
                     style="width: 100%; padding: 10px; border: 1px solid #e0e6f0;
-                           border-radius: 5px;"></textarea>
+                           border-radius: 5px;">{{ form.informant_remarks.value|default_if_none:'' }}</textarea>
             </div>
 
             <!-- Submit Button -->

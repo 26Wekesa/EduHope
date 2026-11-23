@@ -12,6 +12,7 @@ from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import OperationalError
 from django.test import Client, RequestFactory, SimpleTestCase, TestCase, override_settings
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 import httpx2
@@ -162,6 +163,24 @@ class ChatbotTests(TestCase):
 
 
 class PublicApplicationFormTests(TestCase):
+    def test_learner_textareas_do_not_render_css_as_text(self):
+        content = render_to_string('learner.html', {'form': SupportApplicationForm()})
+
+        situation = re.search(
+            r'<textarea name="situation_description"[^>]*>(.*?)</textarea>',
+            content,
+            re.DOTALL,
+        )
+        remarks = re.search(
+            r'<textarea name="informant_remarks"[^>]*>(.*?)</textarea>',
+            content,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(situation)
+        self.assertIsNotNone(remarks)
+        self.assertNotIn('style=', situation.group(1))
+        self.assertNotIn('border-radius:', remarks.group(1))
+
     def test_phone_numbers_are_validated_and_normalized_to_254(self):
         form = MentorApplicationForm(data={
             'name': 'Amina Otieno',
