@@ -59,4 +59,10 @@ class PartnershipRequestAdmin(admin.ModelAdmin):
 
 admin.site.register(Message)
 admin.site.register(MentorshipBooking)
-admin.site.register(Donation)
+
+
+@admin.register(Donation)
+class DonationAdmin(admin.ModelAdmin):
+    list_display = ('donor_name', 'event', 'amount', 'payment_status', 'submitted_at')
+    list_filter = ('payment_status', 'donation_type')
+    readonly_fields = ('payment_status', 'submitted_at')

@@ -56,7 +56,20 @@ class MpesaTransaction(models.Model):
         ('cancelled', 'Cancelled'),
     ]
 
-    mentor = models.ForeignKey(Mentor, on_delete=models.CASCADE, related_name='transactions')
+    mentor = models.ForeignKey(
+        Mentor,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='transactions',
+    )
+    donation = models.ForeignKey(
+        'Donation',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='transactions',
+    )
     phone_number = models.CharField(max_length=15)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     checkout_request_id = models.CharField(max_length=100, unique=True)
@@ -71,6 +84,15 @@ class MpesaTransaction(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=['status'], name='mpesa_status_idx'),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    models.Q(mentor__isnull=False, donation__isnull=True)
+                    | models.Q(mentor__isnull=True, donation__isnull=False)
+                ),
+                name='mpesa_transaction_has_one_owner',
+            ),
         ]
 
     def __str__(self):
@@ -177,6 +199,12 @@ class MentorshipBooking(models.Model):
 
 # &mpesatransactions
 class Donation(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('success', 'Paid'),
+        ('failed', 'Failed'),
+    ]
+
     event = models.ForeignKey(Event, on_delete=models.SET_NULL, null=True, blank=True, related_name='donations')
     donor_name = models.CharField(max_length=100)
     email = models.EmailField()
@@ -188,6 +216,11 @@ class Donation(models.Model):
         ('annual', 'Annual'),
     ])
     message = models.TextField(blank=True, null=True)
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default='pending',
+    )
     submitted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

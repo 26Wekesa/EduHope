@@ -1,0 +1,59 @@
+{% extends 'legal_policy_base.html' %}
+
+{% block title %}Cookie Policy | Bold Foundation{% endblock %}
+{% block meta_description %}Working draft describing essential cookies and browser storage used by the Bold Foundation website.{% endblock %}
+{% block og_title %}Cookie Policy | Bold Foundation{% endblock %}
+{% block twitter_title %}Cookie Policy | Bold Foundation{% endblock %}
+{% block policy_heading %}Cookie Policy{% endblock %}
+{% block policy_summary %}A plain-language description of essential browser storage, the cookie choices banner and how to change your choice.{% endblock %}
+
+{% block policy_content %}
+  <p><strong>Status:</strong> Draft for legal and technical review. Cookie configuration and all deployed pages should be rechecked before adoption.</p>
+
+  <section class="legal-policy__section">
+    <h2>1. What we use now</h2>
+    <p>The website uses essential browser storage for security and site functions:</p>
+    <ul>
+      <li><code>csrftoken</code> helps protect form submissions against cross-site request forgery. Django’s current default lifetime is one year; confirm the production setting.</li>
+      <li><code>sessionid</code> supports server-side sessions, including the temporary Terms acceptance state and payment-flow navigation. Django’s current default lifetime is 14 days; confirm the production setting.</li>
+      <li><code>bold-cookie-preferences-v1</code> is stored in this browser’s local storage to remember the visitor’s cookie choice. It is not a cookie and remains until cleared, changed or invalidated by a later preference version.</li>
+    </ul>
+    <p>Essential security and session storage cannot be switched off through the preference controls without affecting site functions.</p>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>2. Optional cookies and trackers</h2>
+    <p>
+      No analytics or marketing trackers were found in the site templates reviewed for this draft.
+      The banner’s “Accept all” and “Reject non-essential” choices are recorded, but neither choice
+      currently turns on an optional tracking service. If analytics or marketing tools are added, they
+      must remain blocked until the visitor gives the required consent, and this policy and preference
+      controls must be updated before release.
+    </p>
+  </section>
+
+  <section class="legal-policy__section" id="cookie-settings">
+    <h2>3. Choosing and changing preferences</h2>
+    <p>
+      The first-visit banner offers “Accept all cookies”, “Reject non-essential”, and “Manage preferences”.
+      Visitors can reopen the controls using “Cookie settings” in the footer. Preferences are saved in
+      browser local storage. If browser settings prevent saving, optional trackers remain disabled.
+    </p>
+    <p>Clearing site data in the browser removes the saved choice. Essential cookies may still be set when a visitor uses forms or account features.</p>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>4. Third-party services</h2>
+    <p>
+      Using the Gemini chatbot sends the submitted question and recent turns to Google’s API. Payment
+      requests send the phone number and transaction details to Safaricom’s M-Pesa service. These are
+      service integrations, not analytics cookies. Read the
+      <a href="{% url 'privacy' %}">Privacy Policy</a> for the broader data-processing description.
+    </p>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>5. Contact</h2>
+    <p>Questions about browser storage may be sent to <a href="mailto:boldfoundation59@gmail.com">boldfoundation59@gmail.com</a> or <a href="tel:+254793299818">+254 793 299 818</a>. The privacy contact and formal controller identity still need confirmation.</p>
+  </section>
+{% endblock %}

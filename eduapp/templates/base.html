@@ -32,6 +32,7 @@
   <link rel="stylesheet" href="{% static 'assets/vendor/aos/aos.css' %}">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{% static 'assets/css/main.css' %}?v=20261120-performance">
+  <link rel="stylesheet" href="{% static 'assets/css/cookie-consent.css' %}">
   {% block extra_css %}{% endblock %}
 
   <style>
@@ -71,10 +72,13 @@
       <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav ms-auto align-items-center gap-2">
           <li class="nav-item"><a class="nav-link" href="/"><i class="bi bi-house-door" aria-hidden="true"></i> Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'about' %}"><i class="bi bi-info-circle" aria-hidden="true"></i> About</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'programmes' %}"><i class="bi bi-people" aria-hidden="true"></i> Programmes</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'impact' %}"><i class="bi bi-bar-chart" aria-hidden="true"></i> Impact</a></li>
           <li class="nav-item"><a class="nav-link" href="/events/"><i class="bi bi-calendar-event" aria-hidden="true"></i> Events</a></li>
-          <li class="nav-item"><a class="nav-link" href="/services/"><i class="bi bi-people" aria-hidden="true"></i> Mentorship</a></li>
-          <li class="nav-item"><a class="nav-link" href="/learner/"><i class="bi bi-heart" aria-hidden="true"></i> Support</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'partner' %}"><i class="bi bi-diagram-3" aria-hidden="true"></i> Partner</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'learner' %}"><i class="bi bi-heart" aria-hidden="true"></i> Become a Beneficiary</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'get_involved' %}"><i class="bi bi-person-plus" aria-hidden="true"></i> Get Involved</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}"><i class="bi bi-envelope" aria-hidden="true"></i> Contact</a></li>
           {% if user.is_authenticated %}
             {% if user.is_staff %}
               <li class="nav-item"><a class="nav-link" href="/admin_view/"><i class="bi bi-speedometer2" aria-hidden="true"></i> Admin</a></li>
@@ -111,6 +115,7 @@
   {% block content %}{% endblock %}
 
   {% include 'partials/site_footer.html' %}
+  {% include 'partials/cookie_consent.html' %}
 
   <!-- Scripts -->
   <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
@@ -172,6 +177,10 @@
       <span><i class="bi bi-stars me-2"></i>Ask Bold Foundation</span>
       <button id="chatClose" type="button" aria-label="Close chat">&times;</button>
     </div>
+    <p class="small px-3 pt-2 mb-0" id="chatPrivacyNotice">
+      Do not share personal or sensitive information about a child here. Messages are sent to Google Gemini.
+      <a href="{% url 'privacy' %}">Privacy details</a>.
+    </p>
     <div id="chatMessages"></div>
     <form id="chatForm">
       <input id="chatInput" type="text" maxlength="500" placeholder="Ask about our work..." autocomplete="off">

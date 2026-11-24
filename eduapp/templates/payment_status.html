@@ -12,7 +12,7 @@
           <div id="pendingState">
             <div class="spinner-border text-primary mb-3" style="width:3rem;height:3rem;"></div>
             <h4 class="fw-bold">Waiting for Payment...</h4>
-            <p class="text-muted">Check your phone for the M-Pesa prompt and enter your PIN.</p>
+            <p class="text-muted">Check your phone for the M-Pesa prompt and enter your PIN. {% if is_donation %}Your donation is recorded after payment is confirmed.{% endif %}</p>
             <small class="text-muted">This page updates automatically every 5 seconds.</small>
           </div>
           <!-- Success state (hidden initially) -->
@@ -21,12 +21,25 @@
               <i class="bi bi-check-circle-fill text-success" style="font-size:2.5rem;"></i>
             </div>
             <h4 class="fw-bold mt-3 text-success">Payment Successful!</h4>
-            <p class="text-muted">Your mentor application has been submitted for review.</p>
+            <p class="text-muted">
+              {% if is_donation %}
+                Your donation has been received. Thank you for supporting Bold Foundation.
+              {% else %}
+                Your mentor application has been submitted for review.
+              {% endif %}
+            </p>
             <p id="receiptDisplay" class="badge bg-success fs-6 py-2 px-4"></p>
+            {% if not is_donation %}
             <a href="/dashboard/" class="btn btn-lg mt-3 fw-bold text-white"
                style="background:var(--navy);border-radius:50px;">
               Go to My Dashboard
             </a>
+            {% elif event_slug %}
+            <a href="{% url 'event_detail' event_slug %}" class="btn btn-lg mt-3 fw-bold text-white"
+               style="background:var(--navy);border-radius:50px;">
+              Return to Event
+            </a>
+            {% endif %}
           </div>
           <!-- Failed state (hidden initially) -->
           <div id="failedState" style="display:none;">
@@ -35,7 +48,11 @@
             </div>
             <h4 class="fw-bold mt-3 text-danger">Payment Failed</h4>
             <p id="failedDesc" class="text-muted"></p>
+            {% if is_donation and event_slug %}
+            <a href="{% url 'event_detail' event_slug %}#support-form" class="btn btn-outline-danger mt-3 rounded-pill">Try Again</a>
+            {% else %}
             <a href="/mentor/" class="btn btn-outline-danger mt-3 rounded-pill">Try Again</a>
+            {% endif %}
           </div>
         </div>
       </div>

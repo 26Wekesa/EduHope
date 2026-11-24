@@ -85,10 +85,7 @@
         {% else %}
         <div id="support-form" class="card border-0 shadow-sm rounded-4 p-4 h-100">
           <h4 class="fw-bold mb-3" style="color: #0d1b4b;">Support this event</h4>
-          <p class="text-secondary">Help us make this initiative a success by contributing through the same M-Pesa till used for mentor registration.</p>
-          <div class="alert alert-light border rounded-4 mb-3">
-            <strong>Till Number:</strong> {{ settings.MPESA_SHORTCODE|default:'Not configured' }}
-          </div>
+          <p class="text-secondary">Enter your details and amount. An M-Pesa payment prompt will be sent to your phone, and your donation will be recorded only after payment is confirmed.</p>
           <form method="post" action="{% url 'event_support' event.slug %}">
             {% csrf_token %}
             {% include 'partials/form_errors.html' %}
@@ -107,15 +104,12 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Amount (KES)</label>
-              <input type="number" min="1" step="0.01" name="amount" class="form-control" value="{{ form.amount.value|default_if_none:'' }}" required>
+              <input type="number" min="1" step="1" name="amount" class="form-control" value="{{ form.amount.value|default_if_none:'' }}" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Donation type</label>
-              <select class="form-select" name="donation_type" required>
-                <option value="one_time" {% if form.donation_type.value == 'one_time' %}selected{% endif %}>One-time</option>
-                <option value="monthly" {% if form.donation_type.value == 'monthly' %}selected{% endif %}>Monthly</option>
-                <option value="annual" {% if form.donation_type.value == 'annual' %}selected{% endif %}>Annual</option>
-              </select>
+              <div class="form-control bg-light">One-time</div>
+              <input type="hidden" name="donation_type" value="one_time">
             </div>
             <div class="mb-3">
               <label class="form-label">Message</label>

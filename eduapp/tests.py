@@ -63,6 +63,95 @@ def minimal_valid_pdf():
     return bytes(content)
 
 
+class LegalPolicyPageTests(TestCase):
+    def test_all_seven_policy_pages_render_as_review_drafts(self):
+        pages = (
+            ('privacy', 'Privacy Policy'),
+            ('child_safeguarding', 'Child Safeguarding Policy'),
+            ('code_of_conduct', 'Code of Conduct'),
+            ('donations_refunds', 'Donations and Refund Policy'),
+            ('cookie_policy', 'Cookie Policy'),
+            ('complaints_grievance', 'Complaints and Grievance Policy'),
+            ('data_retention', 'Data Retention Policy'),
+        )
+
+        for route, title in pages:
+            with self.subTest(route=route):
+                response = self.client.get(reverse(route))
+
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, title)
+                self.assertContains(response, 'WORKING DRAFT')
+                self.assertContains(response, 'noindex,nofollow')
+                self.assertContains(response, 'Constitution of Kenya, 2010')
+                self.assertContains(response, 'UN Convention on the Rights of the Child')
+
+    def test_footer_exposes_policy_pages_and_cookie_controls(self):
+        response = self.client.get(reverse('index'))
+
+        for route in (
+            'privacy',
+            'child_safeguarding',
+            'code_of_conduct',
+            'donations_refunds',
+            'cookie_policy',
+            'complaints_grievance',
+            'data_retention',
+        ):
+            with self.subTest(route=route):
+                self.assertContains(response, reverse(route))
+
+        self.assertContains(response, 'Accept all cookies')
+        self.assertContains(response, 'Reject non-essential')
+        self.assertContains(response, 'Manage preferences')
+        self.assertContains(response, 'data-cookie-settings')
+        self.assertContains(response, 'chatPrivacyNotice')
+        self.assertContains(response, '+254 793 299 818')
+
+    def test_policies_disclose_unresolved_child_data_and_safeguarding_controls(self):
+        response = self.client.get(reverse('privacy'))
+        self.assertContains(response, 'distinct verified guardian-consent step')
+        self.assertContains(response, 'Oregon, United States')
+        self.assertContains(response, 'not a durable record of')
+        self.assertContains(response, 'Foundation Secretary monitors the general')
+        self.assertContains(response, 'does not enforce that sequence')
+
+        response = self.client.get(reverse('child_safeguarding'))
+        self.assertContains(response, 'not yet a verified')
+        self.assertContains(response, 'can receive and store learner details')
+
+        response = self.client.get(reverse('cookie_policy'))
+        self.assertContains(response, 'optional tracking service')
+        self.assertContains(response, 'id="cookie-settings"')
+
+        response = self.client.get(reverse('complaints_grievance'))
+        self.assertContains(response, 'seven calendar days')
+        self.assertContains(response, '+254 793 299 818')
+
+        response = self.client.get(reverse('donations_refunds'))
+        self.assertContains(response, 'international')
+        self.assertContains(response, 'within seven calendar days')
+
+        response = self.client.get(reverse('contact'))
+        self.assertContains(response, 'within seven calendar days')
+        self.assertContains(response, '+254 793 299 818')
+
+    def test_draft_policies_are_not_published_in_the_sitemap(self):
+        response = self.client.get(reverse('sitemap'))
+
+        for route in (
+            'privacy',
+            'child_safeguarding',
+            'code_of_conduct',
+            'donations_refunds',
+            'cookie_policy',
+            'complaints_grievance',
+            'data_retention',
+        ):
+            with self.subTest(route=route):
+                self.assertNotContains(response, reverse(route))
+
+
 class HealthCheckTests(SimpleTestCase):
     @patch('eduapp.views.connection.ensure_connection')
     def test_health_check_reports_ready_when_database_is_available(self, ensure_connection):
@@ -248,18 +337,20 @@ class PublicApplicationFormTests(TestCase):
         self.assertIn('dob', form.errors)
 
     def test_donation_amount_must_be_positive_and_phone_valid(self):
-        form = EventSupportDonationForm(data={
-            'donor_name': 'Amina Otieno',
-            'email': 'amina@example.com',
-            'phone': '0112345678',
-            'amount': '0',
-            'donation_type': 'one_time',
-            'message': '',
-            'honeypot': '',
-        })
+        for amount in ('0', '1.50'):
+            with self.subTest(amount=amount):
+                form = EventSupportDonationForm(data={
+                    'donor_name': 'Amina Otieno',
+                    'email': 'amina@example.com',
+                    'phone': '0712345678',
+                    'amount': amount,
+                    'donation_type': 'one_time',
+                    'message': '',
+                    'honeypot': '',
+                })
 
-        self.assertFalse(form.is_valid())
-        self.assertIn('amount', form.errors)
+                self.assertFalse(form.is_valid())
+                self.assertIn('amount', form.errors)
 
     def test_partnership_form_validates_email_and_normalizes_phone(self):
         form = PartnershipRequestForm(data={
@@ -377,6 +468,9 @@ class PublicApplicationFlowTests(TestCase):
             'CheckoutRequestID': 'checkout-confirmed',
             'MerchantRequestID': 'merchant-confirmed',
         }
+        session = self.client.session
+        session['pending_mentor_id'] = mentor.pk
+        session.save()
 
         response = self.client.post(
             reverse('payment_initiate', args=[mentor.pk]),
@@ -393,8 +487,40 @@ class PublicApplicationFlowTests(TestCase):
             description='Mentor Application',
         )
 
+        repeated_response = self.client.post(
+            reverse('payment_initiate', args=[mentor.pk]),
+            {'phone': '+254 712 345 678', 'amount': '100'},
+        )
+        self.assertRedirects(repeated_response, reverse('payment_status'))
+        initiate.assert_called_once()
+
     @patch('eduapp.views.initiate_stk_push')
     def test_payment_initiation_rejects_invalid_phone_before_daraja(self, initiate):
+        mentor = Mentor.objects.create(
+            name='Amina Otieno',
+            email='amina@example.com',
+            phone='254712345678',
+            organization='Community Center',
+            years=5,
+            subject='Mentoring',
+            message='I would like to mentor learners.',
+        )
+        session = self.client.session
+        session['pending_mentor_id'] = mentor.pk
+        session.save()
+
+        response = self.client.post(
+            reverse('payment_initiate', args=[mentor.pk]),
+            {'phone': 'not-a-phone', 'amount': '100'},
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertContains(response, 'valid Kenyan mobile number', status_code=400)
+        initiate.assert_not_called()
+        self.assertFalse(MpesaTransaction.objects.exists())
+
+    @patch('eduapp.views.initiate_stk_push')
+    def test_payment_initiation_rejects_unowned_mentor_id(self, initiate):
         mentor = Mentor.objects.create(
             name='Amina Otieno',
             email='amina@example.com',
@@ -407,11 +533,10 @@ class PublicApplicationFlowTests(TestCase):
 
         response = self.client.post(
             reverse('payment_initiate', args=[mentor.pk]),
-            {'phone': 'not-a-phone', 'amount': '100'},
+            {'phone': '0712345678', 'amount': '100'},
         )
 
-        self.assertEqual(response.status_code, 400)
-        self.assertContains(response, 'valid Kenyan mobile number', status_code=400)
+        self.assertEqual(response.status_code, 404)
         initiate.assert_not_called()
         self.assertFalse(MpesaTransaction.objects.exists())
 
@@ -486,6 +611,11 @@ class EventsPageTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, reverse('events'))
+        self.assertContains(response, reverse('about'))
+        self.assertContains(response, reverse('programmes'))
+        self.assertContains(response, reverse('impact'))
+        self.assertContains(response, reverse('get_involved'))
+        self.assertContains(response, reverse('contact'))
         self.assertContains(response, reverse('event_detail', args=['past-mentorship-day']))
         self.assertNotContains(response, 'unpublished-community-event')
         self.assertNotContains(response, reverse('admin_view'))
@@ -527,11 +657,13 @@ class EventsPageTests(TestCase):
 
         for icon in (
             'bi-house-door',
-            'bi-calendar-event',
+            'bi-info-circle',
             'bi-people',
+            'bi-bar-chart',
+            'bi-calendar-event',
             'bi-heart',
-            'bi-diagram-3',
             'bi-person-plus',
+            'bi-envelope',
         ):
             with self.subTest(icon=icon):
                 self.assertContains(response, f'class="bi {icon}"')
@@ -585,6 +717,63 @@ class EventsPageTests(TestCase):
         self.assertIsNotNone(schema)
         self.assertEqual(json.loads(schema.group(1))['@type'], 'Event')
 
+    def test_storytelling_pages_render_the_existing_mission_and_programmes(self):
+        response = self.client.get(reverse('about'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Boys Of Leadership &amp; Dignity')
+        self.assertContains(response, 'September 2025')
+        self.assertContains(response, 'Makanga')
+        self.assertContains(response, 'Kibabii University')
+        self.assertContains(response, 'Beyond the Timetable')
+        self.assertContains(response, reverse('programmes'))
+
+        response = self.client.get(reverse('programmes'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Mentorship')
+        self.assertContains(response, 'Public speaking')
+        self.assertContains(response, 'Climate and community outreach')
+        self.assertContains(response, 'mental wellness')
+        self.assertContains(response, 'market clean-ups')
+
+    def test_impact_page_reports_activities_without_invented_outcome_metrics(self):
+        response = self.client.get(reverse('impact'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Masinde Muliro University')
+        self.assertContains(response, 'Kibabii University')
+        self.assertContains(response, 'Mentorship Club')
+        self.assertContains(response, '11 October 2026')
+        self.assertContains(response, 'Tree planting')
+        self.assertContains(response, 'does not')
+
+    def test_get_involved_and_contact_pages_are_reachable(self):
+        response = self.client.get(reverse('get_involved'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse('mentor'))
+        self.assertContains(response, reverse('partner'))
+        self.assertContains(response, reverse('events'))
+
+        response = self.client.get(reverse('contact'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Contact Bold Foundation')
+        self.assertContains(response, 'name="csrfmiddlewaretoken"')
+
+    def test_contact_form_accepts_a_message(self):
+        response = self.client.post(reverse('contact'), {
+            'name': 'Amina Otieno',
+            'email': 'amina@example.com',
+            'subject': 'Programme information',
+            'message': 'Please share more about your programmes.',
+            'honeypot': '',
+        })
+
+        self.assertRedirects(response, reverse('index'))
+        self.assertTrue(Message.objects.filter(email='amina@example.com').exists())
+
     def test_staff_admin_dashboard_renders_workspace_navigation(self):
         self._create_staff_user()
         client = Client()
@@ -597,6 +786,38 @@ class EventsPageTests(TestCase):
         self.assertContains(response, 'Activity &amp; requests')
         self.assertContains(response, 'Workspace summary')
         self.assertContains(response, 'data-bs-target="#events"')
+
+    def test_admin_dashboard_counts_only_paid_donations_and_shows_donation_payments(self):
+        self._create_staff_user()
+        client = Client()
+        self.assertTrue(client.login(username='adminuser', password='StrongPass123!'))
+        paid_donation = Donation.objects.create(
+            donor_name='Paid Donor',
+            email='paid@example.com',
+            amount=500,
+            donation_type='one_time',
+            payment_status='success',
+        )
+        Donation.objects.create(
+            donor_name='Pending Donor',
+            email='pending@example.com',
+            amount=300,
+            donation_type='one_time',
+        )
+        MpesaTransaction.objects.create(
+            donation=paid_donation,
+            phone_number='254712345678',
+            amount=500,
+            checkout_request_id='admin-donation-checkout',
+            merchant_request_id='admin-donation-merchant',
+            status='success',
+        )
+
+        response = client.get(reverse('admin_view'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['stats']['total_donations'], 1)
+        self.assertContains(response, 'Donation: Paid Donor')
 
     def test_admin_dashboard_paginates_large_message_lists(self):
         self._create_staff_user()
@@ -696,8 +917,14 @@ class EventsPageTests(TestCase):
         self.assertContains(response, reverse('events'))
         self.assertContains(response, reverse('event_detail', args=[event.slug]))
 
-    def test_event_support_records_the_event(self):
+    @patch('eduapp.views.initiate_stk_push')
+    def test_event_support_records_donation_as_pending_until_payment_confirmation(self, initiate):
         event = Event.objects.get(slug='upcoming-community-talk')
+        initiate.return_value = {
+            'ResponseCode': '0',
+            'CheckoutRequestID': 'donation-checkout',
+            'MerchantRequestID': 'donation-merchant',
+        }
         self.client.post(reverse('terms'), {'accept_terms': 'on'})
 
         response = self.client.post(
@@ -712,10 +939,43 @@ class EventsPageTests(TestCase):
             },
         )
 
-        self.assertRedirects(response, reverse('event_detail', args=[event.slug]))
+        self.assertRedirects(response, reverse('payment_status'))
         donation = Donation.objects.get()
         self.assertEqual(donation.event, event)
         self.assertEqual(donation.message, 'Keep going.')
+        self.assertEqual(donation.payment_status, 'pending')
+        transaction = MpesaTransaction.objects.get(donation=donation)
+        self.assertEqual(transaction.amount, donation.amount)
+        initiate.assert_called_once_with(
+            phone_number='254712345678',
+            amount=500,
+            account_ref=f'EVT{event.pk}DON',
+            description='Event Donation',
+        )
+
+    @patch('eduapp.views.initiate_stk_push')
+    def test_event_support_does_not_count_declined_payment_as_donation(self, initiate):
+        event = Event.objects.get(slug='upcoming-community-talk')
+        initiate.return_value = {'ResponseCode': '1', 'errorMessage': 'Payment unavailable'}
+        self.client.post(reverse('terms'), {'accept_terms': 'on'})
+
+        response = self.client.post(
+            reverse('event_support', args=[event.slug]),
+            {
+                'donor_name': 'Amina Otieno',
+                'email': 'amina@example.com',
+                'phone': '0712345678',
+                'amount': '500',
+                'donation_type': 'one_time',
+                'message': '',
+            },
+        )
+
+        self.assertRedirects(response, reverse('event_detail', args=[event.slug]))
+        donation = Donation.objects.get()
+        self.assertEqual(donation.payment_status, 'failed')
+        self.assertEqual(Donation.objects.filter(payment_status='success').count(), 0)
+        self.assertFalse(MpesaTransaction.objects.exists())
 
     def test_service_requires_terms_acceptance(self):
         response = self.client.get(reverse('learner'))
@@ -1271,7 +1531,14 @@ class MpesaCallbackTests(TestCase):
             merchant_request_id='test_merchant_request',
         )
 
-    def _callback(self, result_code, items=None, token='test-callback-secret'):
+    def _callback(
+        self,
+        result_code,
+        items=None,
+        token='test-callback-secret',
+        transaction=None,
+    ):
+        transaction = transaction or self.transaction
         callback_url = reverse('mpesa_callback')
         if token is not None:
             callback_url = f'{callback_url}?token={token}'
@@ -1280,7 +1547,7 @@ class MpesaCallbackTests(TestCase):
             data=json.dumps({
                 'Body': {
                     'stkCallback': {
-                        'CheckoutRequestID': self.transaction.checkout_request_id,
+                        'CheckoutRequestID': transaction.checkout_request_id,
                         'ResultCode': result_code,
                         'ResultDesc': 'Completed' if result_code == 0 else 'Cancelled',
                         'CallbackMetadata': {'Item': items or []},
@@ -1314,6 +1581,59 @@ class MpesaCallbackTests(TestCase):
         self.mentor.refresh_from_db()
         self.assertEqual(self.transaction.status, 'pending')
         self.assertEqual(self.mentor.status, 'payment_pending')
+
+    def test_success_callback_marks_donation_paid_only_with_matching_amount_and_receipt(self):
+        donation = Donation.objects.create(
+            donor_name='Amina Otieno',
+            email='amina@example.com',
+            phone='254708374149',
+            amount=500,
+            donation_type='one_time',
+        )
+        donation_transaction = MpesaTransaction.objects.create(
+            donation=donation,
+            phone_number='254708374149',
+            amount=500,
+            checkout_request_id='donation-checkout',
+            merchant_request_id='donation-merchant',
+        )
+
+        self._callback(0, [
+            {'Name': 'Amount', 'Value': 500},
+            {'Name': 'MpesaReceiptNumber', 'Value': 'DON123XYZ'},
+        ], transaction=donation_transaction)
+
+        donation.refresh_from_db()
+        donation_transaction.refresh_from_db()
+        self.assertEqual(donation.payment_status, 'success')
+        self.assertEqual(donation_transaction.status, 'success')
+        self.assertEqual(donation_transaction.mpesa_receipt_number, 'DON123XYZ')
+
+    def test_success_callback_with_wrong_donation_amount_leaves_it_unpaid(self):
+        donation = Donation.objects.create(
+            donor_name='Amina Otieno',
+            email='amina@example.com',
+            phone='254708374149',
+            amount=500,
+            donation_type='one_time',
+        )
+        donation_transaction = MpesaTransaction.objects.create(
+            donation=donation,
+            phone_number='254708374149',
+            amount=500,
+            checkout_request_id='donation-checkout',
+            merchant_request_id='donation-merchant',
+        )
+
+        self._callback(0, [
+            {'Name': 'Amount', 'Value': 1},
+            {'Name': 'MpesaReceiptNumber', 'Value': 'DON123XYZ'},
+        ], transaction=donation_transaction)
+
+        donation.refresh_from_db()
+        donation_transaction.refresh_from_db()
+        self.assertEqual(donation.payment_status, 'pending')
+        self.assertEqual(donation_transaction.status, 'pending')
 
     def test_callback_failure_is_recorded_without_approving_mentor(self):
         response = self._callback(1032)
@@ -1400,6 +1720,40 @@ class MpesaCallbackTests(TestCase):
         self.assertEqual(self.transaction.status, 'success')
         self.assertEqual(self.transaction.result_code, 0)
         self.assertEqual(self.mentor.status, 'pending_review')
+
+    @patch('eduapp.views.query_stk_status')
+    def test_payment_polling_does_not_mark_donation_paid_without_callback_receipt(self, query_status):
+        donation = Donation.objects.create(
+            donor_name='Amina Otieno',
+            email='amina@example.com',
+            phone='254708374149',
+            amount=500,
+            donation_type='one_time',
+        )
+        donation_transaction = MpesaTransaction.objects.create(
+            donation=donation,
+            phone_number='254708374149',
+            amount=500,
+            checkout_request_id='donation-checkout',
+            merchant_request_id='donation-merchant',
+        )
+        query_status.return_value = {
+            'ResponseCode': '0',
+            'ResultCode': '0',
+            'CheckoutRequestID': donation_transaction.checkout_request_id,
+            'ResultDesc': 'Payment succeeded.',
+        }
+        session = self.client.session
+        session['checkout_request_id'] = donation_transaction.checkout_request_id
+        session.save()
+
+        response = self.client.get(reverse('check_payment_status'))
+
+        self.assertEqual(response.json()['status'], 'pending')
+        donation.refresh_from_db()
+        donation_transaction.refresh_from_db()
+        self.assertEqual(donation.payment_status, 'pending')
+        self.assertEqual(donation_transaction.status, 'pending')
 
     @patch('eduapp.views.query_stk_status')
     def test_payment_polling_rejects_success_for_another_checkout(self, query_status):

@@ -1,0 +1,75 @@
+{% extends 'legal_policy_base.html' %}
+
+{% block title %}Donations and Refund Policy | Bold Foundation{% endblock %}
+{% block meta_description %}Working draft explaining the current event-linked M-Pesa donation flow and the refund process that still requires approval.{% endblock %}
+{% block og_title %}Donations and Refund Policy | Bold Foundation{% endblock %}
+{% block twitter_title %}Donations and Refund Policy | Bold Foundation{% endblock %}
+{% block policy_heading %}Donations and Refund Policy{% endblock %}
+{% block policy_summary %}A transparent draft about event donations, M-Pesa payment confirmation, refunds and financial accountability.{% endblock %}
+
+{% block policy_content %}
+  <p><strong>Status:</strong> Draft. Refund authority, approval controls, receipt process and finance contact require confirmation before this policy is adopted. The foundation has set a target for an initial response to requests within seven calendar days.</p>
+
+  <section class="legal-policy__section">
+    <h2>1. Current donation route</h2>
+    <p>
+      The public donation flow currently accepts one-time contributions linked to a published event and
+      initiates payment through an M-Pesa STK Push. A payment remains pending until the system receives
+      and verifies a matching successful payment callback. A pending or failed request must not be
+      described as a completed donation.
+    </p>
+    <p>
+      The foundation’s stated supporter reach is international, while its beneficiary programmes focus
+      on children in Kenya. The current public payment form offers M-Pesa STK Push only; it does not
+      confirm support for every overseas payment method or any donor tax treatment outside Kenya.
+    </p>
+    <p>
+      The website also has a separate KES 100 mentor-application payment. That fee is not a donation.
+      General bank details, recurring donation instructions, tax deductibility and donation receipts have
+      not been confirmed and are not promised by this draft.
+    </p>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>2. Safe payment practices</h2>
+    <ul>
+      <li>Start a donation only from an official Bold Foundation event page and check the amount and event before confirming.</li>
+      <li>Safaricom sends the payment prompt to the phone number entered. The donor enters their PIN directly in the M-Pesa prompt; the foundation will never ask for the PIN or one-time password.</li>
+      <li>Do not send money to an individual account based on an unsolicited message. Report suspected impersonation through a trusted contact route.</li>
+      <li>Safaricom processes the payment and receives the phone and transaction information needed for that service. See the <a href="{% url 'privacy' %}">Privacy Policy</a>.</li>
+    </ul>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>3. Refund requests</h2>
+    <p>
+      If a payment appears duplicated, unauthorised, misdirected or inconsistent with the amount shown,
+      contact <a href="mailto:boldfoundation59@gmail.com">boldfoundation59@gmail.com</a> or
+      <a href="tel:+254793299818">+254 793 299 818</a> with the event, approximate time, amount and
+      M-Pesa receipt or transaction reference. Never include an M-Pesa PIN.
+    </p>
+    <p>
+      The foundation must verify the payment and approve a written refund procedure, including the decision
+      authority, permitted grounds, return method, handling of payment-provider reversals and response
+      target. Those details are not yet confirmed, so this draft does not promise that every donation is
+      refundable or set a final refund deadline. The foundation aims to send an initial response within
+      seven calendar days; a verified refund decision may take longer. Applicable consumer and payment laws remain relevant.
+    </p>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>4. Stewardship and records</h2>
+    <p>
+      Donations should be recorded against verified payment status, reconciled against provider records,
+      used for authorised charitable purposes and reported transparently. Access to donor contact details
+      and payment records should be limited. The foundation should publish its approved financial controls,
+      receipt practice, reporting cycle and any restricted-gift rules before soliciting broad public donations.
+    </p>
+    <p>See the <a href="{% url 'data_retention' %}">Data Retention Policy</a> draft for unresolved record-retention periods.</p>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>5. Concerns</h2>
+    <p>Payment concerns may be sent to the general email above or raised through <a href="{% url 'complaints_grievance' %}">Complaints and Grievance</a>. A designated finance contact and escalation route still need approval.</p>
+  </section>
+{% endblock %}

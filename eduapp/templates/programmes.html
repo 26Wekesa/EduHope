@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Programmes | Bold Foundation{% endblock %}
+{% block meta_description %}Explore Bold Foundation's mentorship, public speaking, and community engagement activities for the holistic development of boys.{% endblock %}
+{% block og_title %}Our Programmes | Bold Foundation{% endblock %}
+{% block og_description %}Mentorship, public speaking, and community engagement to help boys build confidence and leadership.{% endblock %}
+{% block twitter_title %}Our Programmes | Bold Foundation{% endblock %}
+{% block twitter_description %}Mentorship, public speaking, and community engagement to help boys build confidence and leadership.{% endblock %}
+
+{% block content %}
+<main>
+  <section class="home-programs" style="padding-top: 132px;">
+    <div class="container">
+      <div class="home-section-heading">
+        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">OUR PROGRAMMES</span>
+        <h1>Practical opportunities to speak, lead, and thrive.</h1>
+        <p class="home-lead">
+          Our work centers on boys while bringing girls into some activities so young people
+          can learn to understand one another and thrive together.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <article class="home-program h-100">
+            <i class="bi bi-people home-program-icon" aria-hidden="true"></i>
+            <h2>Mentorship and wellbeing</h2>
+            <p>Mentorship supports confidence, leadership, emotional intelligence, and responsibility. It also includes advocacy for mental wellness.</p>
+          </article>
+        </div>
+        <div class="col-md-4">
+          <article class="home-program h-100">
+            <i class="bi bi-mic home-program-icon" aria-hidden="true"></i>
+            <h2>Public speaking</h2>
+            <p>Opportunities to express ideas, practise speaking, and grow into articulate leaders.</p>
+          </article>
+        </div>
+        <div class="col-md-4">
+          <article class="home-program h-100">
+            <i class="bi bi-geo-alt home-program-icon" aria-hidden="true"></i>
+            <h2>Climate and community outreach</h2>
+            <p>Mentorship and outreach activities include tree planting, market clean-ups, and engagement with less-privileged communities, including orphans.</p>
+            <a href="{% url 'events' %}" class="home-text-link">See events and activities</a>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-cta">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+          <h2>Be part of the work.</h2>
+          <p>Apply to mentor, explore partnership opportunities, or contact the foundation.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a href="{% url 'get_involved' %}" class="btn home-primary-cta">Get involved</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

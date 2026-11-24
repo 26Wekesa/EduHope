@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Get Involved | Bold Foundation{% endblock %}
+{% block meta_description %}Find ways to support Bold Foundation through mentorship, partnerships, events, and learner support.{% endblock %}
+{% block og_title %}Get Involved | Bold Foundation{% endblock %}
+{% block og_description %}Become a mentor, explore partnerships, attend an event, or learn about learner support.{% endblock %}
+{% block twitter_title %}Get Involved | Bold Foundation{% endblock %}
+{% block twitter_description %}Become a mentor, explore partnerships, attend an event, or learn about learner support.{% endblock %}
+
+{% block content %}
+<main>
+  <section class="home-programs" style="padding-top: 132px;">
+    <div class="container">
+      <div class="home-section-heading">
+        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">GET INVOLVED</span>
+        <h1>Help boys grow into confident leaders.</h1>
+        <p class="home-lead">Choose a current way to connect with Bold Foundation.</p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6 col-xl-3">
+          <article class="home-program h-100">
+            <i class="bi bi-person-heart home-program-icon" aria-hidden="true"></i>
+            <h2>Become a mentor</h2>
+            <p>Share your experience and support learners through mentorship and leadership development.</p>
+            <a href="{% url 'mentor' %}" class="home-text-link">Apply as a mentor</a>
+          </article>
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <article class="home-program h-100">
+            <i class="bi bi-diagram-3 home-program-icon" aria-hidden="true"></i>
+            <h2>Partner with us</h2>
+            <p>Tell us how your organization or community would like to collaborate.</p>
+            <a href="{% url 'partner' %}" class="home-text-link">Explore partnership</a>
+          </article>
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <article class="home-program h-100">
+            <i class="bi bi-calendar-event home-program-icon" aria-hidden="true"></i>
+            <h2>Join an event</h2>
+            <p>See upcoming and past activities published by Bold Foundation.</p>
+            <a href="{% url 'events' %}" class="home-text-link">Browse events</a>
+          </article>
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <article class="home-program h-100">
+            <i class="bi bi-heart home-program-icon" aria-hidden="true"></i>
+            <h2>Support an event</h2>
+            <p>Some event pages accept one-time M-Pesa donations through a payment prompt.</p>
+            <a href="{% url 'events' %}" class="home-text-link">Browse events</a>
+          </article>
+        </div>
+      </div>
+
+      <div class="alert alert-light border rounded-4 mt-4">
+        <strong>Looking for learner support?</strong>
+        <a href="{% url 'learner' %}" class="ms-1">Review the application page</a>.
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block robots %}noindex,nofollow{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <style>
+    .legal-policy__hero { min-height: auto; padding: 132px 0 56px; }
+    .legal-policy__content { background: #fff; border-radius: 16px; padding: 2rem; box-shadow: 0 1rem 3rem rgba(13, 27, 75, .08); }
+    .legal-policy__draft { border-left: 5px solid #b45309; }
+    .legal-policy__section { padding: 1.5rem 0; border-bottom: 1px solid #e5e7eb; }
+    .legal-policy__section:last-child { border-bottom: 0; }
+    .legal-policy__section h2, .legal-policy__section h3 { color: #0d1b4b; }
+    .legal-policy__section p, .legal-policy__section li { line-height: 1.75; }
+    .legal-policy__references a { overflow-wrap: anywhere; }
+    @media (max-width: 575.98px) {
+      .legal-policy__hero { padding: 112px 0 40px; }
+      .legal-policy__content { padding: 1.25rem; }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<main class="legal-policy">
+  <section class="home-hero legal-policy__hero">
+    <div class="container">
+      <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #fff3cd; color: #664d03; font-weight: 700;">WORKING DRAFT — REVIEW REQUIRED</span>
+      <h1>{% block policy_heading %}Foundation policy{% endblock %}</h1>
+      <p class="home-hero-copy">{% block policy_summary %}{% endblock %}</p>
+      <p class="small mb-0">Draft 0.1 · 25 November 2026 · Not yet approved for adoption</p>
+    </div>
+  </section>
+
+  <section class="py-5 bg-light">
+    <div class="container">
+      <div class="alert alert-warning legal-policy__draft" role="note">
+        <strong>Important:</strong> This is a working draft, not legal advice and not a representation that
+        Bold Foundation has completed every process described or required by law. It must be reviewed by a
+        qualified Kenyan legal practitioner and the responsible organisational leads before adoption or
+        public reliance. Items marked for confirmation must be resolved first.
+      </div>
+
+      <article class="legal-policy__content">
+        {% block policy_content %}{% endblock %}
+      </article>
+
+      <aside class="card mt-4 legal-policy__references">
+        <div class="card-body">
+          <h2 class="h4">Rights and legal framework</h2>
+          <p>
+            These drafts are guided by the Constitution of Kenya, including equality, dignity, privacy and
+            children’s rights; Kenya’s data-protection and children’s legislation; the UN Convention on the
+            Rights of the Child (UNCRC); and the African Charter on the Rights and Welfare of the Child.
+            The references are starting points for review, not a legal opinion on applicability.
+          </p>
+          <p>
+            Provisions for counsel to consider include Constitution Articles 2(6), 27, 28, 31 and 53;
+            UNCRC Articles 2, 3, 12, 16, 19, 28 and 34; and African Charter Articles 3, 4, 10, 11, 16, 21 and 27.
+          </p>
+          <ul class="mb-0">
+            <li><a href="https://new.kenyalaw.org/akn/ke/act/2010/constitution/eng@2010-09-03" target="_blank" rel="noopener noreferrer">Constitution of Kenya, 2010</a></li>
+            <li><a href="https://new.kenyalaw.org/akn/ke/act/2019/24/eng@2019-11-08" target="_blank" rel="noopener noreferrer">Data Protection Act, No. 24 of 2019</a> and applicable regulations</li>
+            <li><a href="https://new.kenyalaw.org/akn/ke/act/2022/29/eng@2022-07-26" target="_blank" rel="noopener noreferrer">Children Act, No. 29 of 2022</a></li>
+            <li><a href="https://www.ohchr.org/en/instruments-mechanisms/instruments/convention-rights-child" target="_blank" rel="noopener noreferrer">UN Convention on the Rights of the Child</a></li>
+            <li><a href="https://au.int/en/treaties/african-charter-rights-and-welfare-child" target="_blank" rel="noopener noreferrer">African Charter on the Rights and Welfare of the Child</a></li>
+            <li><a href="https://www.odpc.go.ke/" target="_blank" rel="noopener noreferrer">Office of the Data Protection Commissioner (ODPC)</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+{% endblock %}

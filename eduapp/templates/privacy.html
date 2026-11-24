@@ -1,342 +1,158 @@
-<!DOCTYPE html>
-<html lang="en">
-{% load static %}
+{% extends 'legal_policy_base.html' %}
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Privacy Policy | Bold Foundation</title>
-  <meta name="description" content="Read how Bold Foundation collects, uses and protects personal information when you use our services and programs.">
-  <meta name="robots" content="index,follow">
-  <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+{% block title %}Privacy Policy | Bold Foundation{% endblock %}
+{% block meta_description %}Working draft explaining how Bold Foundation handles personal information, including information about children. Kenyan legal review is pending.{% endblock %}
+{% block og_title %}Privacy Policy | Bold Foundation{% endblock %}
+{% block twitter_title %}Privacy Policy | Bold Foundation{% endblock %}
+{% block policy_heading %}Privacy Policy{% endblock %}
+{% block policy_summary %}How the website collects and uses personal information, the rights available to people, and the safeguards that still need confirmation.{% endblock %}
 
-  <!-- Favicons -->
-  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
-  <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+{% block policy_content %}
+  <p><strong>Status:</strong> Draft for review. The legal controller identity, privacy lead, lawful-basis mapping, international-transfer safeguards and retention periods require confirmation before this can be treated as final.</p>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <section class="legal-policy__section">
+    <h2>1. Who is responsible</h2>
+    <p>
+      This website uses the name Bold Foundation. The foundation’s full registered legal name,
+      registration details and designated data-protection contact have not been verified for this draft.
+      The site publishes <a href="mailto:boldfoundation59@gmail.com">boldfoundation59@gmail.com</a> and
+      <a href="tel:+254793299818">+254 793 299 818</a> as general contact routes; neither is represented
+      here as a formally appointed Data Protection Officer. The Foundation Secretary monitors the general
+      email, but no formally appointed privacy officer has been identified.
+    </p>
+  </section>
 
-  <!-- Vendor CSS Files -->
-  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+  <section class="legal-policy__section">
+    <h2>2. Information the current website asks for</h2>
+    <ul>
+      <li><strong>Learner-support applications:</strong> a learner’s name, date of birth, grade, school, requested support, circumstances, guardian name and contact details, address, and information about the person making the referral.</li>
+      <li><strong>Mentor applications:</strong> name, email, phone, organisation, years of experience, subject and message; a linked account may be used for a mentor portal.</li>
+      <li><strong>School bookings and partnerships:</strong> contact and organisation details, requested activities, proposed dates, participant numbers and free-text notes.</li>
+      <li><strong>Contact requests:</strong> name, email, subject and message.</li>
+      <li><strong>Event donations and mentor fees:</strong> payer name/contact details, phone number, amount, payment status and M-Pesa transaction references. The payment request is sent to Safaricom’s M-Pesa service.</li>
+      <li><strong>Accounts and security:</strong> username, email, password hash, session and anti-forgery tokens, and information needed to protect the service.</li>
+      <li><strong>Chat assistant:</strong> the question and recent conversation turns are sent to Google’s Gemini API when the assistant is used. Do not enter a child’s name, contact details, case history, health information or other confidential information into the chatbot.</li>
+      <li><strong>Technical security:</strong> the chatbot rate limit temporarily uses a visitor IP address in a cache key. Hosting and security providers may also process request metadata; exact log fields and retention require confirmation.</li>
+      <li><strong>Event content:</strong> authorised administrators can upload event photos and reports. These may contain identifiable people and must not include a child without the required permissions and safeguarding review.</li>
+    </ul>
+    <p>
+      Free-text descriptions can reveal sensitive information. Only submit information that is necessary
+      and that you are authorised to provide. Children and guardians should receive an age-appropriate
+      explanation before any child-related information is collected.
+    </p>
+  </section>
 
-  <!-- Main CSS File -->
-  <link href="{% static 'assets/css/main.css' %}?v=20261120-performance" rel="stylesheet">
+  <section class="legal-policy__section">
+    <h2>3. Why information is used and lawful basis</h2>
+    <p>
+      The site uses information to respond to enquiries, assess and coordinate programme requests,
+      manage accounts, arrange event or mentor payments, maintain security, and meet legal duties.
+      The foundation must document the lawful basis for each purpose under the Data Protection Act,
+      and must not treat a general terms checkbox as a substitute for a lawful basis or valid consent.
+    </p>
+    <p>
+      For a child’s personal data, processing must meet the applicable child-specific legal safeguards,
+      be in the child’s best interests, and use an appropriate parent or guardian consent and age-verification
+      process where required. The current learner form collects guardian details but this review did not
+      identify a distinct verified guardian-consent step. That gap must be resolved before this policy is adopted.
+    </p>
+    <p>
+      Referrals may come from teachers, credible community leaders or known well-wishers, and supporting
+      information may be requested. A referrer’s role or reputation does not itself establish parent or
+      guardian authority or consent.
+    </p>
+    <p>
+      The foundation’s stated procedure is to contact the parent or guardian before taking programme
+      action and to obtain their consent when a third party makes a referral. The current website form
+      does not enforce that sequence and stores the submitted child details before a guardian-consent
+      check. The lawfulness and minimum-data approach for that initial referral must be confirmed, and
+      the workflow must be changed before this draft can be treated as final.
+    </p>
+    <p>
+      The current Terms acceptance marker is stored in a server session. It is not a durable record of
+      acceptance date/version linked to an applicant, and it is not a separate privacy-consent record.
+      The registration flow also needs review before the foundation can claim it records informed policy acceptance.
+    </p>
+  </section>
 
-  <style>
-    body.privacy-page { background: #fff; color: #586579; }
-    .privacy-page .footer.dark-background { background: #0d1b4b; color: #aaa; }
-    .privacy-page .footer.dark-background a { color: #aaa; }
-    .privacy-page .footer.dark-background a:hover { color: #00c2e0; }
-    .privacy-page .footer.dark-background h4, .privacy-page .footer.dark-background .sitename { color: #fff; }
-    .privacy-page .page-title, .terms-page .page-title { padding: 145px 0 78px; background: linear-gradient(135deg, #0d1b4b 0%, #12356a 68%, #00a9c7 100%); color: #fff; }
-    .privacy-page .page-title .breadcrumbs, .terms-page .page-title .breadcrumbs { color: rgba(255,255,255,.7); }
-    .privacy-page .page-title .breadcrumb-item, .privacy-page .page-title .breadcrumb-item a, .terms-page .page-title .breadcrumb-item, .terms-page .page-title .breadcrumb-item a { color: rgba(255,255,255,.78); }
-    .privacy-page .page-title .title-wrapper h1, .terms-page .page-title .title-wrapper h1 { color: #fff; font-weight: 800; }
-    .privacy-page .page-title .title-wrapper p, .terms-page .page-title .title-wrapper p { color: rgba(255,255,255,.86); max-width: 720px; }
-    .privacy-page .privacy, .terms-page .terms-of-service { background: #f8f9fb; }
-    .privacy-page .privacy-content, .terms-page .tos-content { background: #fff; border-radius: 20px; padding: 2rem 2.5rem; box-shadow: 0 1rem 3rem rgba(13,27,75,.1); }
-    .privacy-page .privacy-section { border-bottom: 1px solid #e9eef5; padding: 2rem 0; }
-    .privacy-page .privacy-section:last-child { border-bottom: 0; }
-    .privacy-page .privacy-section h3, .privacy-page .privacy-section h4 { color: #0d1b4b; font-weight: 700; }
-    .privacy-page .privacy-section p, .privacy-page .privacy-section li { color: #586579; line-height: 1.8; }
-    .privacy-page .highlight-box, .privacy-page .info-box { border-radius: 14px; background: #eef9ff; border-left: 4px solid #00c2e0; }
-    .privacy-page .measure-item, .privacy-page .right-item { background: #f8f9fb !important; color: #586579; }
-    .privacy-page .privacy-section h5 { color: #0d1b4b; }
-    .privacy-page .privacy-section p, .privacy-page .privacy-section li { color: #586579; }
-    .privacy-page .highlight-box { background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%); }
-    .privacy-page .privacy-content .privacy-section .info-box,
-    .privacy-page .privacy-content .privacy-section .measure-item,
-    .privacy-page .privacy-content .privacy-section .right-item { background: #f8f9fb !important; color: #586579 !important; }
-    .privacy-page .privacy-content .privacy-section .highlight-box { background: linear-gradient(135deg, #0d1b4b 0%, #12356a 100%) !important; color: #fff !important; }
-    .privacy-page .privacy-content .privacy-section .info-box h4,
-    .privacy-page .privacy-content .privacy-section .measure-item h5,
-    .privacy-page .privacy-content .privacy-section .right-item h5 { color: #0d1b4b !important; }
-    .privacy-page .privacy-content .privacy-section .info-box li,
-    .privacy-page .privacy-content .privacy-section .measure-item p,
-    .privacy-page .privacy-content .privacy-section .right-item p { color: #586579 !important; }
-    .privacy-page .privacy-content .privacy-section .highlight-box h4,
-    .privacy-page .privacy-content .privacy-section .highlight-box p,
-    .privacy-page .privacy-content .privacy-section .highlight-box i { color: #fff !important; }
-    .privacy-page .contact-section { background: #0d1b4b; border-radius: 18px; padding: 2rem; }
-    .privacy-page .contact-section h3, .privacy-page .contact-section p, .privacy-page .contact-section span { color: #fff; }
-  </style>
+  <section class="legal-policy__section">
+    <h2>4. Sharing and processing outside Kenya</h2>
+    <p>
+      Information may be accessible to authorised foundation administrators and to providers needed to
+      run the service, including Render for hosting/database infrastructure, Safaricom for M-Pesa payment
+      processing, and Google when the Gemini chatbot is used. The website also links to external social
+      networks; those services receive information when a visitor follows a link.
+    </p>
+    <p>
+      The foundation’s stated supporter reach is international, while its beneficiary programmes focus
+      on children in Kenya. If personal information is collected from people in other countries, the
+      foundation must assess any additional privacy laws that apply; this draft does not claim global compliance.
+    </p>
+    <p>
+      The checked-in Render configuration specifies a PostgreSQL database region in Oregon, United States.
+      The actual production location and provider terms must be verified. Before cross-border transfers are
+      made, the foundation must document the destination, processor arrangements and safeguards required
+      by Kenyan law. No claim is made here that those transfer checks are complete.
+    </p>
+    <p>Personal information is not intentionally collected for advertising, and no analytics or marketing tracker is currently present in the site templates reviewed.</p>
+  </section>
 
-  <!-- =======================================================
-  * Template Name: Axis
-  * Template URL: https://bootstrapmade.com/axis-bootstrap-corporate-template/
-  * Updated: Sep 13 2025 with Bootstrap v5.3.8
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
-</head>
+  <section class="legal-policy__section">
+    <h2>5. Children’s dignity, rights and privacy</h2>
+    <p>
+      The foundation’s work must respect each child’s dignity, equality, privacy, safety, participation
+      and best interests. Children should receive explanations they can understand, have their views heard
+      in an age-appropriate way, and not be exposed through public stories or images without separate,
+      informed authorisation and the child’s appropriate assent.
+    </p>
+    <p>
+      The privacy commitments should be read with the
+      <a href="{% url 'child_safeguarding' %}">Child Safeguarding Policy</a> and
+      <a href="{% url 'code_of_conduct' %}">Code of Conduct</a>. A parent or guardian’s contact details
+      are not proof that consent was obtained or verified.
+    </p>
+  </section>
 
-<body class="privacy-page">
-  {% include 'partials/page_progress.html' %}
+  <section class="legal-policy__section">
+    <h2>6. Storage, security and retention</h2>
+    <p>
+      Access should be limited to people who need the information for an authorised purpose. The foundation
+      must verify its actual access controls, backups, encryption, breach-response process and vendor safeguards;
+      this draft does not promise encryption at rest or a particular security certification.
+    </p>
+    <p>
+      No approved category-by-category retention schedule or automatic deletion process was identified.
+      Exact periods must be set and implemented before adoption. See the
+      <a href="{% url 'data_retention' %}">Data Retention Policy</a> draft.
+    </p>
+  </section>
 
-  <nav class="navbar navbar-bold navbar-expand-lg fixed-top" id="mainNav">
-    <div class="container">
-      <a class="navbar-brand fw-bold text-white fs-4" href="/">
-        <img class="navbar-brand__logo" src="{% static 'assets/img/logo.webp' %}" height="40" alt=""> Bold Foundation
-      </a>
-      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto align-items-center gap-2">
-          <li class="nav-item"><a class="nav-link" href="/"><i class="bi bi-house-door" aria-hidden="true"></i> Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="/events/"><i class="bi bi-calendar-event" aria-hidden="true"></i> Events</a></li>
-          <li class="nav-item"><a class="nav-link" href="/services/"><i class="bi bi-people" aria-hidden="true"></i> Mentorship</a></li>
-          <li class="nav-item"><a class="nav-link" href="/learner/"><i class="bi bi-heart" aria-hidden="true"></i> Support</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'partner' %}"><i class="bi bi-diagram-3" aria-hidden="true"></i> Partner</a></li>
-          {% if user.is_authenticated %}
-            {% if user.is_staff %}
-              <li class="nav-item"><a class="nav-link" href="/admin_view/"><i class="bi bi-speedometer2" aria-hidden="true"></i> Admin</a></li>
-            {% else %}
-              <li class="nav-item"><a class="nav-link" href="/dashboard/"><i class="bi bi-person-circle" aria-hidden="true"></i> My Portal</a></li>
-            {% endif %}
-            <li class="nav-item">
-              <form method="post" action="{% url 'logout' %}" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="nav-link border-0 bg-transparent"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Logout</button>
-              </form>
-            </li>
-          {% else %}
-            <li class="nav-item"><a class="nav-link btn-apply ms-2" href="/mentor/"><i class="bi bi-person-plus" aria-hidden="true"></i> Apply as Mentor</a></li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-  </nav>
+  <section class="legal-policy__section">
+    <h2>7. Your rights and how to make a request</h2>
+    <p>
+      Subject to applicable law, a person may ask to be informed about processing, access their personal
+      data, correct inaccurate data, object to processing, request erasure where available, and withdraw
+      consent where consent is the basis. A guardian may act for a child where legally authorised, while
+      respecting the child’s best interests and evolving capacity.
+    </p>
+    <p>
+      Send a request to <a href="mailto:boldfoundation59@gmail.com">boldfoundation59@gmail.com</a>, call
+      <a href="tel:+254793299818">+254 793 299 818</a>, or use
+      <a href="{% url 'contact' %}">Contact Us</a>. The foundation must confirm the identity and authority
+      needed for a request without collecting excessive additional data. If a concern is not resolved, a
+      complaint may be raised with the ODPC. The foundation's target is an initial response within seven
+      calendar days; this is not a promise that a complex request will be completed within that time.
+      A privacy-response owner still needs to be designated.
+    </p>
+  </section>
 
-  <main class="main">
-
-    <!-- Page Title -->
-    <div class="page-title">
-      <div class="breadcrumbs">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'index' %}"><i class="bi bi-house"></i> Home</a></li>
-            <li class="breadcrumb-item active current">Privacy</li>
-          </ol>
-        </nav>
-      </div>
-
-      <div class="title-wrapper">
-        <h1>Privacy Policy</h1>
-        <p>A clear guide to the information Bold Foundation collects, why we use it, and the choices available to you.</p>
-      </div>
-    </div><!-- End Page Title -->
-
-    <!-- Privacy Section -->
-    <section id="privacy" class="privacy section">
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="row">
-          <div class="col-lg-10 mx-auto">
-
-            <div class="privacy-content">
-              <div class="last-updated" data-aos="fade-up" data-aos-delay="200">
-                <p><strong>Last updated:</strong> September 16, 2026</p>
-              </div>
-
-              <div class="privacy-section" data-aos="fade-up" data-aos-delay="300">
-                <h3>Information We Collect</h3>
-                <p>We collect information you submit when you apply for learner support, book mentorship, apply as a mentor, request a partnership, contact us, or support an event.</p>
-
-                <h4>Personal Information</h4>
-                <ul>
-                  <li>Names and contact details</li>
-                  <li>School, learner, or organisation information</li>
-                  <li>Programme preferences and messages</li>
-                  <li>Details needed to coordinate support safely</li>
-                </ul>
-
-                <h4>Usage Data</h4>
-                <p>Our website may receive basic browser, device, and page-visit information to help us keep the service reliable and secure.</p>
-              </div>
-
-              <div class="privacy-section" data-aos="fade-up" data-aos-delay="400">
-                <h3>How We Use Your Information</h3>
-                <p>We use your information to respond to requests, coordinate programmes, communicate follow-ups, improve the website, and meet legal, accounting, safeguarding, and fraud-prevention responsibilities.</p>
-
-                <div class="info-box">
-                  <h4>Primary Uses</h4>
-                  <ol>
-                    <li>Review and respond to applications and bookings</li>
-                    <li>Coordinate mentors, learners, partners, and events</li>
-                    <li>Protect the safety of programme participants</li>
-                    <li>Improve website security and accessibility</li>
-                  </ol>
-                </div>
-              </div>
-
-              <div class="privacy-section" data-aos="fade-up" data-aos-delay="500">
-                <h3>Information Sharing and Disclosure</h3>
-                <p>We do not sell your personal information. We may share relevant information with trusted providers who help operate the website, where required by law, or where necessary to protect a learner, participant, or staff member.</p>
-
-                <div class="highlight-box" data-aos="fade-up" data-aos-delay="600">
-                  <i class="bi bi-shield-check"></i>
-                  <h4>We Never Sell Your Data</h4>
-                  <p>Your information is used only for legitimate programme, service, communication, security, or legal purposes.</p>
-                </div>
-              </div>
-
-              <div class="privacy-section" data-aos="fade-up" data-aos-delay="700">
-                <h3>Data Security</h3>
-                <p>We use reasonable administrative and technical measures to protect information from unauthorized access, loss, misuse, or disclosure. No online service can guarantee absolute security.</p>
-
-                <div class="security-measures">
-                  <div class="row">
-                    <div class="col-md-6" data-aos="fade-right" data-aos-delay="800">
-                      <div class="measure-item">
-                        <i class="bi bi-lock-fill"></i>
-                        <h5>Encryption</h5>
-                        <p>Access to information is limited to people who need it for an approved programme or operational purpose.</p>
-                      </div>
-                    </div>
-                    <div class="col-md-6" data-aos="fade-left" data-aos-delay="900">
-                      <div class="measure-item">
-                        <i class="bi bi-server"></i>
-                        <h5>Secure Storage</h5>
-                        <p>We retain information only for as long as reasonably needed for programme records, legal obligations, or dispute resolution.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="privacy-section" data-aos="fade-up" data-aos-delay="1000">
-                <h3>Your Rights</h3>
-                <p>You may ask us to access, correct, or delete your personal information, subject to legal and safeguarding requirements.</p>
-
-                <div class="rights-list">
-                  <div class="right-item">
-                    <i class="bi bi-eye"></i>
-                    <div>
-                      <h5>Right to Access</h5>
-                      <p>Ask what personal information we hold about you and how it is being used.</p>
-                    </div>
-                  </div>
-                  <div class="right-item">
-                    <i class="bi bi-pencil"></i>
-                    <div>
-                      <h5>Right to Rectification</h5>
-                      <p>Request corrections where the information we hold is inaccurate or incomplete.</p>
-                    </div>
-                  </div>
-                  <div class="right-item">
-                    <i class="bi bi-trash"></i>
-                    <div>
-                      <h5>Right to Erasure</h5>
-                      <p>Request deletion where there is no continuing legal or safeguarding reason to retain it.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="privacy-section" data-aos="fade-up" data-aos-delay="1100">
-                <h3>Cookies and Tracking</h3>
-                <p>We may use essential session storage to support navigation, security, and functions such as remembering terms acceptance. You can manage cookies through your browser.</p>
-
-                <div class="cookie-types">
-                  <h4>Types of Cookies We Use</h4>
-                  <div class="table-responsive">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>Cookie Type</th>
-                          <th>Purpose</th>
-                          <th>Duration</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Essential</td>
-                          <td>Navigation, security, and session functions</td>
-                          <td>Session</td>
-                        </tr>
-                        <tr>
-                          <td>Analytics</td>
-                          <td>Understanding website use</td>
-                          <td>As needed</td>
-                        </tr>
-                        <tr>
-                          <td>Marketing</td>
-                          <td>Not used</td>
-                          <td>None</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-              <div class="privacy-section" data-aos="fade-up" data-aos-delay="1200">
-                <h3>Changes to This Privacy Policy</h3>
-                <p>We may update this policy when our services, legal obligations, or safeguarding practices change. The latest version will be posted here with its revision date.</p>
-              </div>
-
-              <div class="contact-section" data-aos="fade-up" data-aos-delay="1300">
-                <h3>Contact Us</h3>
-                <p>For privacy questions or requests, contact Bold Foundation and we will respond as soon as reasonably possible.</p>
-
-                <div class="contact-info">
-                  <div class="contact-item">
-                    <i class="bi bi-envelope"></i>
-                    <span>boldfoundation59@gmail.com</span>
-                  </div>
-                  <div class="contact-item">
-                    <i class="bi bi-geo-alt"></i>
-                    <span>Bold Foundation, Kenya</span>
-                  </div>
-                  <div class="contact-item">
-                    <i class="bi bi-telephone"></i>
-                    <span>Contact us by email</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-
-    </section><!-- /Privacy Section -->
-
-  </main>
-
-  {% include 'partials/site_footer.html' %}
-
-  <!-- Scroll Top -->
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-  <!-- Preloader -->
-  <div id="preloader"></div>
-
-  <!-- Vendor JS Files -->
-  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'assets/js/page-feedback.js' %}"></script>
-  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
-  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
-  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
-  <script src="{% static 'assets/vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
-
-  <!-- Main JS File -->
-  <script src="{% static 'assets/js/main.js' %}"></script>
-
-</body>
-
-</html>
+  <section class="legal-policy__section">
+    <h2>8. Related policies and changes</h2>
+    <p>
+      Read the <a href="{% url 'cookie_policy' %}">Cookie Policy</a>,
+      <a href="{% url 'complaints_grievance' %}">Complaints and Grievance Policy</a>, and
+      <a href="{% url 'donations_refunds' %}">Donations and Refund Policy</a>. Any revised version should
+      show its effective date and version, and material changes should be communicated in an accessible way.
+    </p>
+  </section>
+{% endblock %}

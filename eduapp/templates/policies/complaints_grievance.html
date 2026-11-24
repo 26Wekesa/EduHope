@@ -1,0 +1,63 @@
+{% extends 'legal_policy_base.html' %}
+
+{% block title %}Complaints and Grievance Policy | Bold Foundation{% endblock %}
+{% block meta_description %}Working draft setting out accessible, fair and child-sensitive ways to raise complaints about Bold Foundation.{% endblock %}
+{% block og_title %}Complaints and Grievance Policy | Bold Foundation{% endblock %}
+{% block twitter_title %}Complaints and Grievance Policy | Bold Foundation{% endblock %}
+{% block policy_heading %}Complaints and Grievance Policy{% endblock %}
+{% block policy_summary %}How concerns should be received, handled fairly, protected from retaliation and referred when safety or legal rights are at stake.{% endblock %}
+
+{% block policy_content %}
+  <p><strong>Status:</strong> Draft. The foundation has set a target for an initial response within seven calendar days. An independent escalation contact, complaint owner and formal review/appeal arrangements have not been approved.</p>
+
+  <section class="legal-policy__section">
+    <h2>1. Who may raise a concern</h2>
+    <p>Any learner, parent or guardian, donor, mentor, volunteer, staff member, partner or community member may raise a complaint about a service, decision, payment, privacy issue, discrimination, misconduct, safeguarding concern or suspected misuse of resources.</p>
+    <p>Children should be able to raise concerns in language and ways they can understand, with support from a trusted adult if they choose. Their safety, dignity, privacy and views must be respected.</p>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>2. How to contact the foundation</h2>
+    <p>
+      The current general routes are <a href="{% url 'contact' %}">Contact Us</a> and
+      <a href="mailto:boldfoundation59@gmail.com">boldfoundation59@gmail.com</a> or
+      <a href="tel:+254793299818">+254 793 299 818</a>. Include only the
+      information needed to explain the issue, how you would like to be contacted, and any immediate
+      safety concern. Do not send a child’s sensitive case details through Facebook or other public social media.
+    </p>
+    <p>
+      The general inbox is not a verified confidential or independent complaints channel. The foundation
+      Secretary monitors the general email, but the foundation must designate an independent escalation
+      route for complaints involving senior leadership before adopting this policy. Anonymous concerns
+      may be considered where possible, but may limit follow-up.
+    </p>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>3. Fair handling principles</h2>
+    <ul>
+      <li>Listen respectfully and acknowledge the concern without prejudging its outcome.</li>
+      <li>Assess immediate risk first; safeguarding concerns must follow the <a href="{% url 'child_safeguarding' %}">Child Safeguarding Policy</a> and must not wait for an ordinary complaint process.</li>
+      <li>Use an impartial person who is not implicated; preserve relevant records and share information only with those who need it.</li>
+      <li>Explain the next step and any limits on confidentiality, and provide reasonable accessibility or language support.</li>
+      <li>Protect people from retaliation for raising a concern in good faith.</li>
+      <li>Record the complaint, actions and outcome securely, and use themes to improve services without identifying complainants unnecessarily.</li>
+    </ul>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>4. Acknowledgement, outcome and escalation</h2>
+    <p>
+      The foundation aims to send an initial acknowledgement or response within seven calendar days.
+      This is not a promise that an investigation or remedy will be completed within that period. If more
+      time is needed, the complainant should be told what happens next and when an update is expected.
+      A formal review or appeal option and independent escalation contact must still be approved.
+    </p>
+    <p>
+      Where a complaint concerns personal-data handling, a person may also contact the
+      <a href="https://www.odpc.go.ke/" target="_blank" rel="noopener noreferrer">Office of the Data Protection Commissioner</a>.
+      Where a child is in immediate danger, contact the appropriate emergency or child-protection authority
+      rather than waiting for an internal response.
+    </p>
+  </section>
+{% endblock %}

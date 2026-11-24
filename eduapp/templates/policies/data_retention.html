@@ -1,0 +1,106 @@
+{% extends 'legal_policy_base.html' %}
+
+{% block title %}Data Retention Policy | Bold Foundation{% endblock %}
+{% block meta_description %}Working draft identifying Bold Foundation data categories and the retention periods that must be set and implemented.{% endblock %}
+{% block og_title %}Data Retention Policy | Bold Foundation{% endblock %}
+{% block twitter_title %}Data Retention Policy | Bold Foundation{% endblock %}
+{% block policy_heading %}Data Retention Policy{% endblock %}
+{% block policy_summary %}A draft schedule for keeping personal information only as long as a lawful, documented purpose requires, with special care for children’s data.{% endblock %}
+
+{% block policy_content %}
+  <p><strong>Status:</strong> Draft schedule only. The site code does not establish or enforce category-specific deletion periods, and no approved retention schedule was supplied.</p>
+
+  <section class="legal-policy__section">
+    <h2>1. Retention rule</h2>
+    <p>
+      Personal information should be adequate, relevant and limited to the stated purpose, accurate,
+      securely protected and kept in identifiable form no longer than necessary. The foundation must
+      document the purpose, lawful basis, start/end event, retention period, review owner, deletion method
+      and any lawful hold for each record category.
+    </p>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>2. Draft retention schedule — periods require approval</h2>
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Record category</th>
+            <th scope="col">Examples</th>
+            <th scope="col">Approved period</th>
+            <th scope="col">Required owner/action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Child support and referral</td>
+            <td>Learner identity, circumstances, guardian and informant details</td>
+            <td><strong>Not set</strong></td>
+            <td>Set a child-centred period and review/closure trigger with the safeguarding and programme leads.</td>
+          </tr>
+          <tr>
+            <td>Mentor, booking and partnership records</td>
+            <td>Applications, contact details, notes and decisions</td>
+            <td><strong>Not set</strong></td>
+            <td>Define periods for unsuccessful applications, active relationships and closed requests.</td>
+          </tr>
+          <tr>
+            <td>Donations and M-Pesa transactions</td>
+            <td>Donor contact details, amount, payment receipt and reconciliation</td>
+            <td><strong>Not set</strong></td>
+            <td>Finance/legal lead to set periods that meet accounting, tax and dispute requirements.</td>
+          </tr>
+          <tr>
+            <td>Contact messages and complaints</td>
+            <td>Enquiries, grievances and response records</td>
+            <td><strong>Not set</strong></td>
+            <td>Set separate limits for routine enquiries and safeguarding/legal case files.</td>
+          </tr>
+          <tr>
+            <td>Accounts and security records</td>
+            <td>User accounts, session data and system/security logs</td>
+            <td><strong>Not set</strong></td>
+            <td>Confirm provider log and backup lifetimes; define account closure and inactive-account rules.</td>
+          </tr>
+          <tr>
+            <td>Chat assistant content</td>
+            <td>Question and recent turns sent to Google Gemini</td>
+            <td><strong>Provider terms not verified</strong></td>
+            <td>The application code does not save chat text to its own application database; verify Google and hosting logs/retention before enabling this for child-related queries.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>3. Deletion, backup and legal holds</h2>
+    <p>
+      When a period expires, records should be securely deleted or irreversibly anonymised from active
+      systems. Backup copies, exports and vendor-held copies must have documented expiry or deletion
+      controls. A legal hold may pause deletion only for the records and period necessary, with restricted
+      access and a recorded review date.
+    </p>
+    <p>
+      The current application contains no scheduled deletion job or user-facing account/data deletion
+      workflow. This policy must not claim that automatic deletion is already operating. A responsible owner
+      must implement and periodically test the approved schedule before adoption.
+    </p>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>4. Children’s records</h2>
+    <p>
+      Children’s information requires heightened protection. Keep only the minimum case details needed,
+      restrict access to authorised people, avoid unnecessary copies, and set a review point when support
+      ends. Retention decisions must balance the child’s privacy and safety with any genuine legal,
+      safeguarding, accounting or dispute obligation; indefinite retention is not a default.
+    </p>
+  </section>
+
+  <section class="legal-policy__section">
+    <h2>5. Governance and review</h2>
+    <p>The board or authorised leadership must approve the schedule, assign an owner for each category, record exceptions and legal holds, and review it at least annually and whenever a programme or provider changes. See the <a href="{% url 'privacy' %}">Privacy Policy</a>.</p>
+  </section>
+{% endblock %}

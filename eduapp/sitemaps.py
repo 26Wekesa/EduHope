@@ -9,7 +9,17 @@ class StaticPageSitemap(Sitemap):
     priority = 0.7
 
     def items(self):
-        return ['index', 'events', 'services', 'terms', 'privacy']
+        return [
+            'index',
+            'about',
+            'programmes',
+            'impact',
+            'get_involved',
+            'events',
+            'contact',
+            'services',
+            'terms',
+        ]
 
     def location(self, item):
         return reverse(item)

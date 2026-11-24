@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Impact | Bold Foundation{% endblock %}
+{% block meta_description %}See Bold Foundation's reported activities in mentorship, mental wellness, climate action, and community outreach.{% endblock %}
+{% block og_title %}Our Impact | Bold Foundation{% endblock %}
+{% block og_description %}Activities and partnerships supporting mentorship, mental wellness, and community action.{% endblock %}
+{% block twitter_title %}Our Impact | Bold Foundation{% endblock %}
+{% block twitter_description %}Activities and partnerships supporting mentorship, mental wellness, and community action.{% endblock %}
+
+{% block content %}
+<main>
+  <section class="home-programs" style="padding-top: 132px;">
+    <div class="container">
+      <div class="home-section-heading">
+        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">OUR IMPACT</span>
+        <h1>Activities, partnerships, and community action.</h1>
+        <p class="home-lead">
+          The highlights below are activities reported by the foundation. This page does not
+          yet include measured outcome statistics or annual reports.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6">
+          <article class="home-program h-100">
+            <i class="bi bi-heart-pulse home-program-icon" aria-hidden="true"></i>
+            <h2>Mental wellness outreach</h2>
+            <p>
+              Bold Foundation participated with partner organizations in a mental wellness
+              activity at Masinde Muliro University. Participants spent time with orphans,
+              shared a meal, and donated basic hygiene items including tissue, soap, and
+              sanitary towels.
+            </p>
+          </article>
+        </div>
+        <div class="col-md-6">
+          <article class="home-program h-100">
+            <i class="bi bi-tree home-program-icon" aria-hidden="true"></i>
+            <h2>Tree planting</h2>
+            <p>Tree planting is part of the foundation's climate and community action activities.</p>
+          </article>
+        </div>
+        <div class="col-md-6">
+          <article class="home-program h-100">
+            <i class="bi bi-people home-program-icon" aria-hidden="true"></i>
+            <h2>Mentorship partnership</h2>
+            <p>
+              On 11 October 2026, Bold Foundation partnered with Kibabii University
+              Mentorship Club for a mentorship event held in connection with the Day of the
+              Girl Child.
+            </p>
+          </article>
+        </div>
+        <div class="col-md-6">
+          <article class="home-program h-100">
+            <i class="bi bi-brush home-program-icon" aria-hidden="true"></i>
+            <h2>Community clean-ups</h2>
+            <p>Market clean-ups are among the community outreach activities connected to climate action.</p>
+          </article>
+        </div>
+      </div>
+
+      <div class="home-cta mt-5">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-8">
+            <h2>Learn more about the work.</h2>
+            <p>Explore current programmes and upcoming community activities.</p>
+          </div>
+          <div class="col-lg-4 text-lg-end">
+            <a href="{% url 'programmes' %}" class="btn home-primary-cta">Our programmes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

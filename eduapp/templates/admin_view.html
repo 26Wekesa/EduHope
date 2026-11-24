@@ -254,13 +254,13 @@
 
       <div class="tab-pane fade" id="payments" role="tabpanel">
         <div class="card border-0 shadow-sm rounded-4 p-4">
-          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">Mentor M-Pesa Payment Records</h3>
+          <h3 class="fw-bold mb-4" style="color: #0d1b4b;">M-Pesa Payment Records</h3>
           {% if transactions %}
           <div class="table-responsive">
             <table class="table align-middle">
               <thead class="table-light">
                 <tr>
-                  <th>Mentor</th>
+                  <th>Payment for</th>
                   <th>Phone</th>
                   <th>Amount</th>
                   <th>Receipt</th>
@@ -272,7 +272,17 @@
               <tbody>
                 {% for txn in transactions %}
                 <tr>
-                  <td><strong>{{ txn.mentor.name }}</strong></td>
+                  <td>
+                    <strong>
+                      {% if txn.donation_id %}
+                        Donation: {{ txn.donation.donor_name }}
+                      {% elif txn.mentor_id %}
+                        Mentor: {{ txn.mentor.name }}
+                      {% else %}
+                        —
+                      {% endif %}
+                    </strong>
+                  </td>
                   <td>{{ txn.phone_number }}</td>
                   <td>KES {{ txn.amount }}</td>
                   <td>{{ txn.mpesa_receipt_number|default:'—' }}</td>
@@ -605,6 +615,7 @@
                   <th>Event</th>
                   <th>Amount</th>
                   <th>Type</th>
+                  <th>Payment status</th>
                 </tr>
               </thead>
               <tbody>
@@ -616,6 +627,7 @@
                   <td>{{ donation.event.title|default:'General' }}</td>
                   <td>KES {{ donation.amount }}</td>
                   <td>{{ donation.get_donation_type_display }}</td>
+                  <td>{{ donation.get_payment_status_display }}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -684,6 +696,11 @@
 </section>
 
 <style>
+  #chatToggle,
+  #chatPanel {
+    display: none !important;
+  }
+
   .admin-console {
     --admin-ink: #1c2633;
     --admin-muted: #78838f;
@@ -936,6 +953,11 @@
     transition: transform 150ms ease, border-color 150ms ease;
   }
 
+  .admin-metric > span:nth-child(2) {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
   .admin-metric:hover {
     transform: translateY(-2px);
     border-color: #cbd3d9;
@@ -964,11 +986,9 @@
   }
 
   .admin-metric small {
-    overflow: hidden;
     color: var(--admin-muted);
     font-size: 10px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.25;
   }
 
   .admin-metric strong {
@@ -979,6 +999,7 @@
 
   .admin-metric__arrow {
     margin-left: auto;
+    flex: 0 0 auto;
     color: #a0a9b0;
     font-size: 12px;
   }
@@ -1248,6 +1269,10 @@
   }
 
   @media (max-width: 1120px) {
+    .admin-overview {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .admin-dashboard-grid {
       grid-template-columns: minmax(0, 1fr);
     }

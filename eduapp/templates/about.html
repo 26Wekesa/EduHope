@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us | Bold Foundation{% endblock %}
+{% block meta_description %}Learn about Bold Foundation, its mission, vision, values, and work to support the holistic development of the boy child in Kenya.{% endblock %}
+{% block og_title %}About Bold Foundation{% endblock %}
+{% block og_description %}Our mission, vision, values, and commitment to the holistic development of the boy child.{% endblock %}
+{% block twitter_title %}About Bold Foundation{% endblock %}
+{% block twitter_description %}Our mission, vision, values, and commitment to the holistic development of the boy child.{% endblock %}
+
+{% block content %}
+<main>
+  <section class="home-hero" style="min-height: auto; padding: 132px 0 64px;">
+    <div class="container">
+      <div class="row align-items-center g-4 g-lg-5">
+        <div class="col-lg-8">
+          <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">ABOUT BOLD FOUNDATION</span>
+          <h1>Every boy deserves the support to lead with confidence.</h1>
+          <p class="home-hero-copy">
+            B.O.L.D. means Boys Of Leadership &amp; Dignity. Bold Foundation works to empower,
+            support, and advocate for the holistic development of the boy child.
+          </p>
+          <p>Founded in September 2025 by Sackland K. Makanga, the foundation's CEO.</p>
+          <a href="{% url 'programmes' %}" class="btn home-primary-cta">Explore our programmes</a>
+        </div>
+        <div class="col-lg-4 text-center">
+          <img
+            src="{% static 'assets/img/about/bold.jpg' %}"
+            class="img-fluid rounded-4"
+            alt="Bold Foundation logo"
+            loading="lazy"
+            decoding="async">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-about">
+    <div class="container">
+      <div class="row g-4 g-lg-5">
+        <div class="col-lg-6">
+          <h2>Why we exist</h2>
+          <p class="home-lead">
+            We believe every boy should have opportunities to build confidence, leadership,
+            emotional intelligence, and a sense of responsibility.
+          </p>
+          <p>The foundation works with schools and communities to support boys' development.</p>
+          <p>
+            Our mission centers the boy child. Some activities bring boys and girls together
+            so they can understand one another and learn to thrive together.
+          </p>
+        </div>
+        <div class="col-lg-6 home-values">
+          <div>
+            <h3>Our vision</h3>
+            <p>A world where every boy grows into a confident, respectful, and purpose-driven man who contributes positively to society.</p>
+          </div>
+          <div>
+            <h3>Our values</h3>
+            <p>Kindness, respect, integrity, accountability, honesty, and collaboration guide our work.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5 bg-light">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <span class="badge rounded-pill px-3 py-2 mb-3" style="background: #eaf8ff; color: #0d1b4b; font-weight: 700;">LEADERSHIP</span>
+          <h2>Sackland K. Makanga, Founder and CEO</h2>
+          <p>
+            Born in 2001 in Ikolomani, Kakamega County, Makanga is the founder and CEO of
+            Bold Foundation. He is studying for a Bachelor of Education in English and
+            Literature at Kibabii University.
+          </p>
+          <p>Makanga is also the author of the published book <em>Beyond the Timetable</em>.</p>
+          <p class="mb-0">He is also a poet; his collection, <em>The Fading Bond</em>, is unpublished.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-cta">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+          <h2>Help boys speak, lead, and thrive.</h2>
+          <p>Learn about our current programmes or find a way to take part.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a href="{% url 'get_involved' %}" class="btn home-primary-cta">Get involved</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

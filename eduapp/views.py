@@ -11,7 +11,7 @@ from django import forms
 from django.contrib.sitemaps.views import sitemap
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
-from django.http import HttpResponse, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -20,7 +20,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods, require_POST
 from django.db import OperationalError, connection, models
 from django.db import transaction as db_transaction
 from django.utils import timezone
@@ -144,6 +144,22 @@ def index(request):
     })
 
 
+def about(request):
+    return render(request, 'about.html')
+
+
+def programmes(request):
+    return render(request, 'programmes.html')
+
+
+def impact(request):
+    return render(request, 'impact.html')
+
+
+def get_involved(request):
+    return render(request, 'get_involved.html')
+
+
 def events_list(request):
     now = timezone.now()
     upcoming_queryset = Event.objects.filter(
@@ -201,11 +217,36 @@ def event_support(request, slug):
     donation = form.save(commit=False)
     donation.event = event
     donation.save()
+    result = initiate_stk_push(
+        phone_number=donation.phone,
+        amount=int(donation.amount),
+        account_ref=f'EVT{event.pk}DON',
+        description='Event Donation',
+    )
+    checkout_request_id = result.get('CheckoutRequestID')
+    merchant_request_id = result.get('MerchantRequestID')
+    if result.get('ResponseCode') != '0' or not checkout_request_id or not merchant_request_id:
+        donation.payment_status = 'failed'
+        donation.save(update_fields=['payment_status'])
+        messages.error(
+            request,
+            result.get('errorMessage', 'Payment request could not be initiated. Please try again.'),
+        )
+        return redirect('event_detail', slug=slug)
+
+    MpesaTransaction.objects.create(
+        donation=donation,
+        phone_number=donation.phone,
+        amount=donation.amount,
+        checkout_request_id=checkout_request_id,
+        merchant_request_id=merchant_request_id,
+    )
+    request.session['checkout_request_id'] = checkout_request_id
     messages.success(
         request,
-        f'Thank you for supporting {event.title}. Please pay KES {donation.amount} using M-Pesa till {settings.MPESA_SHORTCODE}.'
+        f'Payment prompt sent to your phone for your donation to {event.title}. Enter your M-Pesa PIN.'
     )
-    return redirect('event_detail', slug=slug)
+    return redirect('payment_status')
 
 
 def services(request):
@@ -242,14 +283,41 @@ def privacy(request):
     return render(request, 'privacy.html')
 
 
+def child_safeguarding(request):
+    return render(request, 'policies/child_safeguarding.html')
+
+
+def code_of_conduct(request):
+    return render(request, 'policies/code_of_conduct.html')
+
+
+def donations_refunds(request):
+    return render(request, 'policies/donations_refunds.html')
+
+
+def cookie_policy(request):
+    return render(request, 'policies/cookies.html')
+
+
+def complaints_grievance(request):
+    return render(request, 'policies/complaints_grievance.html')
+
+
+def data_retention(request):
+    return render(request, 'policies/data_retention.html')
+
+
 def sponser(request):
     return render(request, 'sponser.html')
 
 
 # ─── Contact ────────────────────────────────────────────────────────────────
 
-@require_POST
+@require_http_methods(['GET', 'POST'])
 def message(request):
+    if request.method == 'GET':
+        return render(request, 'message.html', {'form': ContactMessageForm()})
+
     form = ContactMessageForm(request.POST)
     if not form.is_valid():
         return render(request, 'message.html', {'form': form}, status=400)
@@ -278,6 +346,7 @@ def mentor(request):
         if request.user.is_authenticated:
             mentor_obj.user = request.user
         mentor_obj.save()
+        request.session['pending_mentor_id'] = mentor_obj.pk
 
         # Redirect to payment step
         return redirect('payment_initiate', mentor_id=mentor_obj.id)
@@ -292,6 +361,28 @@ def payment_initiate(request, mentor_id):
         return terms_redirect
 
     mentor_obj = get_object_or_404(Mentor, id=mentor_id)
+    owns_application = (
+        request.user.is_authenticated and mentor_obj.user_id == request.user.pk
+    )
+    started_application_in_session = (
+        request.session.get('pending_mentor_id') == mentor_obj.pk
+    )
+    if not owns_application and not started_application_in_session:
+        raise Http404
+
+    if mentor_obj.status != 'payment_pending':
+        messages.info(request, 'This mentor application is no longer awaiting payment.')
+        return redirect('mentor_dashboard' if owns_application else 'mentor')
+
+    pending_transaction = MpesaTransaction.objects.filter(
+        mentor=mentor_obj,
+        status='pending',
+    ).first()
+    if pending_transaction:
+        request.session['checkout_request_id'] = pending_transaction.checkout_request_id
+        request.session['mentor_id'] = mentor_obj.pk
+        return redirect('payment_status')
+
     fee = int(settings.MENTOR_APPLICATION_FEE)
     form = PaymentInitiationForm(request.POST or None, initial={'amount': fee})
 
@@ -313,30 +404,45 @@ def payment_initiate(request, mentor_id):
                 'form': form,
             }, status=400)
 
-        result = initiate_stk_push(
-            phone_number=phone,
-            amount=fee,
-            account_ref=mentor_obj.name[:12],
-            description='Mentor Application'
-        )
+        with db_transaction.atomic():
+            locked_mentor = Mentor.objects.select_for_update().get(pk=mentor_obj.pk)
+            if locked_mentor.status != 'payment_pending':
+                messages.info(request, 'This mentor application is no longer awaiting payment.')
+                return redirect('mentor_dashboard' if owns_application else 'mentor')
 
-        checkout_request_id = result.get('CheckoutRequestID')
-        merchant_request_id = result.get('MerchantRequestID')
-        if result.get('ResponseCode') == '0' and checkout_request_id and merchant_request_id:
-            MpesaTransaction.objects.create(
-                mentor=mentor_obj,
+            pending_transaction = MpesaTransaction.objects.filter(
+                mentor=locked_mentor,
+                status='pending',
+            ).first()
+            if pending_transaction:
+                request.session['checkout_request_id'] = pending_transaction.checkout_request_id
+                request.session['mentor_id'] = locked_mentor.pk
+                return redirect('payment_status')
+
+            result = initiate_stk_push(
                 phone_number=phone,
                 amount=fee,
-                checkout_request_id=checkout_request_id,
-                merchant_request_id=merchant_request_id,
+                account_ref=locked_mentor.name[:12],
+                description='Mentor Application',
             )
-            request.session['checkout_request_id'] = checkout_request_id
-            request.session['mentor_id'] = mentor_id
-            messages.success(request, 'Payment prompt sent to your phone. Enter your M-Pesa PIN.')
-            return redirect('payment_status')
-        else:
-            error_msg = result.get('errorMessage', 'Payment initiation failed. Try again.')
-            messages.error(request, error_msg)
+
+            checkout_request_id = result.get('CheckoutRequestID')
+            merchant_request_id = result.get('MerchantRequestID')
+            if result.get('ResponseCode') == '0' and checkout_request_id and merchant_request_id:
+                MpesaTransaction.objects.create(
+                    mentor=locked_mentor,
+                    phone_number=phone,
+                    amount=fee,
+                    checkout_request_id=checkout_request_id,
+                    merchant_request_id=merchant_request_id,
+                )
+                request.session['checkout_request_id'] = checkout_request_id
+                request.session['mentor_id'] = mentor_id
+                messages.success(request, 'Payment prompt sent to your phone. Enter your M-Pesa PIN.')
+                return redirect('payment_status')
+
+        error_msg = result.get('errorMessage', 'Payment initiation failed. Try again.')
+        messages.error(request, error_msg)
 
     return render(request, 'payment_page.html', {
         'mentor': mentor_obj,
@@ -358,9 +464,16 @@ def payment_status(request):
     except MpesaTransaction.DoesNotExist:
         return redirect('mentor')
 
+    event_slug = (
+        transaction.donation.event.slug
+        if transaction.donation_id and transaction.donation.event_id
+        else None
+    )
     return render(request, 'payment_status.html', {
         'transaction': transaction,
         'mentor_id': mentor_id,
+        'is_donation': transaction.donation_id is not None,
+        'event_slug': event_slug,
     })
 
 
@@ -390,12 +503,14 @@ def check_payment_status(request):
             }, status=503)
 
         if (
+            transaction.donation_id is None
+            and
             str(query_result.get('ResultCode')) == '0'
             and query_result.get('CheckoutRequestID') == transaction.checkout_request_id
         ):
             with db_transaction.atomic():
                 locked_transaction = MpesaTransaction.objects.select_for_update().select_related(
-                    'mentor'
+                    'mentor',
                 ).get(pk=transaction.pk)
                 if locked_transaction.status == 'pending':
                     locked_transaction.status = 'success'
@@ -411,8 +526,9 @@ def check_payment_status(request):
                         'result_description',
                         'completed_at',
                     ])
-                    locked_transaction.mentor.status = 'pending_review'
-                    locked_transaction.mentor.save(update_fields=['status', 'updated_at'])
+                    if locked_transaction.mentor_id:
+                        locked_transaction.mentor.status = 'pending_review'
+                        locked_transaction.mentor.save(update_fields=['status', 'updated_at'])
                 transaction = locked_transaction
 
     return JsonResponse({
@@ -493,11 +609,18 @@ def mpesa_callback(request):
                 transaction.status = 'success'
                 transaction.mpesa_receipt_number = str(receipt_number)
                 transaction.completed_at = timezone.now()
-                transaction.mentor.status = 'pending_review'
-                transaction.mentor.save(update_fields=['status', 'updated_at'])
+                if transaction.donation_id:
+                    transaction.donation.payment_status = 'success'
+                    transaction.donation.save(update_fields=['payment_status'])
+                elif transaction.mentor_id:
+                    transaction.mentor.status = 'pending_review'
+                    transaction.mentor.save(update_fields=['status', 'updated_at'])
             else:
                 transaction.status = 'failed'
                 transaction.completed_at = timezone.now()
+                if transaction.donation_id:
+                    transaction.donation.payment_status = 'failed'
+                    transaction.donation.save(update_fields=['payment_status'])
 
             transaction.save()
     except Exception:
@@ -554,6 +677,7 @@ def admin_view(request):
     )
     booking_count = MentorshipBooking.objects.count()
     donation_count = Donation.objects.count()
+    paid_donation_count = Donation.objects.filter(payment_status='success').count()
 
     mentors = paginate_queryset(
         Mentor.objects.order_by('-created_at'),
@@ -608,7 +732,7 @@ def admin_view(request):
         donation_count,
     )
     transactions = paginate_queryset(
-        MpesaTransaction.objects.select_related('mentor').order_by('-initiated_at'),
+        MpesaTransaction.objects.select_related('mentor', 'donation').order_by('-initiated_at'),
         request,
         'transactions_page',
         transaction_stats['total'],
@@ -625,7 +749,7 @@ def admin_view(request):
         'approved_partners': partnership_stats['approved'],
         'total_messages': message_count,
         'total_bookings': booking_count,
-        'total_donations': donation_count,
+        'total_donations': paid_donation_count,
     }
 
     return render(request, 'admin_view.html', {

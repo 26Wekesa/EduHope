@@ -1,0 +1,38 @@
+{% load static %}
+<section id="cookieConsent" class="cookie-consent" role="region" aria-label="Cookie choices" hidden>
+  <div class="cookie-consent__header">
+    <div>
+      <h2>Cookie choices</h2>
+      <p>
+        Essential cookies support security and site functions. We currently use no analytics
+        or marketing trackers; your choice will not enable a tracker that is not installed.
+        <a href="{% url 'cookie_policy' %}">Read the Cookie Policy</a>.
+      </p>
+    </div>
+  </div>
+
+  <div class="cookie-consent__actions">
+    <button type="button" class="btn btn-primary" data-cookie-choice="all">Accept all cookies</button>
+    <button type="button" class="btn btn-outline-secondary" data-cookie-choice="essential">Reject non-essential</button>
+    <button type="button" class="btn btn-outline-secondary" id="cookieManageButton" aria-expanded="false" aria-controls="cookiePreferences">Manage preferences</button>
+  </div>
+
+  <div id="cookiePreferences" class="cookie-consent__preferences" hidden>
+    <h3>Manage preferences</h3>
+    <p>Necessary cookies are always on. Optional choices are saved for your browser, but no optional cookie services are currently active.</p>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="cookieAnalytics">
+      <label class="form-check-label" for="cookieAnalytics">Analytics (not currently used)</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="cookieMarketing">
+      <label class="form-check-label" for="cookieMarketing">Marketing (not currently used)</label>
+    </div>
+    <div class="cookie-consent__actions mt-3">
+      <button type="button" class="btn btn-primary" id="cookieSavePreferences">Save preferences</button>
+      <button type="button" class="btn btn-outline-secondary" id="cookieClosePreferences">Close</button>
+    </div>
+  </div>
+  <p id="cookieConsentStatus" class="cookie-consent__status" role="status" aria-live="polite"></p>
+</section>
+<script src="{% static 'assets/js/cookie-consent.js' %}" defer></script>

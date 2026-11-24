@@ -3,7 +3,6 @@ import xml.etree.ElementTree as ElementTree
 import zipfile
 import zlib
 from datetime import date
-from decimal import Decimal
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -162,11 +161,8 @@ class ContactMessageForm(HoneypotModelForm):
 
 class EventSupportDonationForm(HoneypotModelForm):
     phone = KenyanPhoneField()
-    amount = forms.DecimalField(
-        min_value=Decimal('0.01'),
-        max_digits=10,
-        decimal_places=2,
-    )
+    amount = forms.IntegerField(min_value=1, max_value=9999999999)
+    donation_type = forms.ChoiceField(choices=(('one_time', 'One-Time'),))
 
     class Meta:
         model = Donation
