@@ -1,0 +1,50 @@
+{% load static %}
+
+<nav class="navbar navbar-bold fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-white fs-4" href="/">
+      <img class="navbar-brand__logo" src="{% static 'assets/img/logo.webp' %}" height="40" alt=""> Bold Foundation
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#siteNavigation" aria-controls="siteNavigation" aria-expanded="false" aria-label="Open site navigation">
+      <i class="bi bi-list" aria-hidden="true"></i>
+    </button>
+  </div>
+</nav>
+
+<div class="offcanvas offcanvas-end site-navigation" tabindex="-1" id="siteNavigation" aria-labelledby="siteNavigationLabel">
+  <div class="offcanvas-header">
+    <h2 class="offcanvas-title h5 mb-0" id="siteNavigationLabel">Explore Bold Foundation</h2>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close navigation"></button>
+  </div>
+  <div class="offcanvas-body">
+    <nav aria-label="Main navigation">
+      <ul class="navbar-nav gap-1">
+        <li class="nav-item"><a class="nav-link" href="/"><i class="bi bi-house-door" aria-hidden="true"></i> Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}"><i class="bi bi-info-circle" aria-hidden="true"></i> About</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'programmes' %}"><i class="bi bi-people" aria-hidden="true"></i> Programmes</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'impact' %}"><i class="bi bi-bar-chart" aria-hidden="true"></i> Impact</a></li>
+        <li class="nav-item"><a class="nav-link" href="/events/"><i class="bi bi-calendar-event" aria-hidden="true"></i> Events</a></li>
+        <li class="nav-item"><a class="nav-link" href="/services/"><i class="bi bi-people" aria-hidden="true"></i> Mentorship</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'learner' %}"><i class="bi bi-heart" aria-hidden="true"></i> Become a Beneficiary</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'get_involved' %}"><i class="bi bi-person-plus" aria-hidden="true"></i> Get Involved</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'partner' %}"><i class="bi bi-diagram-3" aria-hidden="true"></i> Partner</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}"><i class="bi bi-envelope" aria-hidden="true"></i> Contact</a></li>
+        {% if user.is_authenticated %}
+          {% if user.is_staff %}
+            <li class="nav-item"><a class="nav-link" href="/admin_view/"><i class="bi bi-speedometer2" aria-hidden="true"></i> Admin</a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="/dashboard/"><i class="bi bi-person-circle" aria-hidden="true"></i> My Portal</a></li>
+          {% endif %}
+          <li class="nav-item">
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="nav-link site-navigation__logout"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Logout</button>
+            </form>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link site-navigation__apply" href="/mentor/"><i class="bi bi-person-plus" aria-hidden="true"></i> Apply as Mentor</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>

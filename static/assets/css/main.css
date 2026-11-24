@@ -5011,7 +5011,7 @@ a[class*="btn"]:active,
 }
 
 .navbar-bold .navbar-toggler {
-  display: none;
+  display: inline-flex;
   width: 48px;
   height: 44px;
   align-items: center;
@@ -5019,42 +5019,100 @@ a[class*="btn"]:active,
   padding: 8px;
   border: 1px solid rgba(255, 255, 255, 0.65) !important;
   color: #fff;
+  border-radius: 8px;
 }
 
-@media (max-width: 991.98px) {
-  .navbar-bold .navbar-collapse {
-    margin-top: 12px;
-    padding: 12px 16px;
-    border-radius: 6px;
-    background: #0d1b4b;
-  }
-
-  .navbar-bold .navbar-nav {
-    align-items: flex-start !important;
-  }
-
-  .navbar-bold .nav-link {
-    padding: 8px 0;
-  }
-
-  .navbar-bold .btn-apply {
-    display: inline-block;
-    margin: 8px 0 0 !important;
-  }
-
-  .navbar-bold .navbar-toggler {
-    display: inline-flex;
-  }
-}
-
-.navbar-bold .navbar-toggler-icon {
-  filter: brightness(0) invert(1);
+.navbar-bold .navbar-toggler .bi {
+  font-size: 1.75rem;
+  line-height: 1;
 }
 
 .navbar-bold .navbar-toggler:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 3px;
   box-shadow: none;
+}
+
+.site-navigation {
+  --bs-offcanvas-width: min(360px, calc(100vw - 24px));
+  background: #0d1b4b;
+  color: #f8fafc;
+}
+
+.site-navigation .offcanvas-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.site-navigation .offcanvas-title {
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.site-navigation .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+  opacity: 0.9;
+}
+
+.site-navigation .btn-close:focus-visible {
+  outline: 2px solid #00c2e0;
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+.site-navigation .offcanvas-body {
+  padding: 1rem 1.25rem;
+}
+
+.site-navigation .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 8px;
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+.site-navigation .nav-link i {
+  width: 1.25rem;
+  margin: 0;
+  color: #00c2e0;
+  text-align: center;
+}
+
+.site-navigation .nav-link:hover,
+.site-navigation .nav-link:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.site-navigation .nav-link:focus-visible {
+  outline: 2px solid #00a9c7;
+  outline-offset: 2px;
+}
+
+.site-navigation .site-navigation__apply {
+  margin-top: 0.5rem;
+  background: #00c2e0;
+  color: #0d1b4b;
+}
+
+.site-navigation .site-navigation__apply:hover,
+.site-navigation .site-navigation__apply:focus-visible {
+  background: #76eaff;
+  color: #0d1b4b;
+}
+
+.site-navigation .site-navigation__apply i {
+  color: #0d1b4b;
+}
+
+.site-navigation .site-navigation__logout {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
 }
 
 .page-progress {

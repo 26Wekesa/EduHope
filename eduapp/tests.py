@@ -670,6 +670,12 @@ class EventsPageTests(TestCase):
                 self.assertContains(response, 'aria-hidden="true"')
         self.assertContains(response, 'navbar-brand__logo')
         self.assertContains(response, '--icon-accent: #00c2e0')
+        self.assertContains(response, 'data-bs-toggle="offcanvas"')
+        self.assertContains(response, 'id="siteNavigation"')
+        self.assertContains(response, 'aria-label="Main navigation"')
+        self.assertNotContains(response, 'href="/about/" data-bs-dismiss="offcanvas"')
+        self.assertContains(response, 'class="btn-close" data-bs-dismiss="offcanvas"')
+        self.assertNotContains(response, 'id="navMenu"')
 
     def test_standalone_pages_include_navigation_progress(self):
         for path in (reverse('terms'), reverse('privacy')):
