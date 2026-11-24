@@ -201,4 +201,4 @@ LOGIN_URL = '/login/'
 
 # AI chatbot (Gemini)
 GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
-GEMINI_MODEL = config('GEMINI_MODEL', default='gemini-3.5-flash-lite')
+GEMINI_MODEL = config('GEMINI_MODEL', default='gemini-3.5-flash')
