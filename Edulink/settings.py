@@ -26,7 +26,7 @@ render_hostname = config('RENDER_EXTERNAL_HOSTNAME', default='')
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: production deployments must provide a private secret key.
-DEBUG = config('DEBUG', default=not render_hostname, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 SECRET_KEY = config('SECRET_KEY', default='')
 if not SECRET_KEY:
     if DEBUG:
@@ -121,7 +121,7 @@ if database_url:
             ssl_require=config('DATABASE_SSL_REQUIRE', default=not DEBUG, cast=bool),
         )
     }
-elif DEBUG:
+elif not render_hostname:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -183,7 +183,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # App-specific defaults
-MENTOR_APPLICATION_FEE = 100
 MPESA_ENVIRONMENT = config('MPESA_ENVIRONMENT', default='sandbox')
 MPESA_CONSUMER_KEY = config('MPESA_CONSUMER_KEY', default='')
 MPESA_CONSUMER_SECRET = config('MPESA_CONSUMER_SECRET', default='')

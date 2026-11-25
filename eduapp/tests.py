@@ -441,103 +441,13 @@ class PublicApplicationFlowTests(TestCase):
             'honeypot': '',
         }
 
-    def test_valid_mentor_application_is_saved_and_advances_to_payment(self):
+    def test_valid_mentor_application_is_free_and_submitted_for_review(self):
         response = self.client.post(reverse('mentor'), self.mentor_data)
 
         mentor = Mentor.objects.get(email='amina@example.com')
-        self.assertRedirects(
-            response,
-            reverse('payment_initiate', args=[mentor.pk]),
-        )
+        self.assertRedirects(response, reverse('mentor'))
         self.assertEqual(mentor.phone, '254712345678')
-        self.assertEqual(mentor.status, 'payment_pending')
-
-    @patch('eduapp.views.initiate_stk_push')
-    def test_payment_initiation_persists_only_daraja_accepted_checkout(self, initiate):
-        mentor = Mentor.objects.create(
-            name='Amina Otieno',
-            email='amina@example.com',
-            phone='254712345678',
-            organization='Community Center',
-            years=5,
-            subject='Mentoring',
-            message='I would like to mentor learners.',
-        )
-        initiate.return_value = {
-            'ResponseCode': '0',
-            'CheckoutRequestID': 'checkout-confirmed',
-            'MerchantRequestID': 'merchant-confirmed',
-        }
-        session = self.client.session
-        session['pending_mentor_id'] = mentor.pk
-        session.save()
-
-        response = self.client.post(
-            reverse('payment_initiate', args=[mentor.pk]),
-            {'phone': '+254 712 345 678', 'amount': '100'},
-        )
-
-        transaction = MpesaTransaction.objects.get(mentor=mentor)
-        self.assertRedirects(response, reverse('payment_status'))
-        self.assertEqual(transaction.phone_number, '254712345678')
-        initiate.assert_called_once_with(
-            phone_number='254712345678',
-            amount=100,
-            account_ref='Amina Otieno',
-            description='Mentor Application',
-        )
-
-        repeated_response = self.client.post(
-            reverse('payment_initiate', args=[mentor.pk]),
-            {'phone': '+254 712 345 678', 'amount': '100'},
-        )
-        self.assertRedirects(repeated_response, reverse('payment_status'))
-        initiate.assert_called_once()
-
-    @patch('eduapp.views.initiate_stk_push')
-    def test_payment_initiation_rejects_invalid_phone_before_daraja(self, initiate):
-        mentor = Mentor.objects.create(
-            name='Amina Otieno',
-            email='amina@example.com',
-            phone='254712345678',
-            organization='Community Center',
-            years=5,
-            subject='Mentoring',
-            message='I would like to mentor learners.',
-        )
-        session = self.client.session
-        session['pending_mentor_id'] = mentor.pk
-        session.save()
-
-        response = self.client.post(
-            reverse('payment_initiate', args=[mentor.pk]),
-            {'phone': 'not-a-phone', 'amount': '100'},
-        )
-
-        self.assertEqual(response.status_code, 400)
-        self.assertContains(response, 'valid Kenyan mobile number', status_code=400)
-        initiate.assert_not_called()
-        self.assertFalse(MpesaTransaction.objects.exists())
-
-    @patch('eduapp.views.initiate_stk_push')
-    def test_payment_initiation_rejects_unowned_mentor_id(self, initiate):
-        mentor = Mentor.objects.create(
-            name='Amina Otieno',
-            email='amina@example.com',
-            phone='254712345678',
-            organization='Community Center',
-            years=5,
-            subject='Mentoring',
-            message='I would like to mentor learners.',
-        )
-
-        response = self.client.post(
-            reverse('payment_initiate', args=[mentor.pk]),
-            {'phone': '0712345678', 'amount': '100'},
-        )
-
-        self.assertEqual(response.status_code, 404)
-        initiate.assert_not_called()
+        self.assertEqual(mentor.status, 'pending_review')
         self.assertFalse(MpesaTransaction.objects.exists())
 
     def test_invalid_mentor_application_returns_errors_without_saving(self):
@@ -1586,7 +1496,7 @@ class MpesaCallbackTests(TestCase):
         self.transaction.refresh_from_db()
         self.mentor.refresh_from_db()
         self.assertEqual(self.transaction.status, 'pending')
-        self.assertEqual(self.mentor.status, 'payment_pending')
+        self.assertEqual(self.mentor.status, 'pending_review')
 
     def test_success_callback_marks_donation_paid_only_with_matching_amount_and_receipt(self):
         donation = Donation.objects.create(
@@ -1650,7 +1560,7 @@ class MpesaCallbackTests(TestCase):
         self.mentor.refresh_from_db()
         self.assertEqual(self.transaction.status, 'failed')
         self.assertEqual(self.transaction.result_code, 1032)
-        self.assertEqual(self.mentor.status, 'payment_pending')
+        self.assertEqual(self.mentor.status, 'pending_review')
 
     def test_repeated_success_callback_is_idempotent(self):
         items = [
@@ -1704,7 +1614,7 @@ class MpesaCallbackTests(TestCase):
         self.transaction.refresh_from_db()
         self.assertEqual(self.transaction.status, 'pending')
         self.mentor.refresh_from_db()
-        self.assertEqual(self.mentor.status, 'payment_pending')
+        self.assertEqual(self.mentor.status, 'pending_review')
 
     @patch('eduapp.views.query_stk_status')
     def test_payment_polling_marks_only_matching_daraja_success(self, query_status):
@@ -1778,7 +1688,7 @@ class MpesaCallbackTests(TestCase):
         self.transaction.refresh_from_db()
         self.mentor.refresh_from_db()
         self.assertEqual(self.transaction.status, 'pending')
-        self.assertEqual(self.mentor.status, 'payment_pending')
+        self.assertEqual(self.mentor.status, 'pending_review')
 
     @patch('eduapp.views.query_stk_status', side_effect=Timeout('Daraja timed out'))
     def test_payment_polling_keeps_pending_when_daraja_is_unavailable(self, query_status):
@@ -1793,4 +1703,4 @@ class MpesaCallbackTests(TestCase):
         self.transaction.refresh_from_db()
         self.mentor.refresh_from_db()
         self.assertEqual(self.transaction.status, 'pending')
-        self.assertEqual(self.mentor.status, 'payment_pending')
+        self.assertEqual(self.mentor.status, 'pending_review')

@@ -46,12 +46,6 @@
                 <i class="bi bi-x-circle me-2"></i>
                 Your application was not successful at this time.
               </div>
-            {% elif mentor.status == 'payment_pending' %}
-              <div class="alert alert-warning border-0 rounded-3">
-                <i class="bi bi-credit-card me-2"></i>
-                Payment not yet completed.
-                <a href="/mentor/{{ mentor.id }}/pay/" class="btn btn-sm btn-warning ms-2 rounded-pill">Pay Now</a>
-              </div>
             {% else %}
               <div class="alert alert-info border-0 rounded-3">
                 <i class="bi bi-hourglass-split me-2"></i>

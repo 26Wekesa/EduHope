@@ -11,7 +11,7 @@ from django import forms
 from django.contrib.sitemaps.views import sitemap
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -39,7 +39,6 @@ from .forms import (
     EventSupportDonationForm,
     MentorApplicationForm,
     MentorshipBookingForm,
-    PaymentInitiationForm,
     PartnershipRequestForm,
     RegistrationForm,
     SupportApplicationForm,
@@ -341,118 +340,21 @@ def mentor(request):
             return render(request, 'mentor.html', {'form': form}, status=400)
 
         mentor_obj = form.save(commit=False)
-        mentor_obj.status = 'payment_pending'
         # Link to logged-in user if available
         if request.user.is_authenticated:
             mentor_obj.user = request.user
         mentor_obj.save()
-        request.session['pending_mentor_id'] = mentor_obj.pk
-
-        # Redirect to payment step
-        return redirect('payment_initiate', mentor_id=mentor_obj.id)
+        messages.success(
+            request,
+            'Your free mentor application has been submitted for review.',
+        )
+        return redirect('mentor')
 
     return render(request, 'mentor.html', {'form': MentorApplicationForm()})
 
 
-def payment_initiate(request, mentor_id):
-    """Step 2: Fixed KES 100 mentor registration payment."""
-    terms_redirect = require_terms(request)
-    if terms_redirect:
-        return terms_redirect
-
-    mentor_obj = get_object_or_404(Mentor, id=mentor_id)
-    owns_application = (
-        request.user.is_authenticated and mentor_obj.user_id == request.user.pk
-    )
-    started_application_in_session = (
-        request.session.get('pending_mentor_id') == mentor_obj.pk
-    )
-    if not owns_application and not started_application_in_session:
-        raise Http404
-
-    if mentor_obj.status != 'payment_pending':
-        messages.info(request, 'This mentor application is no longer awaiting payment.')
-        return redirect('mentor_dashboard' if owns_application else 'mentor')
-
-    pending_transaction = MpesaTransaction.objects.filter(
-        mentor=mentor_obj,
-        status='pending',
-    ).first()
-    if pending_transaction:
-        request.session['checkout_request_id'] = pending_transaction.checkout_request_id
-        request.session['mentor_id'] = mentor_obj.pk
-        return redirect('payment_status')
-
-    fee = int(settings.MENTOR_APPLICATION_FEE)
-    form = PaymentInitiationForm(request.POST or None, initial={'amount': fee})
-
-    if request.method == 'POST':
-        if not form.is_valid():
-            return render(request, 'payment_page.html', {
-                'mentor': mentor_obj,
-                'fee': fee,
-                'form': form,
-            }, status=400)
-        phone = form.cleaned_data['phone']
-        submitted_amount = form.cleaned_data['amount'] or fee
-
-        if submitted_amount != fee:
-            form.add_error('amount', f'Mentor registration fee is fixed at KES {fee}.')
-            return render(request, 'payment_page.html', {
-                'mentor': mentor_obj,
-                'fee': fee,
-                'form': form,
-            }, status=400)
-
-        with db_transaction.atomic():
-            locked_mentor = Mentor.objects.select_for_update().get(pk=mentor_obj.pk)
-            if locked_mentor.status != 'payment_pending':
-                messages.info(request, 'This mentor application is no longer awaiting payment.')
-                return redirect('mentor_dashboard' if owns_application else 'mentor')
-
-            pending_transaction = MpesaTransaction.objects.filter(
-                mentor=locked_mentor,
-                status='pending',
-            ).first()
-            if pending_transaction:
-                request.session['checkout_request_id'] = pending_transaction.checkout_request_id
-                request.session['mentor_id'] = locked_mentor.pk
-                return redirect('payment_status')
-
-            result = initiate_stk_push(
-                phone_number=phone,
-                amount=fee,
-                account_ref=locked_mentor.name[:12],
-                description='Mentor Application',
-            )
-
-            checkout_request_id = result.get('CheckoutRequestID')
-            merchant_request_id = result.get('MerchantRequestID')
-            if result.get('ResponseCode') == '0' and checkout_request_id and merchant_request_id:
-                MpesaTransaction.objects.create(
-                    mentor=locked_mentor,
-                    phone_number=phone,
-                    amount=fee,
-                    checkout_request_id=checkout_request_id,
-                    merchant_request_id=merchant_request_id,
-                )
-                request.session['checkout_request_id'] = checkout_request_id
-                request.session['mentor_id'] = mentor_id
-                messages.success(request, 'Payment prompt sent to your phone. Enter your M-Pesa PIN.')
-                return redirect('payment_status')
-
-        error_msg = result.get('errorMessage', 'Payment initiation failed. Try again.')
-        messages.error(request, error_msg)
-
-    return render(request, 'payment_page.html', {
-        'mentor': mentor_obj,
-        'fee': fee,
-        'form': form,
-    })
-
-
 def payment_status(request):
-    """Step 3: Polling page that checks payment status."""
+    """Display the status of an M-Pesa checkout."""
     checkout_id = request.session.get('checkout_request_id')
     mentor_id = request.session.get('mentor_id')
 

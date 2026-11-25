@@ -17,7 +17,6 @@ class Message(models.Model):
 
 class Mentor(models.Model):
     STATUS_CHOICES = [
-        ('payment_pending', 'Payment Pending'),
         ('pending_review', 'Pending Review'),
         ('under_review', 'Under Review'),
         ('approved', 'Approved'),
@@ -33,7 +32,7 @@ class Mentor(models.Model):
     years = models.IntegerField()
     subject = models.CharField(max_length=200)
     message = models.TextField()
-    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='payment_pending')
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending_review')
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

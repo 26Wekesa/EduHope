@@ -60,15 +60,11 @@ ruff check Edulink eduapp manage.py
 
 The `Django CI` GitHub Actions workflow installs dependencies, applies migrations, runs the test suite, and runs Ruff on pushes and pull requests.
 
-## Mentor M-Pesa flow
+## Mentor applications
 
-1. A mentor application is validated and saved with `payment_pending` status.
-2. The applicant enters a Kenyan mobile number. The site requests an STK push through Daraja using a cached OAuth token.
-3. A transaction remains pending until Daraja's STK query confirms `ResultCode == 0` for the same checkout ID, or a valid callback confirms the amount and receipt.
-4. The callback URL includes the configured secret token. Daraja callbacks are acknowledged, but malformed, mismatched, or duplicate callbacks do not approve a payment.
-5. Only confirmed payments move the mentor application to `pending_review`.
-
-Use the Safaricom sandbox before configuring production credentials. Do not mark a payment successful based only on the browser redirect or an unverified callback.
+Mentor applications are free. After validating the form, the site saves the application with
+`pending_review` status; no M-Pesa payment is required. Event donations continue to use the
+separate M-Pesa payment flow.
 
 ## Render deployment
 

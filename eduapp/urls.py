@@ -35,7 +35,6 @@ urlpatterns = [
 
     # Mentor application flow
     path('mentor/', views.mentor, name='mentor'),
-    path('mentor/<int:mentor_id>/pay/', views.payment_initiate, name='payment_initiate'),
     path('payment/status/', views.payment_status, name='payment_status'),
     path('payment/check/', views.check_payment_status, name='check_payment_status'),
     path('mpesa/callback/', views.mpesa_callback, name='mpesa_callback'),
