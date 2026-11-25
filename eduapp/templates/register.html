@@ -37,17 +37,34 @@
 
                 <div style="margin-bottom:12px;">
                     <i class="bi bi-lock-fill" style="color:#0a1f44; margin-right:8px;"></i>
-                    <input name="password1" type="password" placeholder="Password" required>
+                    <input id="id_password1" name="password1" type="password" placeholder="Password" autocomplete="new-password" minlength="12" aria-describedby="passwordRules passwordFeedback" required>
+                </div>
+
+                <div class="password-feedback">
+                    <strong>Password requirements</strong>
+                    <p>Use at least 12 characters and at least three of the four character types below.</p>
+                    <ul id="passwordRules" class="password-feedback__rules">
+                        <li data-password-rule="length">At least 12 characters</li>
+                        <li data-password-rule="lower">Lowercase letter</li>
+                        <li data-password-rule="upper">Uppercase letter</li>
+                        <li data-password-rule="number">Number</li>
+                        <li data-password-rule="symbol">Symbol</li>
+                    </ul>
+                    <p id="passwordFeedback" role="status" aria-live="polite">Password checks update as you type.</p>
+                    <p class="small mb-0">Common passwords and passwords matching your account details are also rejected.</p>
                 </div>
 
                 <div style="margin-bottom:18px;">
                     <i class="bi bi-lock-check" style="color:#0a1f44; margin-right:8px;"></i>
-                    <input name="password2" type="password" placeholder="Confirm Password" required>
+                    <input id="id_password2" name="password2" type="password" placeholder="Confirm Password" autocomplete="new-password" aria-describedby="passwordMatchFeedback" required>
+                    <p id="passwordMatchFeedback" class="small mt-1 mb-0" role="status" aria-live="polite"></p>
                 </div>
 
                 <button type="submit" class="signup-btn">Sign Up</button>
 
             </form>
+
+            <p class="small text-muted text-center mt-3 mb-0">New accounts require approval by an existing administrator before sign-in.</p>
 
             <div style="text-align:center; margin-top:14px; color:#556;">
                 <p style="margin:0;">Already have an account? <a href="{% url 'login' %}" style="color:#0a1f44; font-weight:600;">Sign In</a></p>
@@ -60,5 +77,102 @@
 </div>
 </div>
 </div>
+
+<style>
+    .password-feedback {
+        margin: -4px 0 16px;
+        padding: 12px;
+        border-radius: 8px;
+        background: #f7f7f5;
+        color: #374151;
+        font-size: .9rem;
+    }
+
+    .password-feedback p {
+        margin: 4px 0 8px;
+    }
+
+    .password-feedback__rules {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px 12px;
+        margin: 8px 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .password-feedback__rules li::before {
+        content: "○";
+        margin-right: 6px;
+        color: #6b7280;
+    }
+
+    .password-feedback__rules li.is-met::before {
+        content: "✓";
+        color: #198754;
+    }
+
+    .password-feedback__rules li.is-met {
+        color: #146c43;
+    }
+</style>
+
+<script>
+    (() => {
+        const password = document.getElementById('id_password1');
+        const confirmation = document.getElementById('id_password2');
+        const feedback = document.getElementById('passwordFeedback');
+        const matchFeedback = document.getElementById('passwordMatchFeedback');
+        const patterns = {
+            lower: /[a-z]/,
+            upper: /[A-Z]/,
+            number: /[0-9]/,
+            symbol: /[^A-Za-z0-9]/,
+        };
+
+        function updatePasswordFeedback() {
+            const value = password.value;
+            const checks = {
+                length: value.length >= 12,
+                lower: patterns.lower.test(value),
+                upper: patterns.upper.test(value),
+                number: patterns.number.test(value),
+                symbol: patterns.symbol.test(value),
+            };
+            const characterTypes = ['lower', 'upper', 'number', 'symbol']
+                .filter((rule) => checks[rule]).length;
+            const strongEnough = checks.length && characterTypes >= 3;
+
+            Object.entries(checks).forEach(([rule, passed]) => {
+                document.querySelector(`[data-password-rule="${rule}"]`)
+                    .classList.toggle('is-met', passed);
+            });
+
+            password.setCustomValidity(
+                value && !strongEnough
+                    ? 'Use at least 12 characters and three character types.'
+                    : '',
+            );
+            feedback.textContent = !value
+                ? 'Password checks update as you type.'
+                : strongEnough
+                    ? 'Meets the length and character-type checks. Common-password and account-detail checks run on submission.'
+                    : `Needs at least 12 characters and 3 of 4 character types (${characterTypes}/4 so far).`;
+
+            const matches = confirmation.value === value;
+            confirmation.setCustomValidity(
+                confirmation.value && !matches ? 'Passwords do not match.' : '',
+            );
+            matchFeedback.textContent = !confirmation.value
+                ? ''
+                : matches
+                    ? 'Passwords match.'
+                    : 'Passwords do not match.';
+        }
+
+        password.addEventListener('input', updatePasswordFeedback);
+        confirmation.addEventListener('input', updatePasswordFeedback);
+    })();
+</script>
 
 {% endblock %}

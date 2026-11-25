@@ -49,6 +49,7 @@ urlpatterns = [
 
     # Admin dashboard
     path('admin_view/', views.admin_view, name='admin_view'),
+    path('approve_account/<int:id>/', views.approve_account, name='approve_account'),
     path('approve_mentor/<int:id>/', views.approve_mentor, name='approve_mentor'),
     path('reject_mentor/<int:id>/', views.reject_mentor, name='reject_mentor'),
     path('delete_mentor/<int:id>/', views.delete_mentor, name='delete_mentor'),

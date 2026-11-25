@@ -19,6 +19,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST
 from django.db import OperationalError, connection, models
@@ -580,6 +581,12 @@ def admin_view(request):
     booking_count = MentorshipBooking.objects.count()
     donation_count = Donation.objects.count()
     paid_donation_count = Donation.objects.filter(payment_status='success').count()
+    pending_accounts_queryset = User.objects.filter(
+        is_active=False,
+        is_staff=False,
+        is_superuser=False,
+    )
+    pending_account_count = pending_accounts_queryset.count()
 
     mentors = paginate_queryset(
         Mentor.objects.order_by('-created_at'),
@@ -639,6 +646,12 @@ def admin_view(request):
         'transactions_page',
         transaction_stats['total'],
     )
+    pending_accounts = paginate_queryset(
+        pending_accounts_queryset.order_by('-date_joined'),
+        request,
+        'accounts_page',
+        pending_account_count,
+    )
 
     stats = {
         'total_mentors': mentor_stats['total'],
@@ -666,6 +679,8 @@ def admin_view(request):
         'bookings': bookings,
         'donations': donations,
         'transactions': transactions,
+        'pending_accounts': pending_accounts,
+        'pending_account_count': pending_account_count,
         'stats': stats,
         'approved_learners': stats['approved_learners'],
         'approved_mentors': stats['approved_mentors'],
@@ -684,6 +699,22 @@ def approve_mentor(request, id):
     mentor_obj.approved = True
     mentor_obj.save()
     messages.success(request, f'{mentor_obj.name} has been approved.')
+    return redirect('admin_view')
+
+
+@staff_required
+@require_POST
+def approve_account(request, id):
+    account = get_object_or_404(
+        User,
+        pk=id,
+        is_active=False,
+        is_staff=False,
+        is_superuser=False,
+    )
+    account.is_active = True
+    account.save(update_fields=['is_active'])
+    messages.success(request, f'{account.username} can now sign in.')
     return redirect('admin_view')
 
 
@@ -970,7 +1001,21 @@ def login_user(request):
                 return redirect('admin_view')
             return redirect('mentor_dashboard')
         else:
-            messages.error(request, 'Invalid username or password.')
+            pending_account = None
+            if username and password:
+                pending_account = User.objects.filter(
+                    username=username,
+                    is_active=False,
+                    is_staff=False,
+                    is_superuser=False,
+                ).first()
+            if pending_account and pending_account.check_password(password):
+                messages.info(
+                    request,
+                    'Your account is awaiting approval by an administrator.',
+                )
+            else:
+                messages.error(request, 'Invalid username or password.')
     return render(request, 'login.html', {'next_url': next_url})
 
 
@@ -984,10 +1029,12 @@ def logout_user(request):
 def register(request):
     form = RegistrationForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
-        user = form.save()
-        login(request, user)
-        messages.success(request, 'Account created! Welcome.')
-        return redirect('mentor_dashboard')
+        form.save()
+        messages.success(
+            request,
+            'Your account request was submitted. An administrator must approve it before you can sign in.',
+        )
+        return redirect('login')
 
     return render(request, 'register.html', {'form': form}, status=400 if request.method == 'POST' else 200)
 

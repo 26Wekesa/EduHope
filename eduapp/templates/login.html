@@ -20,6 +20,12 @@
             <h3 style="color:#0d1b4b; font-weight:700; font-size:22px; margin-bottom:6px;">Sign in to manage Bold Foundation data</h3>
         </div>
 
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
         <form method="post" class="login-form">
             {% csrf_token %}
             {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}

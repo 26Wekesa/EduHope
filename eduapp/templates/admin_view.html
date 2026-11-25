@@ -18,6 +18,9 @@
           <button class="nav-link active" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab"><i class="bi bi-inbox"></i><span>Messages</span><span class="admin-sidebar__count">{{ total_messages }}</span></button>
         </li>
         <li class="nav-item" role="presentation">
+          <button class="nav-link" id="accounts-tab" data-bs-toggle="tab" data-bs-target="#accounts" type="button" role="tab"><i class="bi bi-person-check"></i><span>Account approvals</span>{% if pending_account_count %}<span class="admin-sidebar__count">{{ pending_account_count }}</span>{% endif %}</button>
+        </li>
+        <li class="nav-item" role="presentation">
           <button class="nav-link" id="learners-tab" data-bs-toggle="tab" data-bs-target="#learners" type="button" role="tab"><i class="bi bi-mortarboard"></i><span>Learners</span></button>
         </li>
         <li class="nav-item" role="presentation">
@@ -134,6 +137,45 @@
           {% include 'partials/pagination.html' with page_obj=all_messages page_key='messages_page' tab_id='messages' %}
           {% else %}
           <div class="alert alert-info rounded-4 border-0">No messages yet.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="accounts" role="tabpanel">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h3 class="fw-bold mb-2" style="color: #0d1b4b;">Account approvals</h3>
+          <p class="text-muted">Review new account requests. Accounts remain unable to sign in until approved.</p>
+          {% if pending_accounts %}
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Requested</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for account in pending_accounts %}
+                <tr>
+                  <td><strong>{{ account.username }}</strong></td>
+                  <td>{{ account.email }}</td>
+                  <td>{{ account.date_joined|date:"M j, Y" }}</td>
+                  <td>
+                    <form method="post" action="{% url 'approve_account' account.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-success rounded-pill">Approve account</button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% include 'partials/pagination.html' with page_obj=pending_accounts page_key='accounts_page' tab_id='accounts' %}
+          {% else %}
+          <div class="alert alert-info rounded-4 border-0">No accounts are waiting for approval.</div>
           {% endif %}
         </div>
       </div>

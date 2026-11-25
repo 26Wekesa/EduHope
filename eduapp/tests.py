@@ -400,6 +400,56 @@ class PublicApplicationFormTests(TestCase):
         self.assertIn('email', form.errors)
         self.assertIn('password2', form.errors)
 
+    def test_registration_rejects_long_passwords_with_too_few_character_types(self):
+        form = RegistrationForm(data={
+            'username': 'new-user',
+            'email': 'new@example.com',
+            'password1': 'quartzfoundry319847',
+            'password2': 'quartzfoundry319847',
+            'honeypot': '',
+        })
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('at least three', str(form.errors).lower())
+
+
+class RegistrationApprovalTests(TestCase):
+    registration_data = {
+        'username': 'approval-user',
+        'email': 'approval@example.com',
+        'password1': 'Vivid_Cedar!Lake82',
+        'password2': 'Vivid_Cedar!Lake82',
+        'honeypot': '',
+    }
+
+    def test_registration_requires_approval_before_sign_in(self):
+        response = self.client.post(
+            reverse('register'),
+            self.registration_data,
+            follow=True,
+        )
+
+        user = get_user_model().objects.get(username='approval-user')
+        self.assertFalse(user.is_active)
+        self.assertNotIn('_auth_user_id', self.client.session)
+        self.assertContains(response, 'An administrator must approve it')
+
+        login_response = self.client.post(reverse('login'), {
+            'username': 'approval-user',
+            'password': self.registration_data['password1'],
+        })
+        self.assertEqual(login_response.status_code, 200)
+        self.assertContains(login_response, 'awaiting approval')
+        self.assertNotIn('_auth_user_id', self.client.session)
+
+    def test_registration_page_shows_live_password_requirements(self):
+        response = self.client.get(reverse('register'))
+
+        self.assertContains(response, 'At least 12 characters')
+        self.assertContains(response, 'data-password-rule="symbol"')
+        self.assertContains(response, 'password.addEventListener')
+        self.assertContains(response, 'approval by an existing administrator')
+
 
 class LoginRedirectTests(TestCase):
     def setUp(self):
@@ -692,6 +742,12 @@ class EventsPageTests(TestCase):
 
     def test_staff_admin_dashboard_renders_workspace_navigation(self):
         self._create_staff_user()
+        pending_account = get_user_model().objects.create_user(
+            username='pending-member',
+            email='pending@example.com',
+            password='Vivid_Cedar!Lake82',
+            is_active=False,
+        )
         client = Client()
         self.assertTrue(client.login(username='adminuser', password='StrongPass123!'))
 
@@ -702,6 +758,8 @@ class EventsPageTests(TestCase):
         self.assertContains(response, 'Activity &amp; requests')
         self.assertContains(response, 'Workspace summary')
         self.assertContains(response, 'data-bs-target="#events"')
+        self.assertContains(response, 'data-bs-target="#accounts"')
+        self.assertContains(response, pending_account.username)
 
     def test_admin_dashboard_counts_only_paid_donations_and_shows_donation_payments(self):
         self._create_staff_user()
@@ -1073,6 +1131,11 @@ class AdminActionSecurityTests(TestCase):
             location='Nairobi',
             date=timezone.now() + timedelta(days=1),
         )
+        self.pending_account = get_user_model().objects.create_user(
+            username='pending-approval',
+            password='Vivid_Cedar!Lake82',
+            is_active=False,
+        )
 
     def _action_urls(self):
         return [
@@ -1084,6 +1147,7 @@ class AdminActionSecurityTests(TestCase):
             reverse('approve_partner', args=[self.partner.pk]),
             reverse('delete_partner', args=[self.partner.pk]),
             reverse('delete_message', args=[self.message.pk]),
+            reverse('approve_account', args=[self.pending_account.pk]),
             reverse('event_delete', args=[self.event.pk]),
         ]
 
@@ -1091,10 +1155,12 @@ class AdminActionSecurityTests(TestCase):
         self.mentor.refresh_from_db()
         self.learner.refresh_from_db()
         self.partner.refresh_from_db()
+        self.pending_account.refresh_from_db()
         self.assertEqual(self.mentor.status, 'pending_review')
         self.assertFalse(self.mentor.approved)
         self.assertFalse(self.learner.approved)
         self.assertFalse(self.partner.approved)
+        self.assertFalse(self.pending_account.is_active)
         self.assertTrue(Message.objects.filter(pk=self.message.pk).exists())
         self.assertTrue(Event.objects.filter(pk=self.event.pk).exists())
 
@@ -1162,6 +1228,13 @@ class AdminActionSecurityTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Event.objects.filter(pk=self.event.pk).exists())
 
+        response = self.client.post(
+            reverse('approve_account', args=[self.pending_account.pk]),
+        )
+        self.assertEqual(response.status_code, 302)
+        self.pending_account.refresh_from_db()
+        self.assertTrue(self.pending_account.is_active)
+
     def test_staff_post_actions_require_a_csrf_token(self):
         client = Client(enforce_csrf_checks=True)
         client.force_login(self.staff)
@@ -1183,6 +1256,7 @@ class AdminActionSecurityTests(TestCase):
             reverse('approve_partner', args=[self.partner.pk]),
             reverse('delete_partner', args=[self.partner.pk]),
             reverse('delete_message', args=[self.message.pk]),
+            reverse('approve_account', args=[self.pending_account.pk]),
             reverse('event_delete', args=[self.event.pk]),
         ]
         for action_url in rendered_action_urls:
